@@ -31,10 +31,10 @@ public:
     logic_t(uint32_t init, std::string init_n);
 
     // Methods
-    uint32_t get();
-    void rst();  // sync rst, needs active edge to take rst val
-    void set_name(std::string init_n);
-    void clk_update();
+    uint32_t m_get();
+    void m_rst();  // sync rst, needs active edge to take rst val
+    void m_set_name(std::string init_n);
+    void m_clk_update();
 
     // Operator overloads
     void operator= (const uint32_t val_in);

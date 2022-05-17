@@ -5,9 +5,11 @@
 TEST(HelloTest, TestGet) {
 
 	logic_t ff = logic_t(50u);
+	// test constructor only!
+	//ff.m_value = 1;
 
 	// Expect equality.
-	EXPECT_EQ(ff.get(), 50);
+	EXPECT_EQ(ff.m_get(), 50);
 }
 
 TEST(HelloTest, TestEquals) {
@@ -16,11 +18,11 @@ TEST(HelloTest, TestEquals) {
 
 	ff = 100u;
 	// Expect equality.
-	EXPECT_EQ(ff.get(), 50);
+	EXPECT_EQ(ff.m_get(), 50);
 
-	ff.clk_update();
+	ff.m_clk_update();
 
-	EXPECT_EQ(ff.get(), 100);
+	EXPECT_EQ(ff.m_get(), 100);
 
 }
 
