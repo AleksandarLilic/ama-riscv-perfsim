@@ -1,2 +1,5 @@
 local/
 *.swp
+SW/.vs/
+SW/out/
+
