@@ -15,9 +15,9 @@ private:
     uint32_t m_value;
     uint32_t m_rst_value;
     uint32_t m_temp_value;
+    bool m_enable;
     std::string m_name;
 
-    // ? uint32_t enable, enable_mask;
 
     //uint32_t len;
     //uint32_t mask;
@@ -33,6 +33,7 @@ public:
     // Methods
     uint32_t m_get();
     void m_rst();  // sync rst, needs active edge to take rst val
+    void m_set_enable(bool enable_in);
     void m_set_name(std::string init_n);
     void m_clk_update();
 
