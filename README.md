@@ -2,7 +2,8 @@
 
 ## **Overview**
 **Description:**  
-Cycle Accurate C++ implementation of RISC-V RV32I ISA
+Cycle Accurate C++ implementation of RISC-V RV32I ISA  
+Based on [ama-riscv Verilog simulator](https://github.com/AleksandarLilic/ama-riscv/blob/dev/verif/direct_tb/ama_riscv_core_dut_m.v)
 
 **Use-cases:**
  - Stand-alone simulator
@@ -11,17 +12,18 @@ Cycle Accurate C++ implementation of RISC-V RV32I ISA
  - Golden Model for RTL implementation through DPI or other
 
 **Status:**   
-In development - Flow setup
+In development - Phase I: Base structures
 
 **Further development:**  
 TBD    
   
 ## **Project Structure**  
-TBD
+Header files: /SW/include/  
+Source files: /SW/src/  
+Google unit tests: /SW/tests/  
+Documentation: /docs/  
 
 ## **Branches**  
 **Main - stable release:** *main*  
 **Ongoing development:** *dev*  
 **Documentation:** *doc*
-   
-   
