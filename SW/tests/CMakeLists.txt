@@ -14,6 +14,7 @@ add_executable(
   hello_test
   "hello_test.cpp"
   "../src/logic_t.cpp"
+  "../src/cl.cpp"
 )
 target_link_libraries(
   hello_test

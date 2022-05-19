@@ -1,8 +1,6 @@
 #pragma once
 
-#include <iostream>
-
-#define LOG(x) std::cout << x << std::endl
+#include "defines.h"
 
 typedef class logic_t
 {
