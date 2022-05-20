@@ -10,9 +10,9 @@ private:
     // transfer temp to val only on clk update
     // use uint for 'wire' equivalent
 
-    uint32_t m_value;
+    uint32_t m_logic_in;
+    uint32_t m_logic_reg;
     uint32_t m_rst_value;
-    uint32_t m_temp_value;
     bool m_enable;
     std::string m_name;
 
