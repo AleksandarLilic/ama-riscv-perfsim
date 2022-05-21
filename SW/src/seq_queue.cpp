@@ -6,6 +6,6 @@ void seq_queue::add(logic_t* ptr)
 }
 void seq_queue::update() 
 {
-    for (auto i : queue)
+    for (logic_t* i : queue)
         i->m_clk_update();
 }
