@@ -32,9 +32,9 @@ uint32_t logic_t::operator+ (const logic_t logic_in)
     res = m_get() + logic_in.m_logic_reg;
     return res;
 }
-logic_t logic_t::operator- (const logic_t logic_in)
+uint32_t logic_t::operator- (const logic_t logic_in)
 {
-    logic_t res(0);
-    res.m_logic_in = m_get() - logic_in.m_logic_reg;
+    uint32_t res;
+    res = m_get() - logic_in.m_logic_reg;
     return res;
 }

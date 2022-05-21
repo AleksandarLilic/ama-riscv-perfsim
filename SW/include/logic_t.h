@@ -14,6 +14,7 @@ private:
     uint32_t m_logic_reg;
     uint32_t m_rst_value;
     bool m_enable;
+public:
     std::string m_name;
 
 
@@ -27,6 +28,10 @@ public:
     logic_t(uint32_t init);
     logic_t(std::string initn);
     logic_t(uint32_t init, std::string init_n);
+    
+    void init(std::string initn) {
+        m_name = initn;
+    };
 
     // Methods
     uint32_t m_get();
@@ -44,6 +49,6 @@ public:
     void operator++ (int);
     void operator-- (int);
     uint32_t operator+ (const logic_t logic_in);
-    logic_t operator- (const logic_t logic_in);
+    uint32_t operator- (const logic_t logic_in);
 
 } logic_t;

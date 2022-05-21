@@ -11,4 +11,5 @@ private:
 public:
     void add(logic_t* ptr);
     void update();
+    void reset();
 };

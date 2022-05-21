@@ -16,6 +16,8 @@ add_executable(
   "../src/logic_t.cpp"
   "../src/cl.cpp"
   "../src/seq_queue.cpp"
+  "../src/core.cpp"
+  "../src/inst_field.cpp"
 )
 target_link_libraries(
   hello_test
