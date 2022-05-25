@@ -8,9 +8,10 @@
 
 void main()
 {
-    logic_t test(5u);
-    test.m_clk_update();
-    LOG(test.m_get());
+    
+    logic_t test();
+    //test.clk_update();
+    //LOG(test.get());
 
     uint32_t f1 = 0xAA005500 >> 15;
     uint32_t f2 = 55;
@@ -35,8 +36,17 @@ void main()
     LOG("res: " << res);
 
     seq_queue q;
+    uint32_t reg1_out;
+    uint32_t reg2_out;
     logic_t reg1(5, "reg1");
     logic_t reg2(22, "reg2");
+
+    uint32_t conn_test;
+    reg1.connect(&conn_test);
+    LOG("conn_test: " << conn_test);
+    uint32_t conn_test2;
+    reg1.connect(&conn_test2);
+    LOG("conn_test2: " << conn_test2);
 
     q.add(&reg1);
     q.add(&reg2);
@@ -45,6 +55,11 @@ void main()
     reg2 = 44;
 
     q.update();
+    LOG("conn_test after update: " << conn_test);
+    LOG("conn_test2 after update: " << conn_test2);
+
+    res = cl::mux4(1u, reg1.out(), reg2.out(), CL_UNUSED, 0u);
+    LOG("res: " << res);
 
     // -------------------------- cpu ideas:
 
@@ -54,17 +69,17 @@ void main()
 
     imem[0] = 55;
 
-    core.m_reset(1);
-    core.m_update(imem, dmem);
+    core.reset(1);
+    core.update(imem, dmem);
     // core.update();
-    core.m_reset(0);
+    core.reset(0);
 
     LOG("imem[1], written inside func: " << imem[1]);
     LOG("dmem " << dmem[2]);
 
     /*
     
-    core.m_seq_update()
+    core.seq_update()
         //----- MEM/WB stage updates
         dut_m_reg_file_write_update();
         dut_m_csr_write_update();

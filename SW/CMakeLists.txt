@@ -7,7 +7,7 @@ project ("ama-riscv-sim")
 
 # Include sub-projects.
 add_subdirectory ("src")
-add_subdirectory ("tests")
+#add_subdirectory ("tests")
 
 include(FetchContent)
 FetchContent_Declare(

@@ -12,7 +12,7 @@ enable_testing()
 
 add_executable(
   hello_test
-  "hello_test.cpp"
+  #"hello_test.cpp"
   "../src/logic_t.cpp"
   "../src/cl.cpp"
   "../src/seq_queue.cpp"

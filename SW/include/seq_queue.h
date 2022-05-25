@@ -9,7 +9,7 @@ class seq_queue
 private:
     std::vector<logic_t*> queue;
 public:
-    void add(logic_t* ptr);
+    void add(logic_t *ptr);
     void update();
     void reset();
 };
