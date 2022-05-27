@@ -61,6 +61,28 @@ void main()
     res = cl::mux4(1u, reg1.out(), reg2.out(), CL_UNUSED, 0u);
     LOG("res: " << res);
 
+    logic_t ff1(5, "ff1");
+    logic_t ff2(22, "ff2");
+
+    q.add(&ff1);
+    q.add(&ff2);
+    LOG("ff1: " << ff1.out());
+    LOG("ff2: " << ff2.out());
+
+    ff1 = 99;
+    // check this, does not work 
+    ff2 = ff1;
+    //ff2 = ff1.out();
+
+
+    q.update();
+
+    LOG(ff1.get_name() << " on update: " << ff1.out());
+    LOG(ff2.get_name() << " on update: " << ff2.out());
+
+
+
+
     // -------------------------- cpu ideas:
 
     core core;

@@ -8,6 +8,8 @@ void seq_queue::add(logic_t *ptr)
 void seq_queue::update()
 {
     for (logic_t *i : queue)
+        i->clk_update_hold();
+    for (logic_t* i : queue)
         i->clk_update();
 }
 

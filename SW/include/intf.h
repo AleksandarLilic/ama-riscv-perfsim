@@ -41,6 +41,10 @@ typedef struct ctrl_intf_t
 
 typedef struct ctrl_intf_private_t
 {
+    uint32_t opc7_id;
+    uint32_t funct3_id;
+    uint32_t funct7_id;
+    uint32_t funct3_ex;
     bool branch_inst_id;
     bool jump_inst_id;
 } ctrl_intf_private_t;

@@ -5,6 +5,7 @@
 #include "intf.h"
 #include "seq_queue.h"
 #include "logic_t.h"
+#include "cl.h"
 #include <array>
 //#include "memory.h"
 
@@ -25,6 +26,13 @@ public:
 private:
     void init();    // initialize all signals within structures (names and initial/reset values)
 
+    // control
+    void control(ctrl_intf_t *ctrl_intf_id, ctrl_intf_private_t *ctrl_intf_private);
+    void control_op_fwd(ctrl_intf_t* ctrl_intf_id);
+    void control_pipeline_ctrl(ctrl_intf_t* ctrl_intf_id);
+    void control_store_mask(ctrl_intf_t* ctrl_intf_id);
+    void control_branch_resolution(ctrl_intf_t* ctrl_intf_id);
+    // decoder instructions
     void decode(ctrl_intf_t *ctrl_intf_id, ctrl_intf_private_t *ctrl_intf_private);
     void decode_r_type(ctrl_intf_t *ctrl_intf_id);
     void decode_i_type(ctrl_intf_t* ctrl_intf_id);
@@ -38,10 +46,6 @@ private:
     void decode_system(ctrl_intf_t* ctrl_intf_id);
     void decode_unsupported(ctrl_intf_t* ctrl_intf_id);
     void decode_reset(ctrl_intf_t* ctrl_intf_id);
-    void decode_op_fwd(ctrl_intf_t* ctrl_intf_id);
-    void decode_pipeline_ctrl(ctrl_intf_t* ctrl_intf_id);
-    void decode_store_mask(ctrl_intf_t* ctrl_intf_id);
-    void decode_branch_resolution(ctrl_intf_t* ctrl_intf_id);
 
 
 
@@ -58,7 +62,7 @@ public:
     {
         //LOG("imem from core: " << imem_ptr[0] << "\ndmem from core: " << dmem_ptr[0]);
         //imem_ptr[1] = 55;
-        decode(&ctrl_intf_id, &ctrl_intf_private);
+        //decode(&ctrl_intf_id, &ctrl_intf_private);
     }
 
 };
