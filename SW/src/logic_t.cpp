@@ -17,7 +17,7 @@ void logic_t::init(uint32_t init_val, std::string init_name)
     name = init_name;
 }
 void logic_t::connect(uint32_t *connection) { connected_outputs_uint.push_back(connection); } 
-uint32_t const logic_t::out() { return logic_reg; }
+uint32_t logic_t::out() const { return logic_reg; }
 void logic_t::rst() { logic_in = rst_value; }  // sync rst, needs active edge to take rst val
 void logic_t::set_enable(bool enable) { this->enable = enable; }
 void logic_t::clk_update_hold() { hold = logic_in; }
@@ -37,8 +37,7 @@ std::string logic_t::get_name() { return name; }
 
 // Operator overloads
 void logic_t::operator= (const uint32_t operand) { logic_in = operand; }
-//void logic_t::operator= (const logic_t operand) { logic_in = operand.logic_reg;} //operand.out(); }
-void logic_t::operator= (logic_t operand) { logic_in = operand.out(); }
+void logic_t::operator= (const logic_t operand) { logic_in = operand.out(); }
 uint32_t logic_t::operator+ (const uint32_t operand) { return (out() + operand); }
 uint32_t logic_t::operator- (const uint32_t operand) { return (out() - operand); }
 void logic_t::operator+= (const uint32_t operand) { logic_in = out() + operand; }

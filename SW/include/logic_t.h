@@ -27,7 +27,7 @@ public:
     // Methods
     void init(uint32_t init_val, std::string init_name);
     void connect(uint32_t *connection);
-    uint32_t const out();
+    uint32_t out() const;
     void rst();  // sync rst, needs active edge to take rst val
     void set_enable(bool enable);
     // void set_name(std::string init_name);
