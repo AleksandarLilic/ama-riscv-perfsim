@@ -21,12 +21,14 @@ logic_t::logic_t(uint32_t init_val, std::string init_name)
 void logic_t::init(uint32_t init_val, std::string init_name)
 {
     logic_reg = init_val;
+    hold = init_val;
     logic_in = init_val;
     rst_value = init_val;
     enable = 1;
     name = init_name;
 }
 void logic_t::connect(uint32_t *connection) { connected_outputs_uint.push_back(connection); } 
+void logic_t::connect(logic_t *connection) { connected_outputs_logic.push_back(connection); }
 uint32_t logic_t::out() const { return logic_reg; }
 void logic_t::rst() { logic_in = rst_value; }  // sync rst, needs active edge to take rst val
 void logic_t::set_enable(bool enable) { this->enable = enable; }
@@ -37,6 +39,8 @@ void logic_t::clk_update()
     if (enable) {   // only update if ff is enabled
         logic_reg = hold;
         for (uint32_t* i : connected_outputs_uint)
+            *i = hold;
+        for (logic_t* i : connected_outputs_logic)
             *i = hold;
     }
     LOG("Called clk_update() on: '" << name << "'; Input: " << hold << "; Enable: " << enable

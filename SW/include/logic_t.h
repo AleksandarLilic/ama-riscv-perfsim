@@ -20,6 +20,7 @@ private:
     uint32_t hold;
     uint32_t logic_reg;
     std::vector<uint32_t*> connected_outputs_uint;
+    std::vector<logic_t*> connected_outputs_logic;
     uint32_t rst_value;
     bool enable;
 public:
@@ -37,6 +38,7 @@ public:
     // Methods
     void init(uint32_t init_val, std::string init_name);
     void connect(uint32_t *connection);
+    void connect(logic_t *connection);
     uint32_t out() const;
     void rst();  // sync rst, needs active edge to take reset value
     void set_enable(bool enable);
