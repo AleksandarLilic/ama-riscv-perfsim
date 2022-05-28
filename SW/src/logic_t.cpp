@@ -29,7 +29,6 @@ void logic_t::init(uint32_t init_val, std::string init_name)
 }
 void logic_t::connect(uint32_t *connection) { connected_outputs_uint.push_back(connection); } 
 void logic_t::connect(logic_t *connection) { connected_outputs_logic.push_back(connection); }
-uint32_t logic_t::out() const { return logic_reg; }
 void logic_t::rst() { logic_in = rst_value; }  // sync rst, needs active edge to take rst val
 void logic_t::set_enable(bool enable) { this->enable = enable; }
 void logic_t::clk_update_hold() { hold = logic_in; }
@@ -47,17 +46,22 @@ void logic_t::clk_update()
         << "; Old value: " << prev << "; New Value: " << logic_reg << "; ");
 }
 
+// Getters
 std::string logic_t::get_name() const { return name; }
+bool logic_t::get_en() const { return enable; }
+uint32_t logic_t::out() const { return logic_reg; }
 
-// Operator overloads
+// Operator overloads - logic_t with an integer
 void logic_t::operator= (const uint32_t operand) { logic_in = operand; }
-void logic_t::operator= (const logic_t operand) { logic_in = operand.out(); }
 uint32_t logic_t::operator+ (const uint32_t operand) const { return (out() + operand); }
 uint32_t logic_t::operator- (const uint32_t operand) const { return (out() - operand); }
 void logic_t::operator+= (const uint32_t operand) { logic_in = out() + operand; }
 void logic_t::operator-= (const uint32_t operand) { logic_in = out() - operand; }
 void logic_t::operator++ (int) { logic_in++; }
 void logic_t::operator-- (int) { logic_in--; }
+
+// Operator overloads - logic_t with a logic_t
+void logic_t::operator= (const logic_t operand) { logic_in = operand.out(); }
 uint32_t logic_t::operator+ (const logic_t operand) const
 {
     uint32_t res;
@@ -69,4 +73,13 @@ uint32_t logic_t::operator- (const logic_t operand) const
     uint32_t res;
     res = out() - operand.logic_reg;
     return res;
+}
+
+// Non-member operator overloads
+std::ostream& operator<<(std::ostream& stream, const logic_t& operand)
+{
+    stream << "Logic: " << operand.get_name() << 
+        "; Enable: " << operand.get_en() << 
+        "; Value: " << operand.out() << "; ";
+    return stream;
 }

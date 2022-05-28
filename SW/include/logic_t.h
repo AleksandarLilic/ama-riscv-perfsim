@@ -23,8 +23,9 @@ private:
     std::vector<logic_t*> connected_outputs_logic;
     uint32_t rst_value;
     bool enable;
-public:
     std::string name;
+
+public:
 
     //uint32_t len;
     //uint32_t mask;
@@ -39,23 +40,30 @@ public:
     void init(uint32_t init_val, std::string init_name);
     void connect(uint32_t *connection);
     void connect(logic_t *connection);
-    uint32_t out() const;
     void rst();  // sync rst, needs active edge to take reset value
     void set_enable(bool enable);
-    std::string get_name() const;
     void clk_update_hold();
     void clk_update();
 
-    // Operator overloads
+    // Getters
+    std::string get_name() const;
+    bool get_en() const;
+    uint32_t out() const;
+
+    // Operator overloads - logic_t with an integer
     void operator= (const uint32_t operand);
-    void operator= (const logic_t operand);
     uint32_t operator+ (const uint32_t operand) const;
     uint32_t operator- (const uint32_t operand) const;
     void operator+= (const uint32_t operand);
     void operator-= (const uint32_t operand);
     void operator++ (int);
     void operator-- (int);
+    // Operator overloads - logic_t with a logic_t
+    void operator= (const logic_t operand);
     uint32_t operator+ (const logic_t operand) const;
     uint32_t operator- (const logic_t operand) const;
 
 } logic_t;
+
+// Non-member operator overloads
+std::ostream &operator<<(std::ostream &stream, const logic_t &operand);

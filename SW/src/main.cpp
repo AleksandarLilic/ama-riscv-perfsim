@@ -80,6 +80,8 @@ void main()
     LOG(ff1.get_name() << " on update: " << ff1.out());
     LOG(ff2.get_name() << " on update: " << ff2.out());
 
+    LOG(ff2);
+
 
 
 
