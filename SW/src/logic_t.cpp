@@ -1,3 +1,13 @@
+//
+// Project:         AMA-RISCV-SIM
+// File:            logic_t.cpp
+// Date created:    2022-05-16
+// Author:          Aleksandar Lilic
+// Description:     Custom data type, designed to model sequential logic
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+//
+
 #include "../include/logic_t.h"
 
 // Constructors
@@ -33,24 +43,24 @@ void logic_t::clk_update()
         << "; Old value: " << prev << "; New Value: " << logic_reg << "; ");
 }
 
-std::string logic_t::get_name() { return name; }
+std::string logic_t::get_name() const { return name; }
 
 // Operator overloads
 void logic_t::operator= (const uint32_t operand) { logic_in = operand; }
 void logic_t::operator= (const logic_t operand) { logic_in = operand.out(); }
-uint32_t logic_t::operator+ (const uint32_t operand) { return (out() + operand); }
-uint32_t logic_t::operator- (const uint32_t operand) { return (out() - operand); }
+uint32_t logic_t::operator+ (const uint32_t operand) const { return (out() + operand); }
+uint32_t logic_t::operator- (const uint32_t operand) const { return (out() - operand); }
 void logic_t::operator+= (const uint32_t operand) { logic_in = out() + operand; }
 void logic_t::operator-= (const uint32_t operand) { logic_in = out() - operand; }
 void logic_t::operator++ (int) { logic_in++; }
 void logic_t::operator-- (int) { logic_in--; }
-uint32_t logic_t::operator+ (const logic_t operand)
+uint32_t logic_t::operator+ (const logic_t operand) const
 {
     uint32_t res;
     res = out() + operand.logic_reg;
     return res;
 }
-uint32_t logic_t::operator- (const logic_t operand)
+uint32_t logic_t::operator- (const logic_t operand) const
 {
     uint32_t res;
     res = out() - operand.logic_reg;

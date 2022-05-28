@@ -1,3 +1,13 @@
+//
+// Project:         AMA-RISCV-SIM
+// File:            logic_t.h
+// Date created:    2022-05-16
+// Author:          Aleksandar Lilic
+// Description:     Custom data type, designed to model sequential logic
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+//
+
 #pragma once
 
 #include "defines.h"
@@ -28,25 +38,22 @@ public:
     void init(uint32_t init_val, std::string init_name);
     void connect(uint32_t *connection);
     uint32_t out() const;
-    void rst();  // sync rst, needs active edge to take rst val
+    void rst();  // sync rst, needs active edge to take reset value
     void set_enable(bool enable);
-    // void set_name(std::string init_name);
-    std::string get_name();
+    std::string get_name() const;
     void clk_update_hold();
     void clk_update();
 
     // Operator overloads
     void operator= (const uint32_t operand);
     void operator= (const logic_t operand);
-    uint32_t operator+ (const uint32_t operand);
-    uint32_t operator- (const uint32_t operand);
+    uint32_t operator+ (const uint32_t operand) const;
+    uint32_t operator- (const uint32_t operand) const;
     void operator+= (const uint32_t operand);
     void operator-= (const uint32_t operand);
     void operator++ (int);
     void operator-- (int);
-    uint32_t operator+ (const logic_t operand);
-    uint32_t operator- (const logic_t operand);
+    uint32_t operator+ (const logic_t operand) const;
+    uint32_t operator- (const logic_t operand) const;
 
 } logic_t;
-
-std::string get_name();
