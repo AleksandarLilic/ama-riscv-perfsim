@@ -47,7 +47,6 @@ typedef struct ctrl_intf_t
     uint32_t dec_wb_sel_id;
     uint32_t dec_reg_we_id;
 
-        
     uint32_t of_rf_a_sel_fwd_id;
     uint32_t of_rf_b_sel_fwd_id;
     uint32_t of_bc_a_sel_fwd_id;

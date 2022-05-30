@@ -94,7 +94,7 @@ void core::decode(ctrl_intf_t *ctrl_intf)
 void core::decode_r_type(ctrl_intf_t *ctrl_intf)
 {
     LOG("dec r type called");
-    uint32_t alu_op_sel = ctrl_intf->funct3_id | ((inst_field::funct7_b5(ctrl_intf->in_inst_id)) << 3);
+    uint32_t alu_op_sel = ((inst_field::funct7_b5(ctrl_intf->in_inst_id)) << 3) | ctrl_intf->funct3_id;
     LOG("dec, alu sel op = " << alu_op_sel);
 
     ctrl_intf->dec_branch_inst_id = 0;
@@ -110,13 +110,13 @@ void core::decode_r_type(ctrl_intf_t *ctrl_intf)
     ctrl_intf->dec_csr_we_id = 0;
     ctrl_intf->dec_csr_ui_id = 0;
 
-    //ctrl_intf->dec_bc_uns_id = 0;
+    ctrl_intf->dec_bc_uns_id = 0;
 
     ctrl_intf->dec_alu_a_sel_id = ALU_A_SEL_RS1;
     ctrl_intf->dec_alu_b_sel_id = ALU_B_SEL_RS2;
     ctrl_intf->dec_alu_op_sel_id = alu_op_sel;
 
-    //ctrl_intf->dec_store_mask_id = ;
+    ctrl_intf->dec_store_mask_id = 0;
     ctrl_intf->dec_dmem_en_id = 0;
     ctrl_intf->dec_load_sm_en_id = 0;
 
@@ -139,13 +139,13 @@ void core::decode_reset(ctrl_intf_t *ctrl_intf)
     ctrl_intf->dec_csr_we_id = 0;
     ctrl_intf->dec_csr_ui_id = 0;
 
-    //ctrl_intf->dec_bc_uns_id = 0;
+    ctrl_intf->dec_bc_uns_id = 0;
 
     ctrl_intf->dec_alu_a_sel_id = ALU_A_SEL_RS1;
     ctrl_intf->dec_alu_b_sel_id = ALU_B_SEL_RS2;
     ctrl_intf->dec_alu_op_sel_id = 0x0;
 
-    //ctrl_intf->dec_store_mask_id = ;
+    ctrl_intf->dec_store_mask_id = 0;
     ctrl_intf->dec_dmem_en_id = 0;
     ctrl_intf->dec_load_sm_en_id = 0;
 

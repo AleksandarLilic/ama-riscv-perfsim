@@ -15,4 +15,3 @@ uint32_t inst_field::imm_b(uint32_t inst)
         ((inst & IMM_B_HI_M) >> 1)// |
         ; 
 }
-
