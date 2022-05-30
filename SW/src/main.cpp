@@ -100,6 +100,7 @@ void main()
 
     LOG("imem[1], written inside func: " << imem[1]);
     LOG("dmem " << dmem[2]);
+    core.update(imem, dmem);
 
 
     /*

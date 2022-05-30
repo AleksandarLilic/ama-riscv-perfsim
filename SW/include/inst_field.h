@@ -6,6 +6,7 @@ namespace inst_field
 {
     uint32_t opc7(uint32_t inst);
     uint32_t funct7(uint32_t inst);
+    uint32_t funct7_b5(uint32_t inst);
     uint32_t funct3(uint32_t inst);
     uint32_t rd(uint32_t inst);
     uint32_t rs1(uint32_t inst);

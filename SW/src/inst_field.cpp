@@ -2,6 +2,7 @@
 
 uint32_t inst_field::opc7(uint32_t inst) { return (inst & OPC7_M); }
 uint32_t inst_field::funct7(uint32_t inst) { return (inst & FUNCT7_M) >> 25; }
+uint32_t inst_field::funct7_b5(uint32_t inst) { return (inst & FUNCT7_B5_M) >> 30; }
 uint32_t inst_field::funct3(uint32_t inst) { return (inst & FUNCT3_M) >> 12; }
 uint32_t inst_field::rd(uint32_t inst) { return (inst & RD_M) >> 7; }
 uint32_t inst_field::rs1(uint32_t inst) { return (inst & RS1_M) >> 15; }
