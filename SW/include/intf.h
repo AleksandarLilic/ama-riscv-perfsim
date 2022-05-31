@@ -4,6 +4,16 @@
 #include "logic_t.h"
 
 
+typedef struct dp_ex_intf_t
+{
+
+} dp_ex_intf_t;
+
+typedef struct dec_intf_t
+{
+
+} dec_intf_t;
+
 typedef struct ctrl_intf_t
 {
     uint32_t in_inst_id;
@@ -68,3 +78,6 @@ typedef struct seq_id_ex_intf_t
     uint32_t dummy;
 
 } seq_id_ex_intf_t;
+
+void assign(ctrl_intf_t *ctrl_intf, dec_intf_t *dec_intf);
+void assign(ctrl_intf_t *dp_ex_intf_t, dec_intf_t *ctrl_intf);

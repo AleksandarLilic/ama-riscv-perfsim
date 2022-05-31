@@ -22,6 +22,7 @@ private:
     logic_t alu_ex;
 
 public:
+    uint32_t pc_mock = 0;
 
 private:
     void init();    // initialize all signals within structures (names and initial/reset values)
@@ -34,7 +35,6 @@ private:
     void control_branch_resolution(ctrl_intf_t* ctrl_intf);
     // decoder instructions
     void decode(ctrl_intf_t *ctrl_intf);
-
     void decode_r_type(ctrl_intf_t *ctrl_intf);
     void decode_i_type(ctrl_intf_t* ctrl_intf);
     void decode_load(ctrl_intf_t* ctrl_intf);
@@ -59,6 +59,8 @@ public:
     void reset(bool rst_in);
     void update(std::array<uint32_t, IMEM_SIZE> &imem_ptr, std::array<uint32_t, DMEM_SIZE> &dmem_ptr)
     {
+        ctrl_intf.in_inst_id = imem_ptr[pc_mock];
+        LOG("---------- inst fetched: " << std::hex << ctrl_intf.in_inst_id << std::dec);
         control(&(this->ctrl_intf));
         //LOG("imem from core: " << imem_ptr[0] << "\ndmem from core: " << dmem_ptr[0]);
         //imem_ptr[1] = 55;

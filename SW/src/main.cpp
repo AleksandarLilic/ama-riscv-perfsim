@@ -6,9 +6,11 @@
 #include "memory.h"
 #include <array>
 
+#define TEST 0
+
 void main()
 {
-    
+#if TEST
     logic_t test();
     //test.clk_update();
     //LOG(test.get());
@@ -84,24 +86,60 @@ void main()
 
 
 
-
+#else
     // -------------------------- cpu ideas:
-
+    uint32_t clk_count = 19;
     core core;
     std::array<uint32_t, IMEM_SIZE> imem{};
     std::array<uint32_t, DMEM_SIZE> dmem{};
 
-    imem[0] = 55;
+    std::array<std::string, IMEM_SIZE> imemc{};
+
+    imem[0]  = 0x00c58533;  imemc[0]  = "add   x10,x11,x12";
+    imem[1]  = 0x40c58533;  imemc[1]  = "sub   x10,x11,x12";
+    imem[2]  = 0x00c59533;  imemc[2]  = "sll   x10,x11,x12";
+    imem[3]  = 0x00c5d533;  imemc[3]  = "srl   x10,x11,x12";
+    imem[4]  = 0x40c5d533;  imemc[4]  = "sra   x10,x11,x12";
+    imem[5]  = 0x00c5a533;  imemc[5]  = "slt   x10,x11,x12";
+    imem[6]  = 0x00c5b533;  imemc[6]  = "sltu  x10,x11,x12";
+    imem[7]  = 0x00c5c533;  imemc[7]  = "xor   x10,x11,x12";
+    imem[8]  = 0x00c5e533;  imemc[8]  = "or    x10,x11,x12";
+    imem[9]  = 0x00c5f533;  imemc[9]  = "and   x10,x11,x12";
+    imem[10] = 0x02558513;  imemc[10] = "addi  x10,x11,37";
+    imem[11] = 0x0255a513;  imemc[11] = "slti  x10,x11,37";
+    imem[12] = 0x0255b513;  imemc[12] = "sltiu x10,x11,37";
+    imem[13] = 0x0255c513;  imemc[13] = "xori  x10,x11,37";
+    imem[14] = 0x0255e513;  imemc[14] = "ori   x10,x11,37";
+    imem[15] = 0x0255f513;  imemc[15] = "andi  x10,x11,37";
+    imem[16] = 0x00359513;  imemc[16] = "slli  x10,x11,0x3";
+    imem[17] = 0x0035d513;  imemc[17] = "srli  x10,x11,0x3";
+    imem[18] = 0x4035d513;  imemc[18] = "srai  x10,x11,0x3";
+    //imem[19] = 0x
+    //imem[20] = 0x
+    //imem[21] = 0x
+    //imem[22] = 0x
+    //imem[23] = 0x
+    //imem[24] = 0x
+    //imem[25] = 0x
+    //imem[26] = 0x
+    //imem[27] = 0x
+    //imem[28] = 0x
+    //imem[29] = 0x
 
     core.reset(1);
+    LOG("\n---------- inst fetched: " << imemc[core.pc_mock]);
     core.update(imem, dmem);
     // core.update();
     core.reset(0);
 
-    LOG("imem[1], written inside func: " << imem[1]);
-    LOG("dmem " << dmem[2]);
-    core.update(imem, dmem);
+    while (clk_count) {
+        LOG("\n---------- inst fetched: " << imemc[core.pc_mock]);
+        core.update(imem, dmem);
+        clk_count--;
+    }
 
+
+#endif
 
     /*
     
