@@ -79,3 +79,17 @@
 #define IG_B_TYPE           uint32_t(3)
 #define IG_J_TYPE           uint32_t(4)
 #define IG_U_TYPE           uint32_t(5)
+
+// ALU
+#define ALU_ADD     uint32_t(0b0000)
+#define ALU_SUB     uint32_t(0b1000)
+#define ALU_SLL     uint32_t(0b0001)
+#define ALU_SRL     uint32_t(0b0101)
+#define ALU_SRA     uint32_t(0b1101)
+#define ALU_SLT     uint32_t(0b0010)
+#define ALU_SLTU    uint32_t(0b0011)
+#define ALU_XOR     uint32_t(0b0100)
+#define ALU_OR      uint32_t(0b0110)
+#define ALU_AND     uint32_t(0b0111)
+#define ALU_PASS_B  uint32_t(0b1111)
+

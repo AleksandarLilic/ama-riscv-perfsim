@@ -88,7 +88,7 @@ void main()
 
 #else
     // -------------------------- cpu ideas:
-    uint32_t clk_count = 19;
+    uint32_t clk_count = 24;
     core core;
     std::array<uint32_t, IMEM_SIZE> imem{};
     std::array<uint32_t, DMEM_SIZE> dmem{};
@@ -114,11 +114,11 @@ void main()
     imem[16] = 0x00359513;  imemc[16] = "slli  x10,x11,0x3";
     imem[17] = 0x0035d513;  imemc[17] = "srli  x10,x11,0x3";
     imem[18] = 0x4035d513;  imemc[18] = "srai  x10,x11,0x3";
-    //imem[19] = 0x
-    //imem[20] = 0x
-    //imem[21] = 0x
-    //imem[22] = 0x
-    //imem[23] = 0x
+    imem[19] = 0x00458503;  imemc[19] = "lb      x10,4(x11)";
+    imem[20] = 0x00459503;  imemc[20] = "lh      x10,4(x11)";
+    imem[21] = 0x0045a503;  imemc[21] = "lw      x10,4(x11)";
+    imem[22] = 0x0045c503;  imemc[22] = "lbu     x10,4(x11)";
+    imem[23] = 0x0045d503;  imemc[23] = "lhu     x10,4(x11)";
     //imem[24] = 0x
     //imem[25] = 0x
     //imem[26] = 0x

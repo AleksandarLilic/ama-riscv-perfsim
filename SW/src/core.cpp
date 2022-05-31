@@ -70,7 +70,7 @@ void core::decode(ctrl_intf_t *ctrl_intf)
         switch (ctrl_intf->opc7_id) {
         case OPC7_R_TYPE: decode_r_type(ctrl_intf); break;
         case OPC7_I_TYPE: decode_i_type(ctrl_intf); break;
-        //case OPC7_LOAD: decode_load(ctrl_intf); break;
+        case OPC7_LOAD: decode_load(ctrl_intf); break;
         //case OPC7_STORE: decode_store(ctrl_intf); break;
         //case OPC7_BRANCH: decode_branch(ctrl_intf); break;
         //case OPC7_JALR: decode_jalr(ctrl_intf); break;
@@ -158,6 +158,37 @@ void core::decode_i_type(ctrl_intf_t *ctrl_intf)
     ctrl_intf->dec_load_sm_en_id = 0;
 
     ctrl_intf->dec_wb_sel_id = WB_SEL_ALU;
+    ctrl_intf->dec_reg_we_id = 1;
+}
+
+void core::decode_load(ctrl_intf_t *ctrl_intf)
+{
+    LOG("dec load called");
+
+    ctrl_intf->dec_branch_inst_id = 0;
+    ctrl_intf->dec_jump_inst_id = 0;
+    ctrl_intf->dec_store_inst_id = 0;
+    ctrl_intf->dec_load_inst_id = 1;
+
+    ctrl_intf->dec_pc_sel_if = PC_SEL_INC4;
+    ctrl_intf->dec_pc_we_if = 1;
+    ctrl_intf->dec_ig_sel_id = IG_DISABLED;
+
+    ctrl_intf->dec_csr_en_id = 0;
+    ctrl_intf->dec_csr_we_id = 0;
+    ctrl_intf->dec_csr_ui_id = 0;
+
+    ctrl_intf->dec_bc_uns_id = 0;
+
+    ctrl_intf->dec_alu_a_sel_id = ALU_A_SEL_RS1;
+    ctrl_intf->dec_alu_b_sel_id = ALU_B_SEL_RS2;
+    ctrl_intf->dec_alu_op_sel_id = ALU_ADD;
+
+    ctrl_intf->dec_store_mask_id = 0;
+    ctrl_intf->dec_dmem_en_id = 1;
+    ctrl_intf->dec_load_sm_en_id = 1;
+
+    ctrl_intf->dec_wb_sel_id = WB_SEL_DMEM;
     ctrl_intf->dec_reg_we_id = 1;
 }
 
