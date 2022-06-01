@@ -13,7 +13,7 @@
 #include "defines.h"
 #include <vector>
 
-typedef class logic_t
+class logic_t
 {
 private:
     uint32_t logic_in;
@@ -63,7 +63,7 @@ public:
     uint32_t operator+ (const logic_t operand) const;
     uint32_t operator- (const logic_t operand) const;
 
-} logic_t;
+};
 
 // Non-member operator overloads
 std::ostream &operator<<(std::ostream &stream, const logic_t &operand);

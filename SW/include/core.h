@@ -8,9 +8,14 @@
 #include "cl.h"
 #include <array>
 
+#include "control.h"
+
 class core
 {
 private:
+    // modules
+    control control;
+
     // control interfaces
     ctrl_intf_t ctrl_intf{};
 
@@ -18,7 +23,7 @@ private:
     sys_intf_t sys_intf;
     seq_queue queue;
 
-    //datapath signals
+    //datapath signals for test
     logic_t alu_ex;
 
 public:
@@ -27,26 +32,7 @@ public:
 private:
     void init();    // initialize all signals within structures (names and initial/reset values)
 
-    // control
-    void control(ctrl_intf_t *ctrl_intf);
-    void control_op_fwd(ctrl_intf_t* ctrl_intf);
-    void control_pipeline_ctrl(ctrl_intf_t* ctrl_intf);
-    void control_store_mask(ctrl_intf_t* ctrl_intf);
-    void control_branch_resolution(ctrl_intf_t* ctrl_intf);
-    // decoder instructions
-    void decode(ctrl_intf_t *ctrl_intf);
-    void decode_r_type(ctrl_intf_t *ctrl_intf);
-    void decode_i_type(ctrl_intf_t* ctrl_intf);
-    void decode_load(ctrl_intf_t* ctrl_intf);
-    void decode_store(ctrl_intf_t* ctrl_intf);
-    void decode_branch(ctrl_intf_t* ctrl_intf);
-    void decode_jalr(ctrl_intf_t* ctrl_intf);
-    void decode_jal(ctrl_intf_t* ctrl_intf);
-    void decode_lui(ctrl_intf_t* ctrl_intf);
-    void decode_auipc(ctrl_intf_t* ctrl_intf);
-    void decode_system(ctrl_intf_t* ctrl_intf);
-    void decode_unsupported(ctrl_intf_t* ctrl_intf);
-    void decode_reset(ctrl_intf_t* ctrl_intf);
+    // control    
 
     void ex_stage();
     void alu();
@@ -61,10 +47,12 @@ public:
     {
         ctrl_intf.in_inst_id = imem_ptr[pc_mock];
         LOG("---------- inst fetched: " << std::hex << ctrl_intf.in_inst_id << std::dec);
-        control(&(this->ctrl_intf));
+        control.update(&(this->ctrl_intf), &(this->sys_intf));
         //LOG("imem from core: " << imem_ptr[0] << "\ndmem from core: " << dmem_ptr[0]);
         //imem_ptr[1] = 55;
         //decode(&ctrl_intf, &ctrl_intf_private);
+        if (!sys_intf.rst)
+            pc_mock++;
     }
 
 };
