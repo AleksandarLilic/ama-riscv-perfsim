@@ -11,7 +11,7 @@ void decoder::update(ctrl_intf_t *ctrl_intf, sys_intf_t *sys_intf)
         case OPC7_I_TYPE: i_type(ctrl_intf); break;
         case OPC7_LOAD: load(ctrl_intf); break;
         case OPC7_STORE: store(ctrl_intf); break;
-            //case OPC7_BRANCH: branch(ctrl_intf); break;
+        case OPC7_BRANCH: branch(ctrl_intf); LOGW("branching incomplete"); break;
             //case OPC7_JALR: jalr(ctrl_intf); break;
             //case OPC7_JAL: jal (ctrl_intf); break;
             //case OPC7_LUI: lui(ctrl_intf); break;
@@ -37,7 +37,6 @@ void decoder::r_type(ctrl_intf_t *ctrl_intf)
 {
     LOG("dec r type called");
     uint32_t alu_op_sel = ((inst_field::funct7_b5(ctrl_intf->in_inst_id)) << 3) | ctrl_intf->funct3_id;
-    LOG("dec alu sel op = " << alu_op_sel);
 
     ctrl_intf->dec_branch_inst_id = 0;
     ctrl_intf->dec_jump_inst_id = 0;
@@ -64,6 +63,8 @@ void decoder::r_type(ctrl_intf_t *ctrl_intf)
 
     ctrl_intf->dec_wb_sel_id = WB_SEL_ALU;
     ctrl_intf->dec_reg_we_id = 1;
+
+    LOG("dec alu sel op = " << ctrl_intf->dec_alu_op_sel_id);
 }
 
 void decoder::i_type(ctrl_intf_t *ctrl_intf)
@@ -161,6 +162,41 @@ void decoder::store(ctrl_intf_t *ctrl_intf)
 
     ctrl_intf->dec_wb_sel_id = WB_SEL_ALU;
     ctrl_intf->dec_reg_we_id = 0;
+
+    LOG("dec store mask = " << ctrl_intf->dec_store_mask_id);
+}
+
+void decoder::branch(ctrl_intf_t *ctrl_intf)
+{
+    LOG("dec branch called");
+
+    ctrl_intf->dec_branch_inst_id = 1;
+    ctrl_intf->dec_jump_inst_id = 0;
+    ctrl_intf->dec_store_inst_id = 0;
+    ctrl_intf->dec_load_inst_id = 0;
+
+    ctrl_intf->dec_pc_sel_if = PC_SEL_INC4;
+    ctrl_intf->dec_pc_we_if = 0;
+    ctrl_intf->dec_ig_sel_id = IG_B_TYPE;
+
+    ctrl_intf->dec_csr_en_id = 0;
+    ctrl_intf->dec_csr_we_id = 0;
+    ctrl_intf->dec_csr_ui_id = 0;
+
+    ctrl_intf->dec_bc_uns_id = (ctrl_intf->funct3_id & 0b010) >> 1;
+
+    ctrl_intf->dec_alu_a_sel_id = ALU_A_SEL_RS1;
+    ctrl_intf->dec_alu_b_sel_id = ALU_B_SEL_IMM;
+    ctrl_intf->dec_alu_op_sel_id = ALU_ADD;
+
+    ctrl_intf->dec_store_mask_id = 0;
+    ctrl_intf->dec_dmem_en_id = 0;
+    ctrl_intf->dec_load_sm_en_id = 0;
+
+    ctrl_intf->dec_wb_sel_id = WB_SEL_ALU;
+    ctrl_intf->dec_reg_we_id = 0;
+
+    LOG("dec branch compare unsigned = " << ctrl_intf->dec_bc_uns_id);
 }
 
 void decoder::reset(ctrl_intf_t *ctrl_intf)

@@ -88,7 +88,8 @@ void main()
 
 #else
     // -------------------------- cpu ideas:
-    uint32_t clk_count = 1+10+9+5+3;
+    //                  rst + r + i + l + s + b;
+    uint32_t clk_count = 1 + 10 + 9 + 5 + 3 + 6;
     core core;
     std::array<uint32_t, IMEM_SIZE> imem{};
     std::array<uint32_t, DMEM_SIZE> dmem{};
@@ -122,9 +123,19 @@ void main()
     imem[24] = 0x00a58223;  imemc[24] = "sb    x10,4(x11)";
     imem[25] = 0x00a59223;  imemc[25] = "sh    x10,4(x11)";
     imem[26] = 0x00a5a223;  imemc[26] = "sw    x10,4(x11)";
-    //imem[27] = 0x
-    //imem[28] = 0x
-    //imem[29] = 0x
+    imem[27] = 0xfab50ee3;  imemc[27] = "beq   x10,x11,4000005c <loop>";
+    imem[28] = 0xfab51ce3;  imemc[28] = "bne   x10,x11,4000005c <loop>";
+    imem[29] = 0xfab54ae3;  imemc[29] = "blt   x10,x11,4000005c <loop>";
+    imem[30] = 0xfab558e3;  imemc[30] = "bge   x10,x11,4000005c <loop>";
+    imem[31] = 0xfab566e3;  imemc[31] = "bltu  x10,x11,4000005c <loop>";
+    imem[32] = 0xfab574e3;  imemc[32] = "bgeu  x10,x11,4000005c <loop>";
+    //imem[33] = 0x
+    //imem[34] = 0x
+    //imem[35] = 0x
+    //imem[36] = 0x
+    //imem[37] = 0x
+    //imem[38] = 0x
+    //imem[39] = 0x
 
     core.reset(1);
     LOG("\n---------- inst fetched: " << imemc[core.pc_mock]);
