@@ -12,8 +12,8 @@ void decoder::update(ctrl_intf_t *ctrl_intf, sys_intf_t *sys_intf)
         case OPC7_LOAD: load(ctrl_intf); break;
         case OPC7_STORE: store(ctrl_intf); break;
         case OPC7_BRANCH: branch(ctrl_intf); LOGW("branching incomplete"); break;
-            //case OPC7_JALR: jalr(ctrl_intf); break;
-            //case OPC7_JAL: jal (ctrl_intf); break;
+        case OPC7_JALR: jalr(ctrl_intf); break;
+        case OPC7_JAL: jal (ctrl_intf); break;
             //case OPC7_LUI: lui(ctrl_intf); break;
             //case OPC7_AUIPC: auipc(ctrl_intf); break;
             //case OPC7_SYSTEM: system(ctrl_intf); break;
@@ -197,6 +197,68 @@ void decoder::branch(ctrl_intf_t *ctrl_intf)
     ctrl_intf->dec_reg_we_id = 0;
 
     LOG("dec branch compare unsigned = " << ctrl_intf->dec_bc_uns_id);
+}
+
+void decoder::jalr(ctrl_intf_t *ctrl_intf)
+{
+    LOG("dec jalr called");
+
+    ctrl_intf->dec_branch_inst_id = 0;
+    ctrl_intf->dec_jump_inst_id = 1;
+    ctrl_intf->dec_store_inst_id = 0;
+    ctrl_intf->dec_load_inst_id = 0;
+
+    ctrl_intf->dec_pc_sel_if = PC_SEL_ALU;
+    ctrl_intf->dec_pc_we_if = 0;
+    ctrl_intf->dec_ig_sel_id = IG_I_TYPE;
+
+    ctrl_intf->dec_csr_en_id = 0;
+    ctrl_intf->dec_csr_we_id = 0;
+    ctrl_intf->dec_csr_ui_id = 0;
+
+    ctrl_intf->dec_bc_uns_id = 0;
+
+    ctrl_intf->dec_alu_a_sel_id = ALU_A_SEL_PC;
+    ctrl_intf->dec_alu_b_sel_id = ALU_B_SEL_IMM;
+    ctrl_intf->dec_alu_op_sel_id = ALU_ADD;
+
+    ctrl_intf->dec_store_mask_id = 0;
+    ctrl_intf->dec_dmem_en_id = 0;
+    ctrl_intf->dec_load_sm_en_id = 0;
+
+    ctrl_intf->dec_wb_sel_id = WB_SEL_INC4;
+    ctrl_intf->dec_reg_we_id = 1;
+}
+
+void decoder::jal(ctrl_intf_t *ctrl_intf)
+{
+    LOG("dec jal called");
+
+    ctrl_intf->dec_branch_inst_id = 0;
+    ctrl_intf->dec_jump_inst_id = 1;
+    ctrl_intf->dec_store_inst_id = 0;
+    ctrl_intf->dec_load_inst_id = 0;
+
+    ctrl_intf->dec_pc_sel_if = PC_SEL_ALU;
+    ctrl_intf->dec_pc_we_if = 0;
+    ctrl_intf->dec_ig_sel_id = IG_J_TYPE;
+
+    ctrl_intf->dec_csr_en_id = 0;
+    ctrl_intf->dec_csr_we_id = 0;
+    ctrl_intf->dec_csr_ui_id = 0;
+
+    ctrl_intf->dec_bc_uns_id = 0;
+
+    ctrl_intf->dec_alu_a_sel_id = ALU_A_SEL_PC;
+    ctrl_intf->dec_alu_b_sel_id = ALU_B_SEL_IMM;
+    ctrl_intf->dec_alu_op_sel_id = ALU_ADD;
+
+    ctrl_intf->dec_store_mask_id = 0;
+    ctrl_intf->dec_dmem_en_id = 0;
+    ctrl_intf->dec_load_sm_en_id = 0;
+
+    ctrl_intf->dec_wb_sel_id = WB_SEL_INC4;
+    ctrl_intf->dec_reg_we_id = 1;
 }
 
 void decoder::reset(ctrl_intf_t *ctrl_intf)

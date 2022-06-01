@@ -29,3 +29,4 @@ private:
 
     uint32_t store_mask(ctrl_intf_t *ctrl_intf);
 };
+
