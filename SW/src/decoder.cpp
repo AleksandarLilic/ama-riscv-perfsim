@@ -3,7 +3,6 @@
 void decoder::update(ctrl_intf_t *ctrl_intf, sys_intf_t *sys_intf)
 {
     LOG("--- dec called");
-    //LOG("dec !sys_intf.rst = " << !sys_intf.rst);
     if (!sys_intf->rst) {
         LOG("dec ctrl_intf->opc7_id hex = " << std::hex << ctrl_intf->opc7_id << std::dec);
         switch (ctrl_intf->opc7_id) {
@@ -14,10 +13,10 @@ void decoder::update(ctrl_intf_t *ctrl_intf, sys_intf_t *sys_intf)
         case OPC7_BRANCH: branch(ctrl_intf); LOGW("branching incomplete"); break;
         case OPC7_JALR: jalr(ctrl_intf); break;
         case OPC7_JAL: jal (ctrl_intf); break;
-            //case OPC7_LUI: lui(ctrl_intf); break;
-            //case OPC7_AUIPC: auipc(ctrl_intf); break;
+        case OPC7_LUI: lui(ctrl_intf); break;
+        case OPC7_AUIPC: auipc(ctrl_intf); break;
             //case OPC7_SYSTEM: system(ctrl_intf); break;
-            //default: unsupported(ctrl_intf); break;
+        default: unsupported(ctrl_intf); break;
         }
     }
     else /* (sys_intf.rst) */ {
@@ -260,6 +259,74 @@ void decoder::jal(ctrl_intf_t *ctrl_intf)
     ctrl_intf->dec_wb_sel_id = WB_SEL_INC4;
     ctrl_intf->dec_reg_we_id = 1;
 }
+
+void decoder::lui(ctrl_intf_t *ctrl_intf)
+{
+    LOG("dec lui called");
+
+    ctrl_intf->dec_branch_inst_id = 0;
+    ctrl_intf->dec_jump_inst_id = 0;
+    ctrl_intf->dec_store_inst_id = 0;
+    ctrl_intf->dec_load_inst_id = 0;
+
+    ctrl_intf->dec_pc_sel_if = PC_SEL_INC4;
+    ctrl_intf->dec_pc_we_if = 1;
+    ctrl_intf->dec_ig_sel_id = IG_U_TYPE;
+
+    ctrl_intf->dec_csr_en_id = 0;
+    ctrl_intf->dec_csr_we_id = 0;
+    ctrl_intf->dec_csr_ui_id = 0;
+
+    ctrl_intf->dec_bc_uns_id = 0;
+
+    ctrl_intf->dec_alu_a_sel_id = ALU_A_SEL_RS1;
+    ctrl_intf->dec_alu_b_sel_id = ALU_B_SEL_IMM;
+    ctrl_intf->dec_alu_op_sel_id = ALU_PASS_B;
+
+    ctrl_intf->dec_store_mask_id = 0;
+    ctrl_intf->dec_dmem_en_id = 0;
+    ctrl_intf->dec_load_sm_en_id = 0;
+
+    ctrl_intf->dec_wb_sel_id = WB_SEL_ALU;
+    ctrl_intf->dec_reg_we_id = 1;
+}
+
+void decoder::auipc(ctrl_intf_t *ctrl_intf)
+{
+    LOG("dec auipc called");
+
+    ctrl_intf->dec_branch_inst_id = 0;
+    ctrl_intf->dec_jump_inst_id = 0;
+    ctrl_intf->dec_store_inst_id = 0;
+    ctrl_intf->dec_load_inst_id = 0;
+
+    ctrl_intf->dec_pc_sel_if = PC_SEL_INC4;
+    ctrl_intf->dec_pc_we_if = 1;
+    ctrl_intf->dec_ig_sel_id = IG_U_TYPE;
+
+    ctrl_intf->dec_csr_en_id = 0;
+    ctrl_intf->dec_csr_we_id = 0;
+    ctrl_intf->dec_csr_ui_id = 0;
+
+    ctrl_intf->dec_bc_uns_id = 0;
+
+    ctrl_intf->dec_alu_a_sel_id = ALU_A_SEL_PC;
+    ctrl_intf->dec_alu_b_sel_id = ALU_B_SEL_IMM;
+    ctrl_intf->dec_alu_op_sel_id = ALU_ADD;
+
+    ctrl_intf->dec_store_mask_id = 0;
+    ctrl_intf->dec_dmem_en_id = 0;
+    ctrl_intf->dec_load_sm_en_id = 0;
+
+    ctrl_intf->dec_wb_sel_id = WB_SEL_ALU;
+    ctrl_intf->dec_reg_we_id = 1;
+}
+
+void decoder::unsupported(ctrl_intf_t *ctrl_intf)
+{
+    LOGE("Unsupported instruction. Opcode: " << ctrl_intf->opc7_id);
+}
+
 
 void decoder::reset(ctrl_intf_t *ctrl_intf)
 {

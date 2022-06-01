@@ -88,8 +88,8 @@ void main()
 
 #else
     // -------------------------- cpu ideas:
-    //                  rst + r + i + l + s + b + j;
-    uint32_t clk_count = 1 + 10 + 9 + 5 + 3 + 6 + 2;
+    //                  rst + r + i + l + s + b + j + u + inv;
+    uint32_t clk_count = 1 + 10 + 9 + 5 + 3 + 6 + 2 + 2 + 1;
     core core;
     std::array<uint32_t, IMEM_SIZE> imem{};
     std::array<uint32_t, DMEM_SIZE> dmem{};
@@ -131,9 +131,9 @@ void main()
     imem[32] = 0xfab574e3;  imemc[32] = "bgeu  x10,x11,4000005c <loop>";
     imem[33] = 0x00458567;  imemc[33] = "jalr    x10,4(x11)";
     imem[34] = 0xfa1ff06f;  imemc[34] = "jal     x0,4000005c <loop>";
-    //imem[35] = 0x
-    //imem[36] = 0x
-    //imem[37] = 0x
+    imem[35] = 0x01000537;  imemc[35] = "lui     x10,0x1000";
+    imem[36] = 0x01000517;  imemc[36] = "auipc   x10,0x1000";
+    imem[37] = 0x01000500;  imemc[37] = "invalid instr";
     //imem[38] = 0x
     //imem[39] = 0x
 
