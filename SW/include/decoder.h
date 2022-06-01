@@ -26,4 +26,6 @@ private:
     void system(ctrl_intf_t *ctrl_intf);
     void unsupported(ctrl_intf_t *ctrl_intf);
     void reset(ctrl_intf_t *ctrl_intf);
+
+    uint32_t store_mask(ctrl_intf_t *ctrl_intf);
 };
