@@ -9,12 +9,18 @@
 //
 
 #include "../include/logic_t.h"
+#include "../include/seq_queue.h"
 
 // Constructors
-logic_t::logic_t() : logic_reg(0), logic_in(0), rst_value(0), enable(1), name("no-name") {};
-logic_t::logic_t(uint32_t init_val, std::string init_name)
+logic_t::logic_t(seq_queue *q) : logic_reg(0), logic_in(0), rst_value(0), enable(1), name("no-name") 
+{
+    enqueue(q);
+};
+
+logic_t::logic_t(seq_queue *q, uint32_t init_val, std::string init_name)
 {
     init(init_val, init_name);
+    enqueue(q);
 }
 
 // Methods
@@ -26,6 +32,11 @@ void logic_t::init(uint32_t init_val, std::string init_name)
     rst_value = init_val;
     enable = 1;
     name = init_name;
+}
+void logic_t::enqueue(seq_queue *q)
+{
+    q->add(this);
+    LOG("enqueue called");
 }
 void logic_t::connect(uint32_t *connection) { connected_outputs_uint.push_back(connection); } 
 void logic_t::connect(logic_t *connection) { connected_outputs_logic.push_back(connection); }

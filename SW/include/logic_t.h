@@ -13,6 +13,9 @@
 #include "defines.h"
 #include <vector>
 
+// forward declaration, seq_queue.h included in the logic_t.cpp
+class seq_queue;
+
 class logic_t
 {
 private:
@@ -31,13 +34,17 @@ public:
     //uint32_t mask;
     //void init_mask(uint32_t len_in) { for (uint32_t i = 0; i < len; i++) mask = (mask << 1) | 1; }
 
+private:
+    void enqueue(seq_queue *q);
+    void init(uint32_t init_val, std::string init_name);
+
 public:
     // Constructors
-    logic_t();
-    logic_t(uint32_t init_val, std::string init_name);
+    logic_t() = delete;     // always provide queue
+    logic_t(seq_queue *q);
+    logic_t(seq_queue *q, uint32_t init_val, std::string init_name);
 
     // Methods
-    void init(uint32_t init_val, std::string init_name);
     void connect(uint32_t *connection);
     void connect(logic_t *connection);
     void rst();  // sync rst, needs active edge to take reset value

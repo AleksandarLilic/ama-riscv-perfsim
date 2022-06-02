@@ -8,6 +8,15 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 include_directories("../include")
 # Add source to this project"../inc/SW.h"cutable."../include/logic_t.h"
-add_executable (ama-riscv-sim "logic_t.cpp"  "main.cpp" "cl.cpp" "seq_queue.cpp" "core.cpp" "inst_field.cpp" "decoder.cpp" "control.cpp")
+add_executable (ama-riscv-sim 
+"logic_t.cpp"  
+"main.cpp" 
+"cl.cpp" 
+"seq_queue.cpp" 
+"core.cpp" 
+"inst_field.cpp" 
+"decoder.cpp" 
+"control.cpp"
+)
 
 # TODO: Add tests and install targets if needed.

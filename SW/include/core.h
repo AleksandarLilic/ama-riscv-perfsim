@@ -24,7 +24,7 @@ private:
     seq_queue queue;
 
     //datapath signals for test
-    logic_t alu_ex;
+    //logic_t alu_ex;
 
 public:
     uint32_t pc_mock = 0;
@@ -43,16 +43,6 @@ private:
 public:
     core();
     void reset(bool rst_in);
-    void update(std::array<uint32_t, IMEM_SIZE> &imem_ptr, std::array<uint32_t, DMEM_SIZE> &dmem_ptr)
-    {
-        ctrl_intf.in_inst_id = imem_ptr[pc_mock];
-        LOG("---------- inst fetched: " << std::hex << ctrl_intf.in_inst_id << std::dec);
-        control.update(&(this->ctrl_intf), &(this->sys_intf));
-        //LOG("imem from core: " << imem_ptr[0] << "\ndmem from core: " << dmem_ptr[0]);
-        //imem_ptr[1] = 55;
-        //decode(&ctrl_intf, &ctrl_intf_private);
-        if (!sys_intf.rst)
-            pc_mock++;
-    }
+    void update(std::array<uint32_t, IMEM_SIZE> &imem_ptr, std::array<uint32_t, DMEM_SIZE> &dmem_ptr);
 
 };

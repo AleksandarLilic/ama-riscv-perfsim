@@ -3,7 +3,8 @@
 #include "defines.h"
 #include "logic_t.h"
 
-
+// TODO: interfaces cannot have logic_t, creates issues with queue append and ordering
+// TODO: global queue? visible to anyone, but only one for entire design
 typedef struct dp_ex_intf_t
 {
 
@@ -63,6 +64,12 @@ typedef struct ctrl_intf_t
     uint32_t of_bcs_b_sel_fwd_id;
     uint32_t of_alu_a_sel_fwd_id;
     uint32_t of_alu_b_sel_fwd_id;
+
+    // from datapath
+    bool bc_eq;
+    bool bc_lt;
+
+    uint32_t store_offset;
 
 } ctrl_intf_t;
 

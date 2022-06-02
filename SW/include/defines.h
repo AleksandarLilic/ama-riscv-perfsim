@@ -81,6 +81,7 @@
 #define IG_U_TYPE           uint32_t(5)
 
 // ALU
+// TODO: convert to enum
 #define ALU_ADD     uint32_t(0b0000)
 #define ALU_SUB     uint32_t(0b1000)
 #define ALU_SLL     uint32_t(0b0001)

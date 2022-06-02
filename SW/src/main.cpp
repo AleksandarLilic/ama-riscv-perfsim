@@ -6,7 +6,7 @@
 #include "memory.h"
 #include <array>
 
-#define TEST 0
+#define TEST 1
 
 void main()
 {
@@ -38,10 +38,11 @@ void main()
     LOG("res: " << res);
 
     seq_queue q;
+    seq_queue *qp = &q;
     uint32_t reg1_out;
     uint32_t reg2_out;
-    logic_t reg1(5, "reg1");
-    logic_t reg2(22, "reg2");
+    logic_t reg1(qp, 5u, "reg1");
+    logic_t reg2(qp, 22u, "reg2");
 
     uint32_t conn_test;
     reg1.connect(&conn_test);
@@ -50,8 +51,8 @@ void main()
     reg1.connect(&conn_test2);
     LOG("conn_test2: " << conn_test2);
 
-    q.add(&reg1);
-    q.add(&reg2);
+    //q.add(&reg1);
+    //q.add(&reg2);
 
     reg1 = 17;
     reg2 = 44;
@@ -63,11 +64,9 @@ void main()
     res = cl::mux4(1u, reg1.out(), reg2.out(), CL_UNUSED, 0u);
     LOG("res: " << res);
 
-    logic_t ff1(5, "ff1");
-    logic_t ff2(22, "ff2");
+    logic_t ff1(qp, 5, "ff1");
+    logic_t ff2(qp, 22, "ff2");
 
-    q.add(&ff1);
-    q.add(&ff2);
     LOG("ff1: " << ff1.out());
     LOG("ff2: " << ff2.out());
 
@@ -87,7 +86,7 @@ void main()
 
 
 #else
-    // -------------------------- cpu ideas:
+    // cpu
     //                  rst + r + i + l + s + b + j + u + inv;
     uint32_t clk_count = 1 + 10 + 9 + 5 + 3 + 6 + 2 + 2 + 1;
     core core;
