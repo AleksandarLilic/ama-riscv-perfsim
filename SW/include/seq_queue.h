@@ -16,3 +16,4 @@ private:
     //friend void logic_t::enqueue(seq_queue *q);
     friend logic_t;
 };
+

@@ -18,3 +18,4 @@ void seq_queue::reset()
     for (logic_t *i : queue)
         i->rst();
 }
+

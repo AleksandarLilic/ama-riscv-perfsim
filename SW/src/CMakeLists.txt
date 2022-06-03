@@ -17,6 +17,6 @@ add_executable (ama-riscv-sim
 "inst_field.cpp" 
 "decoder.cpp" 
 "control.cpp"
-)
+ "op_fwd.cpp")
 
 # TODO: Add tests and install targets if needed.

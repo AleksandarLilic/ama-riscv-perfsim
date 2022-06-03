@@ -8,18 +8,20 @@ void control::update(ctrl_intf_t *ctrl_intf, sys_intf_t *sys_intf)
     ctrl_intf->funct3_id = inst_field::funct3(ctrl_intf->in_inst_id);
     ctrl_intf->funct7_id = inst_field::funct7(ctrl_intf->in_inst_id);
     ctrl_intf->funct3_ex = inst_field::funct3(ctrl_intf->in_inst_ex);
-
+    ctrl_intf->rs1_addr_id = inst_field::rs1_addr(ctrl_intf->in_inst_id);
+    ctrl_intf->rs2_addr_id = inst_field::rs2_addr(ctrl_intf->in_inst_id);
+    ctrl_intf->rd_addr_id = inst_field::rd_addr(ctrl_intf->in_inst_id);
+    ctrl_intf->rs1_addr_ex = inst_field::rs1_addr(ctrl_intf->in_inst_ex);
+    ctrl_intf->rs2_addr_ex = inst_field::rs2_addr(ctrl_intf->in_inst_ex);
+    ctrl_intf->rd_addr_ex = inst_field::rd_addr(ctrl_intf->in_inst_ex);
+    ctrl_intf->rs1_addr_mem = inst_field::rs1_addr(ctrl_intf->in_inst_mem);
+    ctrl_intf->rs2_addr_mem = inst_field::rs2_addr(ctrl_intf->in_inst_mem);
+    ctrl_intf->rd_addr_mem = inst_field::rd_addr(ctrl_intf->in_inst_mem);
     //LOG("ctrl, funct7 = " << std::hex << (ctrl_intf->funct7_id) << std::dec);
 
     decoder.update(ctrl_intf, sys_intf);
 
-    // ----- includes:
-    // dut_m_decode_dd();
-    // // Operand Forwarding
-    // dut_m_decode_op_fwd_alu();
-    // dut_m_decode_op_fwd_bcs();
-    // dut_m_decode_op_fwd_rf();
-    // /* new func: */ control_op_fwd(ctrl_intf);
+    op_fwd.update(ctrl_intf, sys_intf);
 
     // ----- includes:
     // dut_m_stall_if = dut_m_branch_inst_id || dut_m_jump_inst_id || dut_m_dd_bubble_ex;
@@ -42,5 +44,11 @@ void control::update(ctrl_intf_t *ctrl_intf, sys_intf_t *sys_intf)
 
     // /* new func: */ control_branch_resolution(ctrl_intf);
 
-    
+    // for test only, imitate sequential assignment
+    ctrl_intf->in_inst_mem = ctrl_intf->in_inst_ex;
+    ctrl_intf->rd_we_mem = ctrl_intf->rd_we_ex;
+
+    ctrl_intf->in_inst_ex = ctrl_intf->in_inst_id;
+    ctrl_intf->rd_we_ex = ctrl_intf->dec_reg_we_id;
+
 }

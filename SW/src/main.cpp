@@ -6,9 +6,35 @@
 #include "memory.h"
 #include <array>
 
-#define TEST 1
+#define TEST 0
 
-void main()
+#if TEST
+//typedef struct
+//{
+//    uint32_t init;
+//    std::string name;
+//} log_cfg;
+//
+//
+//log_cfg cfg1[] = {
+//    {0, "pc"},
+//    {0, "pc_sel"},
+//    {0, "we_en"},
+//    {0, "reg_we"},
+//    {0, "b_uns"}
+//};
+//
+//void initw()
+//{
+//    seq_queue q;
+//    for (uint32_t i = 0; i < sizeof(cfg1) / sizeof(*cfg1); ++i) {
+//        logic_t pc();
+//        q.add(pc);
+//    };
+//}
+#endif
+
+int main()
 {
 #if TEST
     logic_t test();
@@ -61,6 +87,8 @@ void main()
     LOG("conn_test after update: " << conn_test);
     LOG("conn_test2 after update: " << conn_test2);
 
+    //intf_ex_stage{mux_sel_09};
+
     res = cl::mux4(1u, reg1.out(), reg2.out(), CL_UNUSED, 0u);
     LOG("res: " << res);
 
@@ -84,11 +112,15 @@ void main()
     LOG(ff2);
 
 
+    //initw();
+
 
 #else
     // cpu
     //                  rst + r + i + l + s + b + j + u + inv;
     uint32_t clk_count = 1 + 10 + 9 + 5 + 3 + 6 + 2 + 2 + 1;
+    //                      dd
+    clk_count = clk_count + 3;
     core core;
     std::array<uint32_t, IMEM_SIZE> imem{};
     std::array<uint32_t, DMEM_SIZE> dmem{};
@@ -133,8 +165,9 @@ void main()
     imem[35] = 0x01000537;  imemc[35] = "lui     x10,0x1000";
     imem[36] = 0x01000517;  imemc[36] = "auipc   x10,0x1000";
     imem[37] = 0x01000500;  imemc[37] = "invalid instr";
-    //imem[38] = 0x
-    //imem[39] = 0x
+    imem[38] = 0x00628433;  imemc[38] = "add     x8,x5,x6";
+    imem[39] = 0x00f40593;  imemc[39] = "addi    x11,x8,15";
+    imem[40] = 0x06340613;  imemc[40] = "addi    x12,x8,99";
 
     core.reset(1);
     LOG("\n---------- inst fetched: " << imemc[core.pc_mock]);

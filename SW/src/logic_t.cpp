@@ -11,12 +11,7 @@
 #include "../include/logic_t.h"
 #include "../include/seq_queue.h"
 
-// Constructors
-logic_t::logic_t(seq_queue *q) : logic_reg(0), logic_in(0), rst_value(0), enable(1), name("no-name") 
-{
-    enqueue(q);
-};
-
+// Constructor
 logic_t::logic_t(seq_queue *q, uint32_t init_val, std::string init_name)
 {
     init(init_val, init_name);
@@ -38,6 +33,9 @@ void logic_t::enqueue(seq_queue *q)
     q->add(this);
     LOG("enqueue called");
 }
+
+//void logic_t::connect_in(uint32_t *connection) { uint_in=connection; }
+
 void logic_t::connect(uint32_t *connection) { connected_outputs_uint.push_back(connection); } 
 void logic_t::connect(logic_t *connection) { connected_outputs_logic.push_back(connection); }
 void logic_t::rst() { logic_in = rst_value; }  // sync rst, needs active edge to take rst val
@@ -48,9 +46,10 @@ void logic_t::clk_update()
     uint32_t prev = logic_reg;
     if (enable) {   // only update if ff is enabled
         logic_reg = hold;
-        for (uint32_t* i : connected_outputs_uint)
+        // write to txt here
+        for (uint32_t *i : connected_outputs_uint)
             *i = hold;
-        for (logic_t* i : connected_outputs_logic)
+        for (logic_t *i : connected_outputs_logic)
             *i = hold;
     }
     LOG("Called clk_update() on: '" << name << "'; Input: " << hold << "; Enable: " << enable

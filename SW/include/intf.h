@@ -19,6 +19,7 @@ typedef struct ctrl_intf_t
 {
     uint32_t in_inst_id;
     uint32_t in_inst_ex;
+    uint32_t in_inst_mem;
     uint32_t in_store_mask_offset;
 
     uint32_t opc7_id;
@@ -58,6 +59,21 @@ typedef struct ctrl_intf_t
     uint32_t dec_wb_sel_id;
     uint32_t dec_reg_we_id;
 
+    // register addresses
+    uint32_t rs1_addr_id;
+    uint32_t rs2_addr_id;
+    uint32_t rd_addr_id;
+    // uint32_t rd_we_id; // as decoder output
+    uint32_t rs1_addr_ex;
+    uint32_t rs2_addr_ex;
+    uint32_t rd_addr_ex;
+    uint32_t rd_we_ex;
+    uint32_t rs1_addr_mem;
+    uint32_t rs2_addr_mem;
+    uint32_t rd_addr_mem;
+    uint32_t rd_we_mem;
+
+    // forwarding
     uint32_t of_rf_a_sel_fwd_id;
     uint32_t of_rf_b_sel_fwd_id;
     uint32_t of_bc_a_sel_fwd_id;

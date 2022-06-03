@@ -20,6 +20,7 @@ class logic_t
 {
 private:
     uint32_t logic_in;
+    //uint32_t* uint_in;
     uint32_t hold;
     uint32_t logic_reg;
     std::vector<uint32_t*> connected_outputs_uint;
@@ -41,10 +42,10 @@ private:
 public:
     // Constructors
     logic_t() = delete;     // always provide queue
-    logic_t(seq_queue *q);
     logic_t(seq_queue *q, uint32_t init_val, std::string init_name);
 
     // Methods
+    //void connect_in(uint32_t *connection);
     void connect(uint32_t *connection);
     void connect(logic_t *connection);
     void rst();  // sync rst, needs active edge to take reset value

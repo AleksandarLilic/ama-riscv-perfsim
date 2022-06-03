@@ -56,7 +56,6 @@ void decoder::r_type(ctrl_intf_t *ctrl_intf)
     ctrl_intf->dec_alu_b_sel_id = ALU_B_SEL_RS2;
     ctrl_intf->dec_alu_op_sel_id = alu_op_sel;
 
-    ctrl_intf->dec_store_mask_id = 0;
     ctrl_intf->dec_dmem_en_id = 0;
     ctrl_intf->dec_load_sm_en_id = 0;
 
@@ -93,7 +92,6 @@ void decoder::i_type(ctrl_intf_t *ctrl_intf)
     ctrl_intf->dec_alu_b_sel_id = ALU_B_SEL_IMM;
     ctrl_intf->dec_alu_op_sel_id = alu_op_sel;
 
-    ctrl_intf->dec_store_mask_id = 0;
     ctrl_intf->dec_dmem_en_id = 0;
     ctrl_intf->dec_load_sm_en_id = 0;
 
@@ -124,7 +122,6 @@ void decoder::load(ctrl_intf_t *ctrl_intf)
     ctrl_intf->dec_alu_b_sel_id = ALU_B_SEL_RS2;
     ctrl_intf->dec_alu_op_sel_id = ALU_ADD;
 
-    ctrl_intf->dec_store_mask_id = 0;
     ctrl_intf->dec_dmem_en_id = 1;
     ctrl_intf->dec_load_sm_en_id = 1;
 
@@ -155,7 +152,6 @@ void decoder::store(ctrl_intf_t *ctrl_intf)
     ctrl_intf->dec_alu_b_sel_id = ALU_B_SEL_IMM;
     ctrl_intf->dec_alu_op_sel_id = ALU_ADD;
 
-    ctrl_intf->dec_store_mask_id = store_mask(ctrl_intf);
     ctrl_intf->dec_dmem_en_id = 1;
     ctrl_intf->dec_load_sm_en_id = 0;
 
@@ -188,7 +184,6 @@ void decoder::branch(ctrl_intf_t *ctrl_intf)
     ctrl_intf->dec_alu_b_sel_id = ALU_B_SEL_IMM;
     ctrl_intf->dec_alu_op_sel_id = ALU_ADD;
 
-    ctrl_intf->dec_store_mask_id = 0;
     ctrl_intf->dec_dmem_en_id = 0;
     ctrl_intf->dec_load_sm_en_id = 0;
 
@@ -221,7 +216,6 @@ void decoder::jalr(ctrl_intf_t *ctrl_intf)
     ctrl_intf->dec_alu_b_sel_id = ALU_B_SEL_IMM;
     ctrl_intf->dec_alu_op_sel_id = ALU_ADD;
 
-    ctrl_intf->dec_store_mask_id = 0;
     ctrl_intf->dec_dmem_en_id = 0;
     ctrl_intf->dec_load_sm_en_id = 0;
 
@@ -252,7 +246,6 @@ void decoder::jal(ctrl_intf_t *ctrl_intf)
     ctrl_intf->dec_alu_b_sel_id = ALU_B_SEL_IMM;
     ctrl_intf->dec_alu_op_sel_id = ALU_ADD;
 
-    ctrl_intf->dec_store_mask_id = 0;
     ctrl_intf->dec_dmem_en_id = 0;
     ctrl_intf->dec_load_sm_en_id = 0;
 
@@ -283,7 +276,6 @@ void decoder::lui(ctrl_intf_t *ctrl_intf)
     ctrl_intf->dec_alu_b_sel_id = ALU_B_SEL_IMM;
     ctrl_intf->dec_alu_op_sel_id = ALU_PASS_B;
 
-    ctrl_intf->dec_store_mask_id = 0;
     ctrl_intf->dec_dmem_en_id = 0;
     ctrl_intf->dec_load_sm_en_id = 0;
 
@@ -314,7 +306,6 @@ void decoder::auipc(ctrl_intf_t *ctrl_intf)
     ctrl_intf->dec_alu_b_sel_id = ALU_B_SEL_IMM;
     ctrl_intf->dec_alu_op_sel_id = ALU_ADD;
 
-    ctrl_intf->dec_store_mask_id = 0;
     ctrl_intf->dec_dmem_en_id = 0;
     ctrl_intf->dec_load_sm_en_id = 0;
 
@@ -358,8 +349,8 @@ void decoder::reset(ctrl_intf_t *ctrl_intf)
 
 }
 
-uint32_t decoder::store_mask(ctrl_intf_t *ctrl_intf)
-{
-    LOGW("placeholder store called");
-    return 0;
-}
+//uint32_t decoder::store_mask(ctrl_intf_t *ctrl_intf)
+//{
+//    LOGW("placeholder store called");
+//    return 0;
+//}

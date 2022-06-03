@@ -94,3 +94,36 @@
 #define ALU_AND     uint32_t(0b0111)
 #define ALU_PASS_B  uint32_t(0b1111)
 
+// Register File
+#define RF_X0_ZERO  uint32_t(0) // hard-wired zero
+#define RF_X1_RA    uint32_t(1) // return address
+#define RF_X2_SP    uint32_t(2) // stack pointer 
+#define RF_X3_GP    uint32_t(3) // global pointer
+#define RF_X4_TP    uint32_t(4) // thread pointer
+#define RF_X5_T0    uint32_t(5) // temporary/alternate link register
+#define RF_X6_T1    uint32_t(6) // temporary
+#define RF_X7_T2    uint32_t(7) // temporary
+#define RF_X8_S0    uint32_t(8) // saved register/frame pointer
+#define RF_X9_S1    uint32_t(9) // saved register
+#define RF_X10_A0   uint32_t(10) // function argument/return value
+#define RF_X11_A1   uint32_t(11) // function argument/return value
+#define RF_X12_A2   uint32_t(12) // function argument
+#define RF_X13_A3   uint32_t(13) // function argument
+#define RF_X14_A4   uint32_t(14) // function argument
+#define RF_X15_A5   uint32_t(15) // function argument
+#define RF_X16_A6   uint32_t(16) // function argument
+#define RF_X17_A7   uint32_t(17) // function argument
+#define RF_X18_S2   uint32_t(18) // saved register
+#define RF_X19_S3   uint32_t(19) // saved register
+#define RF_X20_S4   uint32_t(20) // saved register
+#define RF_X21_S5   uint32_t(21) // saved register
+#define RF_X22_S6   uint32_t(22) // saved register
+#define RF_X23_S7   uint32_t(23) // saved register
+#define RF_X24_S8   uint32_t(24) // saved register
+#define RF_X25_S9   uint32_t(25) // saved register
+#define RF_X26_S10  uint32_t(26) // saved register
+#define RF_X27_S11  uint32_t(27) // saved register
+#define RF_X28_T3   uint32_t(28) // temporary
+#define RF_X29_T4   uint32_t(29) // temporary
+#define RF_X30_T5   uint32_t(30) // temporary
+#define RF_X31_T6   uint32_t(31) // temporary
