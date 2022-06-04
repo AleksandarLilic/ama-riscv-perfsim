@@ -34,13 +34,17 @@ void logic_t::enqueue(seq_queue *q)
     LOG("enqueue called");
 }
 
-//void logic_t::connect_in(uint32_t *connection) { uint_in=connection; }
+void logic_t::connect_in(uint32_t *connection) { connected_inputs_uint.push_back(connection); }
 
 void logic_t::connect(uint32_t *connection) { connected_outputs_uint.push_back(connection); } 
 void logic_t::connect(logic_t *connection) { connected_outputs_logic.push_back(connection); }
 void logic_t::rst() { logic_in = rst_value; }  // sync rst, needs active edge to take rst val
 void logic_t::set_enable(bool enable) { this->enable = enable; }
-void logic_t::clk_update_hold() { hold = logic_in; }
+void logic_t::clk_update_hold() 
+{ 
+    for (uint32_t* i : connected_inputs_uint)
+        hold = *i;
+}
 void logic_t::clk_update()
 {
     uint32_t prev = logic_reg;

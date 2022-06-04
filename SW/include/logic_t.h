@@ -25,6 +25,8 @@ private:
     uint32_t logic_reg;
     std::vector<uint32_t*> connected_outputs_uint;
     std::vector<logic_t*> connected_outputs_logic;
+    std::vector<uint32_t*> connected_inputs_uint;
+
     uint32_t rst_value;
     bool enable;
     std::string name;
@@ -45,7 +47,7 @@ public:
     logic_t(seq_queue *q, uint32_t init_val, std::string init_name);
 
     // Methods
-    //void connect_in(uint32_t *connection);
+    void connect_in(uint32_t *connection);
     void connect(uint32_t *connection);
     void connect(logic_t *connection);
     void rst();  // sync rst, needs active edge to take reset value
