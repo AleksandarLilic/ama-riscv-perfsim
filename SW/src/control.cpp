@@ -28,7 +28,8 @@ void control::update(ctrl_intf_t *ctrl_intf, sys_intf_t *sys_intf)
 
     // /* new func: */ control_store_mask(ctrl_intf);
 
-    // for test only, imitate sequential assignment
+
+    // ------- for test only, imitate sequential assignment
     ctrl_intf->in_inst_mem = ctrl_intf->in_inst_ex;
     ctrl_intf->rd_we_mem = ctrl_intf->rd_we_ex;
 
@@ -65,22 +66,22 @@ void control::branch_resolution(ctrl_intf_t *ctrl_intf, sys_intf_t *sys_intf)
 
     // this function works on data in the ex stage
 
-    uint32_t branch_type = ((ctrl_intf->funct3_ex & 0b100) >> 1) |
-        (ctrl_intf->funct3_ex & 0b001);
+    br_sel_t branch_type = br_sel_t(((ctrl_intf->funct3_ex & 0b100) >> 1) |
+        (ctrl_intf->funct3_ex & 0b001));
     bool branch_taken = 0;
 
     switch (branch_type) {
-    case BR_SEL_BEQ: branch_taken = ctrl_intf->bc_a_eq_b; break;
-    case BR_SEL_BNE: branch_taken = !ctrl_intf->bc_a_eq_b; break;
-    case BR_SEL_BLT: branch_taken = ctrl_intf->bc_a_lt_b; break;
-    case BR_SEL_BGE: branch_taken = ctrl_intf->bc_a_eq_b || !ctrl_intf->bc_a_lt_b; break;
+    case br_sel_t::beq: branch_taken = ctrl_intf->bc_a_eq_b; break;
+    case br_sel_t::bne: branch_taken = !ctrl_intf->bc_a_eq_b; break;
+    case br_sel_t::blt: branch_taken = ctrl_intf->bc_a_lt_b; break;
+    case br_sel_t::bge: branch_taken = ctrl_intf->bc_a_eq_b || !ctrl_intf->bc_a_lt_b; break;
     default: LOGW("Branch Resolution default case");
     }
 
     branch_taken &= !sys_intf->rst; // if in reset, override branch taken
     branch_taken &= ctrl_intf->dec_branch_inst_ex;  // only taken if it actually is branch
-    if (branch_taken || ctrl_intf->dec_jump_inst_ex) ctrl_intf->dec_pc_sel_if = PC_SEL_ALU;
+    if (branch_taken || ctrl_intf->dec_jump_inst_ex) ctrl_intf->dec_pc_sel_if = pc_sel_t::alu;
     
     LOG("branch taken: " << branch_taken);
-    LOG("dec_sel: " << ctrl_intf->dec_pc_sel_if);
+    LOG("dec_sel: " << static_cast<int>(ctrl_intf->dec_pc_sel_if));
 }

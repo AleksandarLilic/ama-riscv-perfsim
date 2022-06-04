@@ -4,18 +4,18 @@ void decoder::update(ctrl_intf_t *ctrl_intf, sys_intf_t *sys_intf)
 {
     LOG("--- dec called");
     if (!sys_intf->rst) {
-        LOG("dec ctrl_intf->opc7_id hex = " << std::hex << ctrl_intf->opc7_id << std::dec);
+        LOG("dec ctrl_intf->opc7_id hex = " << std::hex << static_cast<int>(ctrl_intf->opc7_id) << std::dec);
         switch (ctrl_intf->opc7_id) {
-        case OPC7_R_TYPE: r_type(ctrl_intf); break;
-        case OPC7_I_TYPE: i_type(ctrl_intf); break;
-        case OPC7_LOAD: load(ctrl_intf); break;
-        case OPC7_STORE: store(ctrl_intf); break;
-        case OPC7_BRANCH: branch(ctrl_intf); LOGW("branching incomplete"); break;
-        case OPC7_JALR: jalr(ctrl_intf); break;
-        case OPC7_JAL: jal (ctrl_intf); break;
-        case OPC7_LUI: lui(ctrl_intf); break;
-        case OPC7_AUIPC: auipc(ctrl_intf); break;
-            //case OPC7_SYSTEM: system(ctrl_intf); break;
+        case opc7_t::r_type: r_type(ctrl_intf); break;
+        case opc7_t::i_type: i_type(ctrl_intf); break;
+        case opc7_t::load: load(ctrl_intf); break;
+        case opc7_t::store: store(ctrl_intf); break;
+        case opc7_t::branch: branch(ctrl_intf); LOGW("branching incomplete"); break;
+        case opc7_t::jalr: jalr(ctrl_intf); break;
+        case opc7_t::jal: jal (ctrl_intf); break;
+        case opc7_t::lui: lui(ctrl_intf); break;
+        case opc7_t::auipc: auipc(ctrl_intf); break;
+        //case opc7_t::system: system(ctrl_intf); break;
         default: unsupported(ctrl_intf); break;
         }
     }
@@ -42,9 +42,9 @@ void decoder::r_type(ctrl_intf_t *ctrl_intf)
     ctrl_intf->dec_store_inst_id = 0;
     ctrl_intf->dec_load_inst_id = 0;
 
-    ctrl_intf->dec_pc_sel_if = PC_SEL_INC4;
+    ctrl_intf->dec_pc_sel_if = pc_sel_t::inc4;
     ctrl_intf->dec_pc_we_if = 1;
-    ctrl_intf->dec_ig_sel_id = IG_DISABLED;
+    ctrl_intf->dec_ig_sel_id = imm_gen_t::disabled;
 
     ctrl_intf->dec_csr_en_id = 0;
     ctrl_intf->dec_csr_we_id = 0;
@@ -52,17 +52,17 @@ void decoder::r_type(ctrl_intf_t *ctrl_intf)
 
     ctrl_intf->dec_bc_uns_id = 0;
 
-    ctrl_intf->dec_alu_a_sel_id = ALU_A_SEL_RS1;
-    ctrl_intf->dec_alu_b_sel_id = ALU_B_SEL_RS2;
-    ctrl_intf->dec_alu_op_sel_id = alu_op_sel;
+    ctrl_intf->dec_alu_a_sel_id = alu_op_a_sel_t::rs1;
+    ctrl_intf->dec_alu_b_sel_id = alu_op_b_sel_t::rs2;
+    ctrl_intf->dec_alu_op_sel_id = alu_op_t(alu_op_sel);
 
     ctrl_intf->dec_dmem_en_id = 0;
     ctrl_intf->dec_load_sm_en_id = 0;
 
-    ctrl_intf->dec_wb_sel_id = WB_SEL_ALU;
+    ctrl_intf->dec_wb_sel_id = wb_sel_t::alu;
     ctrl_intf->dec_reg_we_id = 1;
 
-    LOG("dec alu sel op = " << ctrl_intf->dec_alu_op_sel_id);
+    LOG("dec alu sel op = " << static_cast<int>(ctrl_intf->dec_alu_op_sel_id));
 }
 
 void decoder::i_type(ctrl_intf_t *ctrl_intf)
@@ -78,9 +78,9 @@ void decoder::i_type(ctrl_intf_t *ctrl_intf)
     ctrl_intf->dec_store_inst_id = 0;
     ctrl_intf->dec_load_inst_id = 0;
 
-    ctrl_intf->dec_pc_sel_if = PC_SEL_INC4;
+    ctrl_intf->dec_pc_sel_if = pc_sel_t::inc4;
     ctrl_intf->dec_pc_we_if = 1;
-    ctrl_intf->dec_ig_sel_id = IG_I_TYPE;
+    ctrl_intf->dec_ig_sel_id = imm_gen_t::i_type;
 
     ctrl_intf->dec_csr_en_id = 0;
     ctrl_intf->dec_csr_we_id = 0;
@@ -88,14 +88,14 @@ void decoder::i_type(ctrl_intf_t *ctrl_intf)
 
     ctrl_intf->dec_bc_uns_id = 0;
 
-    ctrl_intf->dec_alu_a_sel_id = ALU_A_SEL_RS1;
-    ctrl_intf->dec_alu_b_sel_id = ALU_B_SEL_IMM;
-    ctrl_intf->dec_alu_op_sel_id = alu_op_sel;
+    ctrl_intf->dec_alu_a_sel_id = alu_op_a_sel_t::rs1;
+    ctrl_intf->dec_alu_b_sel_id = alu_op_b_sel_t::imm;
+    ctrl_intf->dec_alu_op_sel_id = alu_op_t(alu_op_sel);
 
     ctrl_intf->dec_dmem_en_id = 0;
     ctrl_intf->dec_load_sm_en_id = 0;
 
-    ctrl_intf->dec_wb_sel_id = WB_SEL_ALU;
+    ctrl_intf->dec_wb_sel_id = wb_sel_t::alu;
     ctrl_intf->dec_reg_we_id = 1;
 }
 
@@ -108,9 +108,9 @@ void decoder::load(ctrl_intf_t *ctrl_intf)
     ctrl_intf->dec_store_inst_id = 0;
     ctrl_intf->dec_load_inst_id = 1;
 
-    ctrl_intf->dec_pc_sel_if = PC_SEL_INC4;
+    ctrl_intf->dec_pc_sel_if = pc_sel_t::inc4;
     ctrl_intf->dec_pc_we_if = 1;
-    ctrl_intf->dec_ig_sel_id = IG_DISABLED;
+    ctrl_intf->dec_ig_sel_id = imm_gen_t::disabled;
 
     ctrl_intf->dec_csr_en_id = 0;
     ctrl_intf->dec_csr_we_id = 0;
@@ -118,14 +118,14 @@ void decoder::load(ctrl_intf_t *ctrl_intf)
 
     ctrl_intf->dec_bc_uns_id = 0;
 
-    ctrl_intf->dec_alu_a_sel_id = ALU_A_SEL_RS1;
-    ctrl_intf->dec_alu_b_sel_id = ALU_B_SEL_RS2;
-    ctrl_intf->dec_alu_op_sel_id = ALU_ADD;
+    ctrl_intf->dec_alu_a_sel_id = alu_op_a_sel_t::rs1;
+    ctrl_intf->dec_alu_b_sel_id = alu_op_b_sel_t::rs2;
+    ctrl_intf->dec_alu_op_sel_id = alu_op_t::op_add;
 
     ctrl_intf->dec_dmem_en_id = 1;
     ctrl_intf->dec_load_sm_en_id = 1;
 
-    ctrl_intf->dec_wb_sel_id = WB_SEL_DMEM;
+    ctrl_intf->dec_wb_sel_id = wb_sel_t::dmem;
     ctrl_intf->dec_reg_we_id = 1;
 }
 
@@ -138,9 +138,9 @@ void decoder::store(ctrl_intf_t *ctrl_intf)
     ctrl_intf->dec_store_inst_id = 1;
     ctrl_intf->dec_load_inst_id = 0;
 
-    ctrl_intf->dec_pc_sel_if = PC_SEL_INC4;
+    ctrl_intf->dec_pc_sel_if = pc_sel_t::inc4;
     ctrl_intf->dec_pc_we_if = 1;
-    ctrl_intf->dec_ig_sel_id = IG_S_TYPE;
+    ctrl_intf->dec_ig_sel_id = imm_gen_t::s_type;
 
     ctrl_intf->dec_csr_en_id = 0;
     ctrl_intf->dec_csr_we_id = 0;
@@ -148,14 +148,14 @@ void decoder::store(ctrl_intf_t *ctrl_intf)
 
     ctrl_intf->dec_bc_uns_id = 0;
 
-    ctrl_intf->dec_alu_a_sel_id = ALU_A_SEL_RS1;
-    ctrl_intf->dec_alu_b_sel_id = ALU_B_SEL_IMM;
-    ctrl_intf->dec_alu_op_sel_id = ALU_ADD;
+    ctrl_intf->dec_alu_a_sel_id = alu_op_a_sel_t::rs1;
+    ctrl_intf->dec_alu_b_sel_id = alu_op_b_sel_t::imm;
+    ctrl_intf->dec_alu_op_sel_id = alu_op_t::op_add;
 
     ctrl_intf->dec_dmem_en_id = 1;
     ctrl_intf->dec_load_sm_en_id = 0;
 
-    ctrl_intf->dec_wb_sel_id = WB_SEL_ALU;
+    ctrl_intf->dec_wb_sel_id = wb_sel_t::alu;
     ctrl_intf->dec_reg_we_id = 0;
 
     LOG("dec store mask = " << ctrl_intf->dec_store_mask_id);
@@ -170,9 +170,9 @@ void decoder::branch(ctrl_intf_t *ctrl_intf)
     ctrl_intf->dec_store_inst_id = 0;
     ctrl_intf->dec_load_inst_id = 0;
 
-    ctrl_intf->dec_pc_sel_if = PC_SEL_INC4;
+    ctrl_intf->dec_pc_sel_if = pc_sel_t::inc4;
     ctrl_intf->dec_pc_we_if = 0;
-    ctrl_intf->dec_ig_sel_id = IG_B_TYPE;
+    ctrl_intf->dec_ig_sel_id = imm_gen_t::b_type;
 
     ctrl_intf->dec_csr_en_id = 0;
     ctrl_intf->dec_csr_we_id = 0;
@@ -180,14 +180,14 @@ void decoder::branch(ctrl_intf_t *ctrl_intf)
 
     ctrl_intf->dec_bc_uns_id = (ctrl_intf->funct3_id & 0b010) >> 1;
 
-    ctrl_intf->dec_alu_a_sel_id = ALU_A_SEL_RS1;
-    ctrl_intf->dec_alu_b_sel_id = ALU_B_SEL_IMM;
-    ctrl_intf->dec_alu_op_sel_id = ALU_ADD;
+    ctrl_intf->dec_alu_a_sel_id = alu_op_a_sel_t::rs1;
+    ctrl_intf->dec_alu_b_sel_id = alu_op_b_sel_t::imm;
+    ctrl_intf->dec_alu_op_sel_id = alu_op_t::op_add;
 
     ctrl_intf->dec_dmem_en_id = 0;
     ctrl_intf->dec_load_sm_en_id = 0;
 
-    ctrl_intf->dec_wb_sel_id = WB_SEL_ALU;
+    ctrl_intf->dec_wb_sel_id = wb_sel_t::alu;
     ctrl_intf->dec_reg_we_id = 0;
 
     LOG("dec branch compare unsigned = " << ctrl_intf->dec_bc_uns_id);
@@ -202,9 +202,9 @@ void decoder::jalr(ctrl_intf_t *ctrl_intf)
     ctrl_intf->dec_store_inst_id = 0;
     ctrl_intf->dec_load_inst_id = 0;
 
-    ctrl_intf->dec_pc_sel_if = PC_SEL_ALU;
+    ctrl_intf->dec_pc_sel_if = pc_sel_t::alu;
     ctrl_intf->dec_pc_we_if = 0;
-    ctrl_intf->dec_ig_sel_id = IG_I_TYPE;
+    ctrl_intf->dec_ig_sel_id = imm_gen_t::i_type;
 
     ctrl_intf->dec_csr_en_id = 0;
     ctrl_intf->dec_csr_we_id = 0;
@@ -212,14 +212,14 @@ void decoder::jalr(ctrl_intf_t *ctrl_intf)
 
     ctrl_intf->dec_bc_uns_id = 0;
 
-    ctrl_intf->dec_alu_a_sel_id = ALU_A_SEL_PC;
-    ctrl_intf->dec_alu_b_sel_id = ALU_B_SEL_IMM;
-    ctrl_intf->dec_alu_op_sel_id = ALU_ADD;
+    ctrl_intf->dec_alu_a_sel_id = alu_op_a_sel_t::pc;
+    ctrl_intf->dec_alu_b_sel_id = alu_op_b_sel_t::imm;
+    ctrl_intf->dec_alu_op_sel_id = alu_op_t::op_add;
 
     ctrl_intf->dec_dmem_en_id = 0;
     ctrl_intf->dec_load_sm_en_id = 0;
 
-    ctrl_intf->dec_wb_sel_id = WB_SEL_INC4;
+    ctrl_intf->dec_wb_sel_id = wb_sel_t::inc4;
     ctrl_intf->dec_reg_we_id = 1;
 }
 
@@ -232,9 +232,9 @@ void decoder::jal(ctrl_intf_t *ctrl_intf)
     ctrl_intf->dec_store_inst_id = 0;
     ctrl_intf->dec_load_inst_id = 0;
 
-    ctrl_intf->dec_pc_sel_if = PC_SEL_ALU;
+    ctrl_intf->dec_pc_sel_if = pc_sel_t::alu;
     ctrl_intf->dec_pc_we_if = 0;
-    ctrl_intf->dec_ig_sel_id = IG_J_TYPE;
+    ctrl_intf->dec_ig_sel_id = imm_gen_t::j_type;
 
     ctrl_intf->dec_csr_en_id = 0;
     ctrl_intf->dec_csr_we_id = 0;
@@ -242,14 +242,14 @@ void decoder::jal(ctrl_intf_t *ctrl_intf)
 
     ctrl_intf->dec_bc_uns_id = 0;
 
-    ctrl_intf->dec_alu_a_sel_id = ALU_A_SEL_PC;
-    ctrl_intf->dec_alu_b_sel_id = ALU_B_SEL_IMM;
-    ctrl_intf->dec_alu_op_sel_id = ALU_ADD;
+    ctrl_intf->dec_alu_a_sel_id = alu_op_a_sel_t::pc;
+    ctrl_intf->dec_alu_b_sel_id = alu_op_b_sel_t::imm;
+    ctrl_intf->dec_alu_op_sel_id = alu_op_t::op_add;
 
     ctrl_intf->dec_dmem_en_id = 0;
     ctrl_intf->dec_load_sm_en_id = 0;
 
-    ctrl_intf->dec_wb_sel_id = WB_SEL_INC4;
+    ctrl_intf->dec_wb_sel_id = wb_sel_t::inc4;
     ctrl_intf->dec_reg_we_id = 1;
 }
 
@@ -262,9 +262,9 @@ void decoder::lui(ctrl_intf_t *ctrl_intf)
     ctrl_intf->dec_store_inst_id = 0;
     ctrl_intf->dec_load_inst_id = 0;
 
-    ctrl_intf->dec_pc_sel_if = PC_SEL_INC4;
+    ctrl_intf->dec_pc_sel_if = pc_sel_t::inc4;
     ctrl_intf->dec_pc_we_if = 1;
-    ctrl_intf->dec_ig_sel_id = IG_U_TYPE;
+    ctrl_intf->dec_ig_sel_id = imm_gen_t::u_type;
 
     ctrl_intf->dec_csr_en_id = 0;
     ctrl_intf->dec_csr_we_id = 0;
@@ -272,14 +272,14 @@ void decoder::lui(ctrl_intf_t *ctrl_intf)
 
     ctrl_intf->dec_bc_uns_id = 0;
 
-    ctrl_intf->dec_alu_a_sel_id = ALU_A_SEL_RS1;
-    ctrl_intf->dec_alu_b_sel_id = ALU_B_SEL_IMM;
-    ctrl_intf->dec_alu_op_sel_id = ALU_PASS_B;
+    ctrl_intf->dec_alu_a_sel_id = alu_op_a_sel_t::rs1;
+    ctrl_intf->dec_alu_b_sel_id = alu_op_b_sel_t::imm;
+    ctrl_intf->dec_alu_op_sel_id = alu_op_t::op_pass_b;
 
     ctrl_intf->dec_dmem_en_id = 0;
     ctrl_intf->dec_load_sm_en_id = 0;
 
-    ctrl_intf->dec_wb_sel_id = WB_SEL_ALU;
+    ctrl_intf->dec_wb_sel_id = wb_sel_t::alu;
     ctrl_intf->dec_reg_we_id = 1;
 }
 
@@ -292,9 +292,9 @@ void decoder::auipc(ctrl_intf_t *ctrl_intf)
     ctrl_intf->dec_store_inst_id = 0;
     ctrl_intf->dec_load_inst_id = 0;
 
-    ctrl_intf->dec_pc_sel_if = PC_SEL_INC4;
+    ctrl_intf->dec_pc_sel_if = pc_sel_t::inc4;
     ctrl_intf->dec_pc_we_if = 1;
-    ctrl_intf->dec_ig_sel_id = IG_U_TYPE;
+    ctrl_intf->dec_ig_sel_id = imm_gen_t::u_type;
 
     ctrl_intf->dec_csr_en_id = 0;
     ctrl_intf->dec_csr_we_id = 0;
@@ -302,20 +302,20 @@ void decoder::auipc(ctrl_intf_t *ctrl_intf)
 
     ctrl_intf->dec_bc_uns_id = 0;
 
-    ctrl_intf->dec_alu_a_sel_id = ALU_A_SEL_PC;
-    ctrl_intf->dec_alu_b_sel_id = ALU_B_SEL_IMM;
-    ctrl_intf->dec_alu_op_sel_id = ALU_ADD;
+    ctrl_intf->dec_alu_a_sel_id = alu_op_a_sel_t::pc;
+    ctrl_intf->dec_alu_b_sel_id = alu_op_b_sel_t::imm;
+    ctrl_intf->dec_alu_op_sel_id = alu_op_t::op_add;
 
     ctrl_intf->dec_dmem_en_id = 0;
     ctrl_intf->dec_load_sm_en_id = 0;
 
-    ctrl_intf->dec_wb_sel_id = WB_SEL_ALU;
+    ctrl_intf->dec_wb_sel_id = wb_sel_t::alu;
     ctrl_intf->dec_reg_we_id = 1;
 }
 
 void decoder::unsupported(ctrl_intf_t *ctrl_intf)
 {
-    LOGE("Unsupported instruction. Opcode: " << ctrl_intf->opc7_id);
+    LOGE("Unsupported instruction. Opcode: " << static_cast<int>(ctrl_intf->opc7_id));
 }
 
 
@@ -326,9 +326,9 @@ void decoder::reset(ctrl_intf_t *ctrl_intf)
     ctrl_intf->dec_store_inst_id = 0;
     ctrl_intf->dec_load_inst_id = 0;
 
-    ctrl_intf->dec_pc_sel_if = PC_SEL_INC4;
+    ctrl_intf->dec_pc_sel_if = pc_sel_t::inc4;
     ctrl_intf->dec_pc_we_if = 1;
-    ctrl_intf->dec_ig_sel_id = IG_DISABLED;
+    ctrl_intf->dec_ig_sel_id = imm_gen_t::disabled;
 
     ctrl_intf->dec_csr_en_id = 0;
     ctrl_intf->dec_csr_we_id = 0;
@@ -336,15 +336,15 @@ void decoder::reset(ctrl_intf_t *ctrl_intf)
 
     ctrl_intf->dec_bc_uns_id = 0;
 
-    ctrl_intf->dec_alu_a_sel_id = ALU_A_SEL_RS1;
-    ctrl_intf->dec_alu_b_sel_id = ALU_B_SEL_RS2;
-    ctrl_intf->dec_alu_op_sel_id = 0x0;
+    ctrl_intf->dec_alu_a_sel_id = alu_op_a_sel_t::rs1;
+    ctrl_intf->dec_alu_b_sel_id = alu_op_b_sel_t::rs2;
+    ctrl_intf->dec_alu_op_sel_id = alu_op_t::op_add;
 
     ctrl_intf->dec_store_mask_id = 0;
     ctrl_intf->dec_dmem_en_id = 0;
     ctrl_intf->dec_load_sm_en_id = 0;
 
-    ctrl_intf->dec_wb_sel_id = WB_SEL_ALU;
+    ctrl_intf->dec_wb_sel_id = wb_sel_t::alu;
     ctrl_intf->dec_reg_we_id = 0;
 
 }

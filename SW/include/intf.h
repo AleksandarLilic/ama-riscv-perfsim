@@ -22,7 +22,7 @@ typedef struct ctrl_intf_t
     uint32_t in_inst_mem;
     uint32_t in_store_mask_offset;
 
-    uint32_t opc7_id;
+    opc7_t opc7_id;
     uint32_t funct3_id;
     uint32_t funct7_id;
     uint32_t funct3_ex;
@@ -40,47 +40,48 @@ typedef struct ctrl_intf_t
     bool dec_store_inst_id;
     bool dec_load_inst_id;
     // fetch stage
-    uint32_t dec_pc_sel_if;
+    // uint32_t dec_pc_sel_if;
+    pc_sel_t dec_pc_sel_if;
     bool dec_pc_we_if;
-    uint32_t dec_ig_sel_id;
+    imm_gen_t dec_ig_sel_id;
     uint32_t dec_csr_en_id;
     uint32_t dec_csr_we_id;
     uint32_t dec_csr_ui_id;
     // branching
-    uint32_t dec_bc_uns_id;
+    bool dec_bc_uns_id;
     // alu
-    uint32_t dec_alu_a_sel_id;
-    uint32_t dec_alu_b_sel_id;
-    uint32_t dec_alu_op_sel_id;
+    alu_op_a_sel_t dec_alu_a_sel_id;
+    alu_op_b_sel_t dec_alu_b_sel_id;
+    alu_op_t dec_alu_op_sel_id;
     // dmem
     uint32_t dec_store_mask_id;
     uint32_t dec_dmem_en_id;
     uint32_t dec_load_sm_en_id;
     // writeback
-    uint32_t dec_wb_sel_id;
-    uint32_t dec_reg_we_id;
+    wb_sel_t dec_wb_sel_id;
+    bool dec_reg_we_id;
 
     // register addresses
-    uint32_t rs1_addr_id;
-    uint32_t rs2_addr_id;
-    uint32_t rd_addr_id;
-    // uint32_t rd_we_id; // as decoder output
-    uint32_t rs1_addr_ex;
-    uint32_t rs2_addr_ex;
-    uint32_t rd_addr_ex;
-    uint32_t rd_we_ex;
-    uint32_t rs1_addr_mem;
-    uint32_t rs2_addr_mem;
-    uint32_t rd_addr_mem;
-    uint32_t rd_we_mem;
+    rf_t rs1_addr_id;
+    rf_t rs2_addr_id;
+    rf_t rd_addr_id;
+    // bool rd_we_id; // as decoder output
+    rf_t rs1_addr_ex;
+    rf_t rs2_addr_ex;
+    rf_t rd_addr_ex;
+    bool rd_we_ex;
+    rf_t rs1_addr_mem;
+    rf_t rs2_addr_mem;
+    rf_t rd_addr_mem;
+    bool rd_we_mem;
 
     // forwarding
     uint32_t of_rf_a_sel_fwd_id;
     uint32_t of_rf_b_sel_fwd_id;
     uint32_t of_bc_a_sel_fwd_id;
     uint32_t of_bcs_b_sel_fwd_id;
-    uint32_t of_alu_a_sel_fwd_id;
-    uint32_t of_alu_b_sel_fwd_id;
+    alu_op_a_sel_fwd_t of_alu_a_sel_fwd_id;
+    alu_op_b_sel_fwd_t of_alu_b_sel_fwd_id;
 
     // from datapath
     bool bc_a_eq_b;

@@ -17,32 +17,32 @@ void op_fwd::update(ctrl_intf_t *ctrl_intf, sys_intf_t *sys_intf)
 void op_fwd::dependency_detection(ctrl_intf_t *ctrl_intf)
 {
     // EX stage
-    dd_rs1_ex = ((ctrl_intf->rs1_addr_id != RF_X0_ZERO) && 
+    dd_rs1_ex = ((ctrl_intf->rs1_addr_id != rf_t::x0_zero) && 
         (ctrl_intf->rs1_addr_id == ctrl_intf->rd_addr_ex) &&
-        (ctrl_intf->rd_addr_ex));
-    dd_rs2_ex = ((ctrl_intf->rs2_addr_id != RF_X0_ZERO) &&
+        (ctrl_intf->rd_we_ex));
+    dd_rs2_ex = ((ctrl_intf->rs2_addr_id != rf_t::x0_zero) &&
         (ctrl_intf->rs2_addr_id == ctrl_intf->rd_addr_ex) &&
-        (ctrl_intf->rd_addr_ex));
+        (ctrl_intf->rd_we_ex));
 
     // MEM stage
-    dd_rs1_mem = ((ctrl_intf->rs1_addr_id != RF_X0_ZERO) &&
+    dd_rs1_mem = ((ctrl_intf->rs1_addr_id != rf_t::x0_zero) &&
         (ctrl_intf->rs1_addr_id == ctrl_intf->rd_addr_mem) &&
-        (ctrl_intf->rd_addr_mem));
-    dd_rs2_mem = ((ctrl_intf->rs2_addr_id != RF_X0_ZERO) &&
+        (ctrl_intf->rd_we_mem));
+    dd_rs2_mem = ((ctrl_intf->rs2_addr_id != rf_t::x0_zero) &&
         (ctrl_intf->rs2_addr_id == ctrl_intf->rd_addr_mem) &&
-        (ctrl_intf->rd_addr_mem));
+        (ctrl_intf->rd_we_mem));
 }
 
 void op_fwd::op_fwd_rf(ctrl_intf_t *ctrl_intf)
 {
     // RF A
     ctrl_intf->of_rf_a_sel_fwd_id = dd_rs1_mem &&
-        ((ctrl_intf->dec_alu_a_sel_id == ALU_A_SEL_RS1) ||
+        ((ctrl_intf->dec_alu_a_sel_id == alu_op_a_sel_t::rs1) ||
             (ctrl_intf->dec_branch_inst_id));
 
     // RF B
     ctrl_intf->of_rf_b_sel_fwd_id = dd_rs2_mem &&
-        ((ctrl_intf->dec_alu_b_sel_id == ALU_B_SEL_RS2) ||
+        ((ctrl_intf->dec_alu_b_sel_id == alu_op_b_sel_t::rs2) ||
             (ctrl_intf->dec_branch_inst_id) || 
             (ctrl_intf->dec_store_inst_id));
 }
@@ -63,14 +63,14 @@ void op_fwd::op_fwd_bcs(ctrl_intf_t *ctrl_intf)
 void op_fwd::op_fwd_alu(ctrl_intf_t *ctrl_intf)
 {
     // Operand A
-    if ((dd_rs1_ex) && ((ctrl_intf->dec_alu_a_sel_id == ALU_A_SEL_RS1)) /* && (!bubble_load) */)
-        ctrl_intf->of_alu_a_sel_fwd_id = ALU_A_SEL_FWD_ALU;             // forward previous ALU result
+    if ((dd_rs1_ex) && ((ctrl_intf->dec_alu_a_sel_id == alu_op_a_sel_t::rs1)) /* && (!bubble_load) */)
+        ctrl_intf->of_alu_a_sel_fwd_id = alu_op_a_sel_fwd_t::fwd_mem;             // forward previous ALU result
     else
-        ctrl_intf->of_alu_a_sel_fwd_id = ctrl_intf->dec_alu_a_sel_id;   // don't forward
+        ctrl_intf->of_alu_a_sel_fwd_id = alu_op_a_sel_fwd_t(ctrl_intf->dec_alu_a_sel_id);   // don't forward
 
     // Operand B
-    if ((dd_rs2_ex) && ((ctrl_intf->dec_alu_b_sel_id == ALU_B_SEL_RS2)) /* && (!bubble_load) */)
-        ctrl_intf->of_alu_b_sel_fwd_id = ALU_B_SEL_FWD_ALU;             // forward previous ALU result
+    if ((dd_rs2_ex) && ((ctrl_intf->dec_alu_b_sel_id == alu_op_b_sel_t::rs2)) /* && (!bubble_load) */)
+        ctrl_intf->of_alu_b_sel_fwd_id = alu_op_b_sel_fwd_t::fwd_mem;             // forward previous ALU result
     else
-        ctrl_intf->of_alu_b_sel_fwd_id = ctrl_intf->dec_alu_b_sel_id;   // don't forward
+        ctrl_intf->of_alu_b_sel_fwd_id = alu_op_b_sel_fwd_t(ctrl_intf->dec_alu_b_sel_id);   // don't forward
 }
