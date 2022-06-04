@@ -38,6 +38,7 @@ typedef struct ctrl_intf_t
     bool dec_branch_inst_id;
     bool dec_jump_inst_id;
     bool dec_store_inst_id;
+    bool dec_store_inst_ex;
     bool dec_load_inst_id;
     // fetch stage
     // uint32_t dec_pc_sel_if;
@@ -54,7 +55,7 @@ typedef struct ctrl_intf_t
     alu_op_b_sel_t dec_alu_b_sel_id;
     alu_op_t dec_alu_op_sel_id;
     // dmem
-    uint32_t dec_store_mask_id;
+    uint32_t dec_store_mask_ex;
     uint32_t dec_dmem_en_id;
     uint32_t dec_load_sm_en_id;
     // writeback
@@ -88,6 +89,7 @@ typedef struct ctrl_intf_t
     bool bc_a_lt_b;
     bool dec_branch_inst_ex;
     bool dec_jump_inst_ex;
+    uint32_t alu_out;
 
     uint32_t store_offset;
 

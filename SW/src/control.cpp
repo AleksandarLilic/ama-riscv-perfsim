@@ -25,6 +25,7 @@ void control::update(ctrl_intf_t *ctrl_intf, sys_intf_t *sys_intf)
     op_fwd.update(ctrl_intf, sys_intf);
     // pipeline_ctrl(ctrl_intf, sys_intf);
     branch_resolution(ctrl_intf, sys_intf);
+    store_mask(ctrl_intf);
 
     // /* new func: */ control_store_mask(ctrl_intf);
 
@@ -35,6 +36,7 @@ void control::update(ctrl_intf_t *ctrl_intf, sys_intf_t *sys_intf)
 
     ctrl_intf->in_inst_ex = ctrl_intf->in_inst_id;
     ctrl_intf->rd_we_ex = ctrl_intf->dec_reg_we_id;
+    ctrl_intf->dec_store_inst_ex = ctrl_intf->dec_store_inst_id;
 
     ctrl_intf->dec_branch_inst_ex = ctrl_intf->dec_branch_inst_id;
     ctrl_intf->dec_jump_inst_ex = ctrl_intf->dec_jump_inst_id;
@@ -84,4 +86,34 @@ void control::branch_resolution(ctrl_intf_t *ctrl_intf, sys_intf_t *sys_intf)
     
     LOG("branch taken: " << branch_taken);
     LOG("dec_sel: " << static_cast<int>(ctrl_intf->dec_pc_sel_if));
+}
+
+void control::store_mask(ctrl_intf_t *ctrl_intf)
+{
+    // dummy, will cause unaligned value issue 
+    // ctrl_intf->alu_out = 3;
+
+    uint32_t mask_width = ctrl_intf->funct3_ex & 0b11;
+    uint32_t mask_offset = ctrl_intf->alu_out & 0b11;
+    
+    // uint32_t b0 = 1;
+    // uint32_t b1 = ((mask_width & 0b1) << 1) | (mask_width & 0b10);
+    // uint32_t b2 = (mask_width & 0b10) << 1;
+    // uint32_t b3 = (mask_width & 0b10) << 2;
+    // uint32_t mask = (b3 | b2 | b1 | b0) << 4;
+
+    uint32_t mask = 1;
+    mask = ~(~mask << mask_width);  // fill with 1s from right
+    mask = mask | ((mask << 1) & 0x8);  // add bit[3] if word
+    mask = mask << 4;   // prepare for potential offset
+    // byte 0001'0000
+    // half 0011'0000
+    // word 1111'0000
+    uint32_t inst_en = ~(~ctrl_intf->dec_store_inst_ex << 3); // fill with 1s from right
+
+    ctrl_intf->dec_store_mask_ex = inst_en & (mask >> (4 - mask_offset));
+    if (ctrl_intf->dec_store_inst_ex) {
+        LOG("ctrl_intf->dec_store_mask_id: " << ctrl_intf->dec_store_mask_ex);
+        //LOG("b3: " << b3 << "; b2: " << b2 << "; b1: " << b1 << "; b0: " << b0);
+    }
 }

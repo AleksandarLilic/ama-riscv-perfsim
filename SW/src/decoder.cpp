@@ -158,7 +158,7 @@ void decoder::store(ctrl_intf_t *ctrl_intf)
     ctrl_intf->dec_wb_sel_id = wb_sel_t::alu;
     ctrl_intf->dec_reg_we_id = 0;
 
-    LOG("dec store mask = " << ctrl_intf->dec_store_mask_id);
+    LOG("dec store mask = " << ctrl_intf->dec_store_mask_ex);
 }
 
 void decoder::branch(ctrl_intf_t *ctrl_intf)
@@ -340,7 +340,7 @@ void decoder::reset(ctrl_intf_t *ctrl_intf)
     ctrl_intf->dec_alu_b_sel_id = alu_op_b_sel_t::rs2;
     ctrl_intf->dec_alu_op_sel_id = alu_op_t::op_add;
 
-    ctrl_intf->dec_store_mask_id = 0;
+    ctrl_intf->dec_store_mask_ex = 0;
     ctrl_intf->dec_dmem_en_id = 0;
     ctrl_intf->dec_load_sm_en_id = 0;
 
