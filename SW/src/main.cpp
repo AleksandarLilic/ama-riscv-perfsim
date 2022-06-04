@@ -170,14 +170,14 @@ int main()
     imem[40] = 0x06340613;  imemc[40] = "addi    x12,x8,99";
 
     core.reset(1);
-    LOG("\n---------- inst fetched: " << imemc[core.pc_mock]);
+    LOG("\n---------- inst in decode stage: " << imemc[core.pc_mock]);
     core.update(imem, dmem);
     clk_count--;
     // core.update();
     core.reset(0);
 
     while (clk_count) {
-        LOG("\n---------- inst fetched: " << imemc[core.pc_mock]);
+        LOG("\n---------- inst in decode stage: " << imemc[core.pc_mock]);
         core.update(imem, dmem);
         clk_count--;
     }

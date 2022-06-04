@@ -11,7 +11,7 @@ void core::reset(bool rst_in)
 void core::update(std::array<uint32_t, IMEM_SIZE> &imem_ptr, std::array<uint32_t, DMEM_SIZE> &dmem_ptr)
 {
     ctrl_intf.in_inst_id = imem_ptr[pc_mock];
-    LOG("---------- inst fetched: " << std::hex << ctrl_intf.in_inst_id << std::dec);
+    LOG("---------- inst in decode stage: " << std::hex << ctrl_intf.in_inst_id << std::dec);
     control.update(&(this->ctrl_intf), &(this->sys_intf));
     //LOG("imem from core: " << imem_ptr[0] << "\ndmem from core: " << dmem_ptr[0]);
     //imem_ptr[1] = 55;

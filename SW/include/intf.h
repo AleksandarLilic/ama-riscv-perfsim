@@ -29,6 +29,7 @@ typedef struct ctrl_intf_t
 
     // pipeline
     uint32_t stall_if;
+    uint32_t clear_if;
     uint32_t clear_id;
     uint32_t clear_ex;
     uint32_t clear_mem;
@@ -40,7 +41,7 @@ typedef struct ctrl_intf_t
     bool dec_load_inst_id;
     // fetch stage
     uint32_t dec_pc_sel_if;
-    uint32_t dec_pc_we_if;
+    bool dec_pc_we_if;
     uint32_t dec_ig_sel_id;
     uint32_t dec_csr_en_id;
     uint32_t dec_csr_we_id;
@@ -82,8 +83,10 @@ typedef struct ctrl_intf_t
     uint32_t of_alu_b_sel_fwd_id;
 
     // from datapath
-    bool bc_eq;
-    bool bc_lt;
+    bool bc_a_eq_b;
+    bool bc_a_lt_b;
+    bool dec_branch_inst_ex;
+    bool dec_jump_inst_ex;
 
     uint32_t store_offset;
 
@@ -92,6 +95,9 @@ typedef struct ctrl_intf_t
 typedef struct sys_intf_t
 {
     bool rst;
+    bool rst_seq_id;
+    bool rst_seq_ex;
+    bool rst_seq_mem;
 
 } sys_intf_t;
 
