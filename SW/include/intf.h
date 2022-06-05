@@ -35,21 +35,21 @@ typedef struct ctrl_intf_t
     uint32_t clear_mem;
 
     // from control, as datapath control
-    bool dec_branch_inst_id;
-    bool dec_jump_inst_id;
-    bool dec_store_inst_id;
-    bool dec_store_inst_ex;
-    bool dec_load_inst_id;
+    uint32_t dec_branch_inst_id;
+    uint32_t dec_jump_inst_id;
+    uint32_t dec_store_inst_id;
+    uint32_t dec_store_inst_ex;
+    uint32_t dec_load_inst_id;
     // fetch stage
     // uint32_t dec_pc_sel_if;
     pc_sel_t dec_pc_sel_if;
-    bool dec_pc_we_if;
+    uint32_t dec_pc_we_if;
     imm_gen_t dec_ig_sel_id;
     uint32_t dec_csr_en_id;
     uint32_t dec_csr_we_id;
     uint32_t dec_csr_ui_id;
     // branching
-    bool dec_bc_uns_id;
+    uint32_t dec_bc_uns_id;
     // alu
     alu_op_a_sel_t dec_alu_a_sel_id;
     alu_op_b_sel_t dec_alu_b_sel_id;
@@ -60,7 +60,7 @@ typedef struct ctrl_intf_t
     uint32_t dec_load_sm_en_id;
     // writeback
     wb_sel_t dec_wb_sel_id;
-    bool dec_reg_we_id;
+    uint32_t dec_reg_we_id;
 
     // register addresses
     rf_t rs1_addr_id;
@@ -70,11 +70,11 @@ typedef struct ctrl_intf_t
     rf_t rs1_addr_ex;
     rf_t rs2_addr_ex;
     rf_t rd_addr_ex;
-    bool rd_we_ex;
+    uint32_t rd_we_ex;
     rf_t rs1_addr_mem;
     rf_t rs2_addr_mem;
     rf_t rd_addr_mem;
-    bool rd_we_mem;
+    uint32_t rd_we_mem;
 
     // forwarding
     uint32_t of_rf_a_sel_fwd_id;
@@ -85,10 +85,10 @@ typedef struct ctrl_intf_t
     alu_op_b_sel_fwd_t of_alu_b_sel_fwd_id;
 
     // from datapath
-    bool bc_a_eq_b;
-    bool bc_a_lt_b;
-    bool dec_branch_inst_ex;
-    bool dec_jump_inst_ex;
+    uint32_t bc_a_eq_b;
+    uint32_t bc_a_lt_b;
+    uint32_t dec_branch_inst_ex;
+    uint32_t dec_jump_inst_ex;
     uint32_t alu_out;
 
     uint32_t store_offset;
@@ -97,10 +97,10 @@ typedef struct ctrl_intf_t
 
 typedef struct sys_intf_t
 {
-    bool rst;
-    bool rst_seq_id;
-    bool rst_seq_ex;
-    bool rst_seq_mem;
+    uint32_t rst;
+    uint32_t rst_seq_id;
+    uint32_t rst_seq_ex;
+    uint32_t rst_seq_mem;
 
 } sys_intf_t;
 

@@ -38,8 +38,8 @@ void control::update(ctrl_intf_t *ctrl_intf, sys_intf_t *sys_intf)
     ctrl_intf->rd_we_ex = ctrl_intf->dec_reg_we_id;
     ctrl_intf->dec_store_inst_ex = ctrl_intf->dec_store_inst_id;
 
-    ctrl_intf->dec_branch_inst_ex = ctrl_intf->dec_branch_inst_id;
-    ctrl_intf->dec_jump_inst_ex = ctrl_intf->dec_jump_inst_id;
+    // ctrl_intf->dec_branch_inst_ex = ctrl_intf->dec_branch_inst_id;
+    // ctrl_intf->dec_jump_inst_ex = ctrl_intf->dec_jump_inst_id;
 }
 
 void control::pipeline_ctrl(ctrl_intf_t *ctrl_intf, sys_intf_t *sys_intf)
@@ -47,18 +47,18 @@ void control::pipeline_ctrl(ctrl_intf_t *ctrl_intf, sys_intf_t *sys_intf)
     LOG("--- pipeline control called");
     LOGW("function not tested, needs system intf inputs implementation");
 
-    ctrl_intf->stall_if = ctrl_intf->dec_branch_inst_id || 
+    ctrl_intf->stall_if = ctrl_intf->dec_branch_inst_id | 
         ctrl_intf->dec_jump_inst_id /* ||
         dut_m_dd_bubble_ex*/;
     
-    ctrl_intf->clear_if = ctrl_intf->dec_branch_inst_id ||
+    ctrl_intf->clear_if = ctrl_intf->dec_branch_inst_id |
         ctrl_intf->dec_jump_inst_id;
 
     ctrl_intf->clear_id = sys_intf->rst_seq_id /* || dut_m_dd_bubble_ex*/;
     ctrl_intf->clear_ex = sys_intf->rst_seq_ex;
     ctrl_intf->clear_mem = sys_intf->rst_seq_mem;
     
-    ctrl_intf->dec_pc_we_if = ctrl_intf->dec_pc_we_if && (!ctrl_intf->stall_if);
+    ctrl_intf->dec_pc_we_if = ctrl_intf->dec_pc_we_if & (~ctrl_intf->stall_if);
 }
 
 void control::branch_resolution(ctrl_intf_t *ctrl_intf, sys_intf_t *sys_intf)
@@ -70,17 +70,17 @@ void control::branch_resolution(ctrl_intf_t *ctrl_intf, sys_intf_t *sys_intf)
 
     br_sel_t branch_type = br_sel_t(((ctrl_intf->funct3_ex & 0b100) >> 1) |
         (ctrl_intf->funct3_ex & 0b001));
-    bool branch_taken = 0;
+    uint32_t branch_taken = 0;
 
     switch (branch_type) {
     case br_sel_t::beq: branch_taken = ctrl_intf->bc_a_eq_b; break;
-    case br_sel_t::bne: branch_taken = !ctrl_intf->bc_a_eq_b; break;
+    case br_sel_t::bne: branch_taken = ~ctrl_intf->bc_a_eq_b; break;
     case br_sel_t::blt: branch_taken = ctrl_intf->bc_a_lt_b; break;
-    case br_sel_t::bge: branch_taken = ctrl_intf->bc_a_eq_b || !ctrl_intf->bc_a_lt_b; break;
+    case br_sel_t::bge: branch_taken = ctrl_intf->bc_a_eq_b | ~ctrl_intf->bc_a_lt_b; break;
     default: LOGW("Branch Resolution default case");
     }
 
-    branch_taken &= !sys_intf->rst; // if in reset, override branch taken
+    branch_taken &= ~sys_intf->rst; // if in reset, override branch taken
     branch_taken &= ctrl_intf->dec_branch_inst_ex;  // only taken if it actually is branch
     if (branch_taken || ctrl_intf->dec_jump_inst_ex) ctrl_intf->dec_pc_sel_if = pc_sel_t::alu;
     
