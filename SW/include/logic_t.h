@@ -16,22 +16,29 @@
 // forward declaration, seq_queue.h included in the logic_t.cpp
 class seq_queue;
 
+// TODO: create virtual logic_t class then extend to get various FF configurations
+// 1a. sync rst or 1b. async rst or 1c. no rst
+// then add other inputs, extend again
+// 1. FF w/ enable
+// 2. FF w/ clear
+
+// TODO: every input has to have a connect pointer
+
+
 class logic_t
 {
 private:
-    //uint32_t logic_in;
-    //uint32_t* uint_in;
     uint32_t hold;
     uint32_t logic_reg;
     uint32_t rst_value;
-    bool enable;
+    uint32_t *connected_enable;
+    uint32_t *connected_reset;
+    //uint32_t *connected_clr;
+    uint32_t *connected_input;
+    uint32_t *connected_output;
     std::string id;
-    uint32_t *connected_input_uint;
-    std::vector<uint32_t*> connected_outputs_uint;
-    std::vector<logic_t*> connected_outputs_logic;
 
 public:
-
     //uint32_t len;
     //uint32_t mask;
     //void init_mask(uint32_t len_in) { for (uint32_t i = 0; i < len; i++) mask = (mask << 1) | 1; }
@@ -47,16 +54,14 @@ public:
 
     // Methods
     void connect_in(uint32_t *connection);
-    void connect(uint32_t *connection);
-    void connect(logic_t *connection);
-    void rst();  // sync rst, needs active edge to take reset value
-    void set_enable(bool enable);
-    void clk_update_hold();
-    void clk_update();
+    void connect_out(uint32_t *connection);
+    void connect_rst(uint32_t *connection);
+    void connect_en(uint32_t *connection);
+    void update_hold();
+    void update();
 
     // Getters
     std::string get_id() const;
-    bool get_en() const;
     uint32_t out() const;
 
     //    // Operator overloads - logic_t with an integer

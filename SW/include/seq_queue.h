@@ -9,6 +9,7 @@ class seq_queue
 private:
     std::vector<logic_t*> queue;
 public:
+    void update_hold();
     void update();
     void reset();
 private:

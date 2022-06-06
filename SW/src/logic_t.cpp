@@ -23,43 +23,41 @@ void logic_t::init(uint32_t init_val, std::string init_id)
 {
     logic_reg = init_val;
     hold = init_val;
-    //*connected_input_uint = init_val;
     rst_value = init_val;
-    enable = 1;
     id = init_id;
 }
 void logic_t::enqueue(seq_queue *q)
 {
     q->add(this);
-    LOG("enqueue called");
+    //LOG("Enqueue called");
 }
 
 //void logic_t::connect_in(uint32_t *connection) { uint_in=connection; }
 
-void logic_t::connect_in(uint32_t *connection) { connected_input_uint = connection; } 
-void logic_t::connect(uint32_t *connection) { connected_outputs_uint.push_back(connection); } 
-void logic_t::connect(logic_t *connection) { connected_outputs_logic.push_back(connection); }
-void logic_t::rst() { hold = rst_value; }  // sync rst, needs active edge to take rst val
-void logic_t::set_enable(bool enable) { this->enable = enable; }
-void logic_t::clk_update_hold() { hold = *connected_input_uint; }
-void logic_t::clk_update()
+void logic_t::connect_in(uint32_t *connection) { connected_input = connection; } 
+void logic_t::connect_out(uint32_t *connection) { connected_output = connection; } 
+void logic_t::connect_rst(uint32_t *connection) { connected_reset = connection; } 
+void logic_t::connect_en(uint32_t *connection) { connected_enable = connection; } 
+// void logic_t::connect(logic_t *connection) { connected_outputs_logic.push_back(connection); }
+void logic_t::update_hold() { hold = *connected_input; }
+void logic_t::update()
 {
     uint32_t prev = logic_reg;
-    if (enable) {   // only update if ff is enabled
+    if (*connected_enable) {   // only update if ff is enabled
         logic_reg = hold;
-        // write to txt here
-        for (uint32_t *i : connected_outputs_uint)
-            *i = hold;
-        //for (logic_t *i : connected_outputs_logic)
-        //    *i = hold;
+        *connected_output = hold;
     }
-    LOG("Update: '" << id << "'; Input: " << hold << "; Enable: " << enable
+    if (*connected_reset) {   // overwrite if rst
+        logic_reg = rst_value;
+        *connected_output = rst_value;
+    }
+    // write to .txt here
+    LOG("Update: '" << id << "'; Input: " << hold << "; Enable: " << *connected_enable
         << "; Old Output: " << prev << "; New Output: " << logic_reg << "; ");
 }
 
 // Getters
 std::string logic_t::get_id() const { return id; }
-bool logic_t::get_en() const { return enable; }
 uint32_t logic_t::out() const { return logic_reg; }
 
 // Operator overloads - logic_t with an integer

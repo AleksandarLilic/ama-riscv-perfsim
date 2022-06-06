@@ -173,13 +173,13 @@ int main()
     LOG("\n---------- inst in decode stage: " << imemc[core.pc_mock]);
     core.update(imem, dmem);
     clk_count--;
-    // core.update();
     core.reset(0);
 
     while (clk_count) {
         LOG("\n---------- inst in decode stage: " << imemc[core.pc_mock]);
         core.update(imem, dmem);
         clk_count--;
+        //if (clk_count==35)core.reset(0);
     }
 
 

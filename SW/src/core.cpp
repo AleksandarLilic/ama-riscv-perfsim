@@ -7,8 +7,8 @@ void core::init() {
 void core::reset(bool rst_in)
 {
     sys_intf.rst = rst_in;
-    if (sys_intf.rst)
-        intf_cfg.q.reset();
+    //if (sys_intf.rst)
+      //  intf_cfg.q.reset();
 }
 
 void core::update(std::array<uint32_t, IMEM_SIZE> &imem_ptr, std::array<uint32_t, DMEM_SIZE> &dmem_ptr)
@@ -23,6 +23,7 @@ void core::update(std::array<uint32_t, IMEM_SIZE> &imem_ptr, std::array<uint32_t
         pc_mock++;
 
     LOG("\nRunning queue update:");
+    intf_cfg.q.update_hold();
     intf_cfg.q.update();
     LOG("Queue update finished \n");
 }
