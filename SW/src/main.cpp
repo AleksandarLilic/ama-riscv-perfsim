@@ -34,6 +34,22 @@
 //}
 #endif
 
+void queue_update_all(intf_cfg *intf_cfg)
+{
+    // TODO:
+    //std::vector<queue*> all_queues;
+    //for (queue *i : all_queues)
+    //    i->update_hold();
+    //for (queue *i : all_queues)
+    //    i->update();
+
+    LOG("\nRunning queue update:");
+    intf_cfg->q.update_hold();
+    intf_cfg->q.update();
+    LOG("Queue update finished \n");
+}
+
+
 int main()
 {
 #if TEST
@@ -121,7 +137,11 @@ int main()
     uint32_t clk_count = 1 + 10 + 9 + 5 + 3 + 6 + 2 + 2 + 1;
     //                      dd
     clk_count = clk_count + 3;
-    core core;
+
+
+
+    intf_cfg intf_cfg;
+    core core(&intf_cfg);
     std::array<uint32_t, IMEM_SIZE> imem{};
     std::array<uint32_t, DMEM_SIZE> dmem{};
 
@@ -169,6 +189,7 @@ int main()
     imem[39] = 0x00f40593;  imemc[39] = "addi    x11,x8,15";
     imem[40] = 0x06340613;  imemc[40] = "addi    x12,x8,99";
 
+    core.init(&intf_cfg);
     core.reset(1);
     LOG("\n---------- inst in decode stage: " << imemc[core.pc_mock]);
     core.update(imem, dmem);
@@ -178,6 +199,7 @@ int main()
     while (clk_count) {
         LOG("\n---------- inst in decode stage: " << imemc[core.pc_mock]);
         core.update(imem, dmem);
+        queue_update_all(&intf_cfg);
         clk_count--;
         //if (clk_count==35)core.reset(0);
     }

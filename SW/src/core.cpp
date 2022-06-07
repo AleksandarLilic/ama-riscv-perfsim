@@ -1,36 +1,28 @@
 #include "../include/core.h"
 
-void core::init() {
-    ctrl_intf_p = &intf_cfg.ctrl_intf;
+void core::init(intf_cfg *intf_cfg) {
+    ctrl_intf_p = &intf_cfg->ctrl_intf;
+    sys_intf_p = &intf_cfg->sys_intf;
 }
 
 void core::reset(bool rst_in)
 {
-    sys_intf.rst = rst_in;
-    //if (sys_intf.rst)
-      //  intf_cfg.q.reset();
+    sys_intf_p->rst = rst_in;
 }
 
 void core::update(std::array<uint32_t, IMEM_SIZE> &imem_ptr, std::array<uint32_t, DMEM_SIZE> &dmem_ptr)
 {
     ctrl_intf_p->in_inst_id = imem_ptr[pc_mock];
     LOG("---------- inst in decode stage: " << std::hex << ctrl_intf_p->in_inst_id << std::dec);
-    control.update(ctrl_intf_p, &(this->sys_intf));
-    //LOG("imem from core: " << imem_ptr[0] << "\ndmem from core: " << dmem_ptr[0]);
-    //imem_ptr[1] = 55;
-    //decode(&ctrl_intf, &ctrl_intf_private);
-    if (!sys_intf.rst)
+    control.update(ctrl_intf_p, sys_intf_p);
+    if (!sys_intf_p->rst)
         pc_mock++;
-
-    LOG("\nRunning queue update:");
-    intf_cfg.q.update_hold();
-    intf_cfg.q.update();
-    LOG("Queue update finished \n");
 }
 
-core::core()
+core::core(intf_cfg *intf_cfg)
 {
-    init();
+    init(intf_cfg);
+    LOG("core constructor called");
 }
 
 // Core ID stage

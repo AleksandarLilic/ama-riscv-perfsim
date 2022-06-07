@@ -15,14 +15,11 @@ class core
 {
 private:
 
-    intf_cfg intf_cfg;
 
     // interfaces
-    // send interfaces to stage constructors?
-    // ctrl_intf_t ctrl_intf{};
+    sys_intf_t *sys_intf_p;
     ctrl_intf_t *ctrl_intf_p;
     //ctrl_if_ex_t ctrl_if_ex;
-    sys_intf_t sys_intf;
 
     // LOGIC    
     // if_stage if_stage(if_stage_intf)
@@ -46,19 +43,16 @@ private:
 
 public:
     uint32_t pc_mock = 0;
+    void init(intf_cfg *intf_cfg);    // initialize all signals within structures (names and initial/reset values)
 
 private:
-    void init();    // initialize all signals within structures (names and initial/reset values)
 
     // control
     void ex_stage();
     void alu();
-    // all update:
-    void cl_update();
-    void seq_update();
 
 public:
-    core();
+    core(intf_cfg *intf_cfg);
     void reset(bool rst_in);
     void update(std::array<uint32_t, IMEM_SIZE> &imem_ptr, std::array<uint32_t, DMEM_SIZE> &dmem_ptr);
 

@@ -32,10 +32,10 @@ private:
         {"branch_inst_id_ex", 0, &sys_intf.rst, &en_true, &ctrl_intf.dec_branch_inst_id, &ctrl_intf.dec_branch_inst_ex},
         {"jump_inst_id_ex", 0, &sys_intf.rst, &en_true, &ctrl_intf.dec_jump_inst_id, &ctrl_intf.dec_jump_inst_ex}
     };
-
+    
+private:
     void init();
 
-    // { "PC", 0, &pc_input, &pc_output},
 
 };
 
