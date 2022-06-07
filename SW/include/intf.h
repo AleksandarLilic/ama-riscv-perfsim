@@ -3,13 +3,12 @@
 #include "defines.h"
 #include "logic_t.h"
 
+#define RESET_VECTOR 0x0
+
 // TODO: interfaces cannot have logic_t, creates issues with queue append and ordering
 // TODO: global queue? visible to anyone, but only one for entire design
-typedef struct dp_ex_intf_t
-{
 
-} dp_ex_intf_t;
-
+// Module level interfaces
 typedef struct dec_intf_t
 {
 
@@ -95,6 +94,80 @@ typedef struct ctrl_intf_t
 
 } ctrl_intf_t;
 
+struct if_intf_t;
+struct id_intf_t;
+struct ex_intf_t;
+struct mem_intf_t;
+struct wb_intf_t;
+
+// stage interfaces
+typedef struct if_intf_t
+{
+    uint32_t pc;
+    uint32_t nx_pc;
+
+    uint32_t imem_addr;
+
+    uint32_t pc_sel_if;
+    uint32_t pc_we_if;
+
+    uint32_t alu_out_ex;
+
+private:
+    void read_inputs(id_intf_t *id_intf, ex_intf_t *ex_intf);
+
+} if_intf_t;
+
+typedef struct id_intf_t
+{
+    uint32_t pc;
+    uint32_t nx_pc;
+
+    uint32_t imem_addr;
+
+    uint32_t pc_sel_if;
+    uint32_t pc_we_if;
+
+    uint32_t alu_out_ex;
+
+private:
+    void read_inputs(ex_intf_t *ex_intf);
+
+} id_intf_t;
+
+
+// Pipeline interfaces
+// typedef struct seq_if_id_intf_t
+// {
+//     logic_t pc;
+//     logic_t inst_id;
+// 
+//     seq_if_id_intf_t() = delete;
+//     seq_if_id_intf_t(seq_queue *q) :
+//         pc(q, RESET_VECTOR, "Program Counter"),
+//         inst_id(q, 0, "inst_id")
+//     {
+//         LOG("seq_if_id_intf called");
+//     }
+// 
+// } seq_if_id_intf_t;
+// 
+// typedef struct seq_id_ex_intf_t
+// {
+//     logic_t rf_read_op_a_ex;
+//     logic_t rf_read_op_b_ex;
+// 
+//     seq_id_ex_intf_t() = delete;
+//     seq_id_ex_intf_t(seq_queue *q) : 
+//         rf_read_op_a_ex(q, 0, "rf_read_op_a_ex"),
+//         rf_read_op_b_ex(q, 0, "rf_read_op_b_ex")
+//     {
+//         LOG("seq_id_ex_intf called");
+//     };
+// 
+// } seq_id_ex_intf_t;
+
+// System interfaces
 typedef struct sys_intf_t
 {
     uint32_t rst;
@@ -103,13 +176,6 @@ typedef struct sys_intf_t
     uint32_t rst_seq_mem;
 
 } sys_intf_t;
-
-typedef struct seq_id_ex_intf_t
-{
-    //logic_t rf_read_op_a;
-    uint32_t dummy;
-
-} seq_id_ex_intf_t;
 
 void assign(ctrl_intf_t *ctrl_intf, dec_intf_t *dec_intf);
 void assign(ctrl_intf_t *dp_ex_intf_t, dec_intf_t *ctrl_intf);

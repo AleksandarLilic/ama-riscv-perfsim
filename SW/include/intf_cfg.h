@@ -5,6 +5,7 @@
 #include "intf.h"
 #include "seq_queue.h"
 
+#define IF_ID_SIZE 1
 
 typedef struct logic_init_cfg_t {
     std::string id;
@@ -18,26 +19,23 @@ typedef struct logic_init_cfg_t {
 class intf_cfg
 {
 public:
-    ctrl_intf_t ctrl_intf{};
-    sys_intf_t sys_intf{};
-    seq_queue q;
 private:
-    seq_queue *qp = &q;
     uint32_t en_true = 1;
-    uint32_t en_false = 1;
+    uint32_t en_false = 0;
 public:
-    intf_cfg();
+    void init_if_id(seq_queue *q, sys_intf_t *sys_intf, if_intf_t *if_intf, id_intf_t *id_intf);
+    void init_id_ex();
+    void init_ex_mem();
+    void init_mem_wb();
 private:
-    logic_init_cfg_t logic_init_cfg[2] = {
-        {"branch_inst_id_ex", 0, &sys_intf.rst, &en_true, &ctrl_intf.dec_branch_inst_id, &ctrl_intf.dec_branch_inst_ex},
-        {"jump_inst_id_ex", 0, &sys_intf.rst, &en_true, &ctrl_intf.dec_jump_inst_id, &ctrl_intf.dec_jump_inst_ex}
-    };
-    
+    logic_init_cfg_t if_id[IF_ID_SIZE];
+
 private:
-    void init();
+    void init(seq_queue *q, logic_init_cfg_t *logic_init_cfg, uint32_t loop);
 
 
 };
+
 
 
 

@@ -1,29 +1,33 @@
 #include "../include/core.h"
 
-void core::init(intf_cfg *intf_cfg) {
-    ctrl_intf_p = &intf_cfg->ctrl_intf;
-    sys_intf_p = &intf_cfg->sys_intf;
+void core::init(seq_queue *q)
+{
+    LOG("core init called");    
 }
 
 void core::reset(bool rst_in)
 {
-    sys_intf_p->rst = rst_in;
+    sys_intf.rst = rst_in;
 }
 
 void core::update(std::array<uint32_t, IMEM_SIZE> &imem_ptr, std::array<uint32_t, DMEM_SIZE> &dmem_ptr)
 {
-    ctrl_intf_p->in_inst_id = imem_ptr[pc_mock];
-    LOG("---------- inst in decode stage: " << std::hex << ctrl_intf_p->in_inst_id << std::dec);
-    control.update(ctrl_intf_p, sys_intf_p);
-    if (!sys_intf_p->rst)
+    ctrl_intf.in_inst_id = imem_ptr[pc_mock];
+    LOG("---------- inst in decode stage: " << std::hex << ctrl_intf.in_inst_id << std::dec);
+    control.update(&ctrl_intf, &sys_intf);
+    if (!sys_intf.rst)
         pc_mock++;
 }
 
-core::core(intf_cfg *intf_cfg)
+
+core::core(seq_queue *q) /*:
+    seq_id_ex_intf(q)*/
 {
-    init(intf_cfg);
-    LOG("core constructor called");
+    intf_cfg.init_if_id(q, &sys_intf, &if_intf, &id_intf);
+    init(q);
+    LOG("core queue constructor called");
 }
+
 
 // Core ID stage
 
