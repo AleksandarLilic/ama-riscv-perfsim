@@ -5,29 +5,45 @@ void core::init(seq_queue *q)
     LOG("core init called");    
 }
 
+void core::mem_init(uint32_t *imem_ptr, uint32_t *dmem_ptr) 
+{ 
+    LOG("mem_init called");
+    this->imem_ptr = imem_ptr;  
+    this->dmem_ptr = dmem_ptr;
+    LOG("imem_ptr = " << this->imem_ptr);
+    LOG("dmem_ptr = " << this->dmem_ptr);
+};
+
 void core::reset(bool rst_in)
 {
     sys_intf.rst = rst_in;
 }
 
-void core::update(std::array<uint32_t, IMEM_SIZE> &imem_ptr, std::array<uint32_t, DMEM_SIZE> &dmem_ptr)
+void core::update()
 {
-    ctrl_intf.in_inst_id = imem_ptr[pc_mock];
-    LOG("---------- inst in decode stage: " << std::hex << ctrl_intf.in_inst_id << std::dec);
-    control.update(&ctrl_intf, &sys_intf);
-    if (!sys_intf.rst)
-        pc_mock++;
+    LOG("---------- inst in decode stage: " << std::hex << id_intf.inst_id << std::dec);
+    front_end(&if_intf, &id_intf);
+    control.update();
+    //if (!sys_intf.rst)
+    //    pc_mock++;
 }
 
-
-core::core(seq_queue *q) /*:
-    seq_id_ex_intf(q)*/
+core::core(seq_queue *q, uint32_t *imem_ptr, uint32_t *dmem_ptr) :
+    control(&sys_intf, &if_intf, &id_intf, &ex_intf, &mem_intf)
 {
-    intf_cfg.init_if_id(q, &sys_intf, &if_intf, &id_intf);
+    mem_init(imem_ptr, dmem_ptr);
+    intf_cfg.init_if_id(q, &sys_intf, &if_intf, &id_intf, imem_ptr);
     init(q);
     LOG("core queue constructor called");
 }
 
+void core::front_end(if_intf_t *if_intf, id_intf_t *id_intf)
+{
+    LOG("Before update - PC: " << if_intf->pc << "; NX PC: " << id_intf->nx_pc);
+    if_intf->pc = id_intf->nx_pc + 1;
+    if_intf->imem_addr = id_intf->nx_pc;
+    LOG("After update - PC: " << if_intf->pc << "; NX PC: " << id_intf->nx_pc);
+}
 
 // Core ID stage
 

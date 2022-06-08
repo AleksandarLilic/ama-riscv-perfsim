@@ -1,6 +1,21 @@
 #include "../include/control.h"
 
 //extern void imemc_print_ex();
+control::control(sys_intf_t *sys_intf, if_intf_t *if_intf, id_intf_t *id_intf,
+    ex_intf_t *ex_intf, mem_intf_t *mem_intf)
+{
+    this->sys_intf = sys_intf;
+    this->if_intf = if_intf;
+    this->id_intf = id_intf;
+    this->ex_intf = ex_intf;
+    this->mem_intf = mem_intf;
+}
+
+void control::update()
+{
+    id_intf->ctrl_intf.in_inst_id = id_intf->inst_id;   // FIXME: not a way to do it....
+    update(&id_intf->ctrl_intf, sys_intf);
+}
 
 void control::update(ctrl_intf_t *ctrl_intf, sys_intf_t *sys_intf)
 {

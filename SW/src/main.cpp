@@ -141,9 +141,11 @@ int main()
     clk_count = clk_count + 3;
 
     seq_queue q;
-    core core(&q);
     std::array<uint32_t, IMEM_SIZE> imem{};
+    uint32_t imem_dout;
     std::array<uint32_t, DMEM_SIZE> dmem{};
+    uint32_t dmem_dout;
+    core core(&q, &imem_dout, &dmem_dout);
 
     std::array<std::string, IMEM_SIZE> imemc{};
 
@@ -190,14 +192,17 @@ int main()
     imem[40] = 0x06340613;  imemc[40] = "addi    x12,x8,99";
 
     core.reset(1);
-    LOG("\n---------- inst in decode stage: " << imemc[core.pc_mock]);
-    core.update(imem, dmem);
+    imem_dout = imem[core.if_intf.imem_addr];
+    LOG("\n---------- inst in decode stage: " << imemc[core.if_intf.imem_addr]);
+    core.update();
+    queue_update_all(&q);
     clk_count--;
     core.reset(0);
 
     while (clk_count) {
-        LOG("\n---------- inst in decode stage: " << imemc[core.pc_mock]);
-        core.update(imem, dmem);
+        imem_dout = imem[core.if_intf.imem_addr];
+        LOG("\n---------- inst in decode stage: " << imemc[core.if_intf.imem_addr]);
+        core.update();
         queue_update_all(&q);
         clk_count--;
         //if (clk_count==35)core.reset(0);

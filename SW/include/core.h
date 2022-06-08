@@ -7,64 +7,55 @@
 #include "logic_t.h"
 #include "cl.h"
 #include "intf_cfg.h"
-#include <array>
-
 #include "control.h"
+#include "reg_file.h"
+
+#include <array>
 
 class core
 {
-private:
-
+public:
+    // interfaces
     intf_cfg intf_cfg;
 
-    // interfaces
-    ctrl_intf_t ctrl_intf{};
+    uint32_t *imem_ptr;
+    uint32_t *dmem_ptr;
+
     sys_intf_t sys_intf{};
-    //seq_id_ex_intf_t seq_id_ex_intf;
-    //ctrl_if_ex_t ctrl_if_ex{};
 
     if_intf_t if_intf{};
-    id_intf_t id_intf;
+    id_intf_t id_intf{};
+    ex_intf_t ex_intf{};
+    mem_intf_t mem_intf{};
+    wb_intf_t wb_intf{};
 
-
-    // LOGIC    
-    // if_stage if_stage(if_stage_intf);
-    // imem in level up hier
-
-    // if_id_pipeline(if_stage_intf, id_stage_intf);
-
-    // id_stage id_stage(seq_if_id_intf, seq_id_ex_intf)
-            control control; // incl control into id stage
-            //control control(ctrl_intf); // incl control into id stage
-
-    // ex_stage ex_stage
-    // id_ex_pipeline(id_stage_intf, ex_stage_intf);
-    //      id_stage_intf.update();
-    //      
-
-
-    // mem_stage mem_stage
-    // dmem in level up hier
-
-    // wb_stage wb_stage
-
-    // framework stuff, probably to be moved to main
-    // seq_queue queue;
+private: // modules
+    // if
+    void front_end(if_intf_t *if_intf, id_intf_t *id_intf);
+    // id
+    control control;
+    reg_file reg_file(sys_intf_t *sys_intf, id_intf_t *id_intf, mem_intf_t *mem_intf);
+    void imm_gen(id_intf_t *id_intf);
+    // ex
+    void branch_compare(ex_intf_t *ex_intf);
+    void alu(ex_intf_t *ex_intf);
+    void store_shift(ex_intf_t *ex_intf);
+    // mem
+    void load_shift_mask(mem_intf_t *mem_intf);
+    // wb
+    void writeback(wb_intf_t *wb_intf);
 
 public:
-    uint32_t pc_mock = 0;
+    //uint32_t pc_mock = 0;
 
 private:
-
-    // control
-    void ex_stage();
-    void alu();
     void init(seq_queue *q);    // initialize all signals within structures (names and initial/reset values)
 
 public:
     core() = delete;
-    core(seq_queue *q);
+    core(seq_queue *q, uint32_t *imem_ptr, uint32_t *dmem_ptr);
+    void mem_init(uint32_t *imem_ptr, uint32_t *dmem_ptr);
     void reset(bool rst_in);
-    void update(std::array<uint32_t, IMEM_SIZE> &imem_ptr, std::array<uint32_t, DMEM_SIZE> &dmem_ptr);
+    void update();
 
 };
