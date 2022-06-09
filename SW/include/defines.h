@@ -6,6 +6,7 @@
 #define LOG(x) std::cout << x << std::endl
 #define LOGW(x) std::cout << " >>> WARNING: "<< x << std::endl
 #define LOGE(x) std::cout << " >>> ERROR: "<< x << std::endl
+#define FHEX(x) std::hex << x << std::dec
 
 // Combinational logic
 #define CL_UNUSED uint32_t(0xFFFF'FFFF)

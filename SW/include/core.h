@@ -50,12 +50,13 @@ public:
 
 private:
     void init(seq_queue *q);    // initialize all signals within structures (names and initial/reset values)
+    void mem_init(uint32_t *imem_ptr, uint32_t *dmem_ptr);
 
 public:
     core() = delete;
     core(seq_queue *q, uint32_t *imem_ptr, uint32_t *dmem_ptr);
-    void mem_init(uint32_t *imem_ptr, uint32_t *dmem_ptr);
     void reset(bool rst_in);
     void update();
+    void update_fe();
 
 };

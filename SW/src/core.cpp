@@ -19,13 +19,15 @@ void core::reset(bool rst_in)
     sys_intf.rst = rst_in;
 }
 
+void core::update_fe()
+{
+    front_end(&if_intf, &id_intf);
+}
+
 void core::update()
 {
-    LOG("---------- inst in decode stage: " << std::hex << id_intf.inst_id << std::dec);
-    front_end(&if_intf, &id_intf);
+    LOG("---------- inst in ID stage: " << std::hex << id_intf.inst_id << std::dec);
     control.update();
-    //if (!sys_intf.rst)
-    //    pc_mock++;
 }
 
 core::core(seq_queue *q, uint32_t *imem_ptr, uint32_t *dmem_ptr) :
@@ -39,10 +41,10 @@ core::core(seq_queue *q, uint32_t *imem_ptr, uint32_t *dmem_ptr) :
 
 void core::front_end(if_intf_t *if_intf, id_intf_t *id_intf)
 {
-    LOG("Before update - PC: " << if_intf->pc << "; NX PC: " << id_intf->nx_pc);
-    if_intf->pc = id_intf->nx_pc + 1;
+    //LOG("Before update - PC: " << if_intf->pc << "; NX PC: " << id_intf->nx_pc);
     if_intf->imem_addr = id_intf->nx_pc;
-    LOG("After update - PC: " << if_intf->pc << "; NX PC: " << id_intf->nx_pc);
+    if_intf->pc = id_intf->nx_pc + 1;
+    //LOG("After update - PC: " << if_intf->pc << "; NX PC: " << id_intf->nx_pc);
 }
 
 // Core ID stage

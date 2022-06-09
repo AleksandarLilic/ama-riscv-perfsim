@@ -192,16 +192,20 @@ int main()
     imem[40] = 0x06340613;  imemc[40] = "addi    x12,x8,99";
 
     core.reset(1);
+    core.update_fe();
     imem_dout = imem[core.if_intf.imem_addr];
-    LOG("\n---------- inst in decode stage: " << imemc[core.if_intf.imem_addr]);
+    LOG("\n---------- inst in IF stage: " << FHEX(imem_dout) <<
+        "; ASM: " << imemc[core.if_intf.imem_addr]);
     core.update();
     queue_update_all(&q);
     clk_count--;
     core.reset(0);
 
     while (clk_count) {
+        core.update_fe();
         imem_dout = imem[core.if_intf.imem_addr];
-        LOG("\n---------- inst in decode stage: " << imemc[core.if_intf.imem_addr]);
+        LOG("\n---------- inst in IF stage: " << FHEX(imem_dout) <<
+            "; ASM: " << imemc[core.if_intf.imem_addr]);
         core.update();
         queue_update_all(&q);
         clk_count--;
