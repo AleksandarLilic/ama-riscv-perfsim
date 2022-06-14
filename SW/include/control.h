@@ -14,8 +14,10 @@
 class control
 {
 private:
+    // modules
     decoder decoder;
     op_fwd op_fwd;
+    // interfaces
     sys_intf_t *sys_intf;
     if_intf_t *if_intf;
     id_intf_t *id_intf;

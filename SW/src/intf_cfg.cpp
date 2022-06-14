@@ -2,21 +2,34 @@
 
 void intf_cfg::init(seq_queue *q, logic_init_cfg_t *logic_init_cfg, uint32_t loop)
 {
+    static uint32_t iq = 0u;
     uint32_t i = 0u;
     logic_t *reg;
-    for (i = 0u; i < loop; i++)
+    for (; i < loop; i++)
     {
-        reg = new logic_t(q, logic_init_cfg[i].init, logic_init_cfg[i].id);
-        reg->connect_rst(logic_init_cfg[i].reset);
-        reg->connect_en(logic_init_cfg[i].enable);
-        reg->connect_in(logic_init_cfg[i].input);
-        reg->connect_out(logic_init_cfg[i].output);
-        LOG("Logic created; ID: " << logic_init_cfg[i].id);
-        LOG("connected input addr: " << logic_init_cfg[i].input);
+        reg = new logic_t(q, logic_init_cfg[iq].init, logic_init_cfg[iq].id);
+        reg->connect_rst(logic_init_cfg[iq].reset);
+        reg->connect_en(logic_init_cfg[iq].enable);
+        reg->connect_in(logic_init_cfg[iq].input);
+        reg->connect_out(logic_init_cfg[iq].output);
+        LOG("Logic created; ID: " << logic_init_cfg[iq].id);
+        LOG("connected input addr: " << logic_init_cfg[iq].input);
+        iq++;
     }
 }
 
-void intf_cfg::init_if_id(seq_queue *q, sys_intf_t *sys_intf, if_intf_t *if_intf, id_intf_t *id_intf, uint32_t *imem_dout)
+void intf_cfg::init_sys(seq_queue *q, sys_intf_t *sys_intf)
+{
+    logic_init_cfg_t sys[SYS_SIZE] = {
+        {"rst_seq_id", 1, &sys_intf->rst, &in_true, &sys_intf->rst_seq_d1, &sys_intf->rst_seq_id},
+        {"rst_seq_ex", 1, &sys_intf->rst, &in_true, &sys_intf->rst_seq_d2, &sys_intf->rst_seq_ex},
+        {"rst_seq_mem", 1, &sys_intf->rst, &in_true, &sys_intf->rst_seq_d3, &sys_intf->rst_seq_mem}
+    };
+    init(q, sys, SYS_SIZE);
+}
+
+void intf_cfg::init_if_id(seq_queue *q, sys_intf_t *sys_intf, if_intf_t *if_intf, 
+    id_intf_t *id_intf, uint32_t *imem_dout)
 {
     logic_init_cfg_t if_id[IF_ID_SIZE] = {
         {"nx_pc", 0, &sys_intf->rst, &if_intf->pc_we_if, &if_intf->pc, &id_intf->nx_pc},

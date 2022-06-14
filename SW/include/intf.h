@@ -194,6 +194,11 @@ private:
 typedef struct sys_intf_t
 {
     uint32_t rst;
+    uint32_t rst_seq;
+    uint32_t rst_seq_d1;
+    uint32_t rst_seq_d2;
+    uint32_t rst_seq_d3;
+
     uint32_t rst_seq_id;
     uint32_t rst_seq_ex;
     uint32_t rst_seq_mem;

@@ -6,6 +6,7 @@
 #include "seq_queue.h"
 
 #define IF_ID_SIZE 2
+#define SYS_SIZE 3
 
 typedef struct logic_init_cfg_t {
     std::string id;
@@ -23,11 +24,13 @@ private:
     uint32_t in_true = 1;
     uint32_t in_false = 0;
 public:
+    void init_sys(seq_queue *q, sys_intf_t *sys_intf);
     void init_if_id(seq_queue *q, sys_intf_t *sys_intf, if_intf_t *if_intf, id_intf_t *id_intf, uint32_t *imem_dout);
     void init_id_ex();
     void init_ex_mem();
     void init_mem_wb();
 private:
+    logic_init_cfg_t sys[SYS_SIZE];
     logic_init_cfg_t if_id[IF_ID_SIZE];
 
 private:

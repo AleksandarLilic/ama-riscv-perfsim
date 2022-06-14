@@ -30,11 +30,14 @@ public:
     wb_intf_t wb_intf{};
 
 private: // modules
+    // system
+    void  reset_seq(sys_intf_t *sys_intf);
     // if
     void front_end(if_intf_t *if_intf, id_intf_t *id_intf);
     // id
     control control;
-    reg_file reg_file(sys_intf_t *sys_intf, id_intf_t *id_intf, mem_intf_t *mem_intf);
+    reg_file reg_file;
+    //reg_file reg_file(sys_intf_t *sys_intf, id_intf_t *id_intf, mem_intf_t *mem_intf);
     void imm_gen(id_intf_t *id_intf);
     // ex
     void branch_compare(ex_intf_t *ex_intf);

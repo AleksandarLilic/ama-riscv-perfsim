@@ -19,6 +19,6 @@ add_executable (ama-riscv-sim
 "control.cpp"
 "op_fwd.cpp"
 "reg_file.cpp"
- "intf_cfg.cpp")
+ "intf_cfg.cpp" "pipeline_stage.cpp")
 
 # TODO: Add tests and install targets if needed.

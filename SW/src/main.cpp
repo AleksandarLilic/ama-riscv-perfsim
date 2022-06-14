@@ -45,10 +45,10 @@ void queue_update_all(seq_queue *q)
     //for (queue *i : all_queues)
     //    i->update();
 
-    LOG("\nRunning queue update:");
+    LOG("\n\n------ Running queue update:\n");
     q->update_hold();
     q->update();
-    LOG("Queue update finished \n");
+    LOG("\n------ Queue update finished \n\n");
 }
 
 
@@ -139,6 +139,7 @@ int main()
     uint32_t clk_count = 1 + 10 + 9 + 5 + 3 + 6 + 2 + 2 + 1;
     //                      dd
     clk_count = clk_count + 3;
+    clk_count = 6;
 
     seq_queue q;
     std::array<uint32_t, IMEM_SIZE> imem{};
@@ -194,9 +195,11 @@ int main()
     core.reset(1);
     core.update_fe();
     imem_dout = imem[core.if_intf.imem_addr];
-    LOG("\n---------- inst in IF stage: " << FHEX(imem_dout) <<
-        "; ASM: " << imemc[core.if_intf.imem_addr]);
     core.update();
+    
+    LOG("---------- inst in IF stage: " << FHEX(imem_dout) <<
+        "; ASM: " << imemc[core.if_intf.imem_addr]);
+    
     queue_update_all(&q);
     clk_count--;
     core.reset(0);
@@ -204,9 +207,11 @@ int main()
     while (clk_count) {
         core.update_fe();
         imem_dout = imem[core.if_intf.imem_addr];
-        LOG("\n---------- inst in IF stage: " << FHEX(imem_dout) <<
-            "; ASM: " << imemc[core.if_intf.imem_addr]);
         core.update();
+        
+        LOG("---------- inst in IF stage: " << FHEX(imem_dout) <<
+            "; ASM: " << imemc[core.if_intf.imem_addr]);
+        
         queue_update_all(&q);
         clk_count--;
         //if (clk_count==35)core.reset(0);
