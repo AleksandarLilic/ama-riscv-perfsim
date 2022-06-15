@@ -49,7 +49,7 @@ core::core(seq_queue *q, uint32_t *imem_ptr, uint32_t *dmem_ptr) :
 {
     mem_init(imem_ptr, dmem_ptr);
     intf_cfg.init_sys(q, &sys_intf);
-    //intf_cfg.init_if_id(q, &sys_intf, &if_intf, &id_intf, imem_ptr);
+    intf_cfg.init_if_id(q, &sys_intf, &if_intf, &id_intf, imem_ptr);
     //init(q);
     LOG("core queue constructor called");
 }

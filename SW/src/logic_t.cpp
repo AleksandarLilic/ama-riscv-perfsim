@@ -52,7 +52,7 @@ void logic_t::update()
         *connected_output = rst_value;
     }
     // write to .txt here
-    LOG("Update: '" << id << "'; Input: " << hold << "', HEX: " << FHEX(hold)
+    LOG("Update: '" << id << "'; Input: " << hold << ", HEX: " << FHEX(hold)
         << "; Enable: " << *connected_enable << "; Reset: " << *connected_reset 
         << "; Old Output: " << prev << ", HEX: " << FHEX(prev)
         << "; New Output: " << logic_reg << ", HEX: " << FHEX(logic_reg) << "; ");
