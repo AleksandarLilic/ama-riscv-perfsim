@@ -40,8 +40,8 @@ void core::update_fe()
 void core::update()
 {
     reset_seq(&sys_intf);
-    LOG("---------- inst in ID stage: " << std::hex << id_intf.inst_id << std::dec);
     control.update();
+    LOG("---------- inst in ID stage: " << std::hex << id_intf.inst_id << std::dec);
 }
 
 core::core(seq_queue *q, uint32_t *imem_ptr, uint32_t *dmem_ptr) :
@@ -54,10 +54,13 @@ core::core(seq_queue *q, uint32_t *imem_ptr, uint32_t *dmem_ptr) :
     LOG("core queue constructor called");
 }
 
+#define ALU_OUT_MOCK 12
+
 void core::front_end(if_intf_t *if_intf, id_intf_t *id_intf)
 {
     //LOG("Before update - PC: " << if_intf->pc << "; NX PC: " << id_intf->nx_pc);
-    if_intf->imem_addr = id_intf->nx_pc;
+    //if_intf->imem_addr = id_intf->nx_pc;
+    if_intf->imem_addr = cl::mux2(uint32_t(id_intf->ctrl_intf.dec_pc_sel_if), id_intf->nx_pc, ALU_OUT_MOCK);
     if_intf->pc = id_intf->nx_pc + 1;
     //LOG("After update - PC: " << if_intf->pc << "; NX PC: " << id_intf->nx_pc);
 }

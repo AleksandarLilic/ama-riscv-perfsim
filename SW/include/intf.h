@@ -23,6 +23,7 @@ typedef struct ctrl_intf_t
 
     // pipeline
     uint32_t stall_if;
+    uint32_t stall_if_d;
     uint32_t clear_if;
     uint32_t clear_id;
     uint32_t clear_ex;
@@ -99,63 +100,36 @@ struct wb_intf_t;
 typedef struct if_intf_t
 {
     uint32_t imem_addr;
-
-//private:
     uint32_t pc;
     uint32_t pc_sel_if;
     uint32_t pc_we_if = 1u;
-
     uint32_t alu_out_ex;
-
-private:
-    void read_inputs(id_intf_t *id_intf, ex_intf_t *ex_intf);
-    //friend core;
 
 } if_intf_t;
 
 typedef struct id_intf_t
 {
-public:
     uint32_t inst_id;
-//private:
     uint32_t nx_pc;
     uint32_t rf_data_a;
     uint32_t rf_data_b;
     uint32_t imm_id;
     uint32_t store_inst;
     ctrl_intf_t ctrl_intf;
-protected:
-
-private:
-    void read_inputs(ex_intf_t *ex_intf);
-    //friend core;
-
 } id_intf_t;
 
 typedef struct ex_intf_t
 {
-public:
-
-private:
-    void read_inputs(ex_intf_t *ex_intf);
 
 } ex_intf_t;
 
 typedef struct mem_intf_t
 {
-public:
-
-private:
-    void read_inputs(ex_intf_t *ex_intf);
 
 } mem_intf_t;
 
 typedef struct wb_intf_t
 {
-public:
-
-private:
-    void read_inputs(ex_intf_t *ex_intf);
 
 } wb_intf_t;
 
@@ -202,8 +176,4 @@ typedef struct sys_intf_t
     uint32_t rst_seq_id;
     uint32_t rst_seq_ex;
     uint32_t rst_seq_mem;
-
 } sys_intf_t;
-
-// void assign(ctrl_intf_t *ctrl_intf, dec_intf_t *dec_intf);
-// void assign(ctrl_intf_t *dp_ex_intf_t, dec_intf_t *ctrl_intf);

@@ -35,6 +35,7 @@ private: // modules
     // if
     void front_end(if_intf_t *if_intf, id_intf_t *id_intf);
     // id
+    void inst_check();
     control control;
     reg_file reg_file;
     //reg_file reg_file(sys_intf_t *sys_intf, id_intf_t *id_intf, mem_intf_t *mem_intf);

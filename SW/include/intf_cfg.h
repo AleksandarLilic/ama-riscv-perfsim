@@ -5,8 +5,9 @@
 #include "intf.h"
 #include "seq_queue.h"
 
-#define IF_ID_SIZE 2
 #define SYS_SIZE 3
+#define IF_ID_SIZE 3
+#define RESET_VECTOR 0
 
 typedef struct logic_init_cfg_t {
     std::string id;

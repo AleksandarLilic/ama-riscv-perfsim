@@ -13,6 +13,9 @@ control::control(sys_intf_t *sys_intf, if_intf_t *if_intf, id_intf_t *id_intf,
 
 void control::update()
 {
+    id_intf->ctrl_intf.stall_if = sys_intf->rst;
+    if (id_intf->ctrl_intf.stall_if_d)
+        id_intf->inst_id = NOP;
     id_intf->ctrl_intf.in_inst_id = id_intf->inst_id;   // FIXME: not a way to do it....
     update(&id_intf->ctrl_intf, sys_intf);
 }
@@ -41,6 +44,8 @@ void control::update(ctrl_intf_t *ctrl_intf, sys_intf_t *sys_intf)
     // pipeline_ctrl(ctrl_intf, sys_intf);
     branch_resolution(ctrl_intf, sys_intf);
     store_mask(ctrl_intf);
+
+    id_intf->ctrl_intf.dec_pc_we_if = id_intf->ctrl_intf.dec_pc_we_if && !id_intf->ctrl_intf.stall_if;
 
     // /* new func: */ control_store_mask(ctrl_intf);
 
