@@ -17,13 +17,13 @@ private:
     bool dd_rs2_mem;
 
 public:
-    void update(ctrl_intf_t *ctrl_intf, sys_intf_t *sys_intf);
+    void update(sys_intf_t *sys_intf, id_intf_t *id_intf, ex_intf_t *ex_intf, mem_intf_t *mem_intf);
 
 private:
-    void dependency_detection(ctrl_intf_t *ctrl_intf);
-    void op_fwd_rf(ctrl_intf_t *ctrl_intf);
-    void op_fwd_bcs(ctrl_intf_t *ctrl_intf);
-    void op_fwd_alu(ctrl_intf_t *ctrl_intf);
+    void dependency_detection(id_intf_t *id_intf, ex_intf_t *ex_intf, mem_intf_t *mem_intf);
+    void op_fwd_rf(id_intf_t *id_intf);
+    void op_fwd_bcs(id_intf_t *id_intf);
+    void op_fwd_alu(id_intf_t *id_intf);
 };
 
 

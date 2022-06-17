@@ -25,12 +25,13 @@ private:
     mem_intf_t *mem_intf;
 
 public:
-    void update();
     control(sys_intf_t *sys_intf, if_intf_t *if_intf, id_intf_t *id_intf,
         ex_intf_t *ex_intf, mem_intf_t *mem_intf);
+    void update();
 private:
-    void update(ctrl_intf_t *ctrl_intf, sys_intf_t *sys_intf);
-    void pipeline_ctrl(ctrl_intf_t *ctrl_intf, sys_intf_t *sys_intf);
-    void store_mask(ctrl_intf_t *ctrl_intf);
-    void branch_resolution(ctrl_intf_t *ctrl_intf, sys_intf_t *sys_intf);
+    void update(sys_intf_t *sys_intf, id_intf_t *id_intf, ex_intf_t *ex_intf,
+        mem_intf_t *mem_intf);
+    void pipeline_ctrl(sys_intf_t *sys_intf, id_intf_t *id_intf);
+    void store_mask(id_intf_t *id_intf, ex_intf_t *ex_intf);
+    void branch_resolution(sys_intf_t *sys_intf, id_intf_t *id_intf, ex_intf_t *ex_intf);
 };

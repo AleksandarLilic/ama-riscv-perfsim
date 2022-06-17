@@ -29,6 +29,11 @@ void core::reset_seq(sys_intf_t *sys_intf)
     sys_intf->rst_seq_d1 = (sys_intf->rst_seq & 0b100) >> 2;
     sys_intf->rst_seq_d2 = (sys_intf->rst_seq & 0b10) >> 1;
     sys_intf->rst_seq_d3 = sys_intf->rst_seq & 0b1;
+
+    //LOG("sys_intf->rst_seq: " << sys_intf->rst_seq);
+    //LOG("sys_intf->rst_seq_d1: " << sys_intf->rst_seq_d1);
+    //LOG("sys_intf->rst_seq_d2: " << sys_intf->rst_seq_d2);
+    //LOG("sys_intf->rst_seq_d3: " << sys_intf->rst_seq_d3);
 }
 
 
@@ -50,19 +55,31 @@ core::core(seq_queue *q, uint32_t *imem_ptr, uint32_t *dmem_ptr) :
     mem_init(imem_ptr, dmem_ptr);
     intf_cfg.init_sys(q, &sys_intf);
     intf_cfg.init_if_id(q, &sys_intf, &if_intf, &id_intf, imem_ptr);
+    intf_cfg.init_id_ex(q, &sys_intf, &id_intf, &ex_intf);
+    intf_cfg.init_ex_mem(q, &sys_intf, &id_intf, &ex_intf, &mem_intf);
     //init(q);
     LOG("core queue constructor called");
 }
 
+
+// Datapath logic
 #define ALU_OUT_MOCK 12
 
 void core::front_end(if_intf_t *if_intf, id_intf_t *id_intf)
 {
-    //LOG("Before update - PC: " << if_intf->pc << "; NX PC: " << id_intf->nx_pc);
-    //if_intf->imem_addr = id_intf->nx_pc;
-    if_intf->imem_addr = cl::mux2(uint32_t(id_intf->ctrl_intf.dec_pc_sel_if), id_intf->nx_pc, ALU_OUT_MOCK);
+    LOG("Current PC: " << if_intf->pc << "; NX PC: " << id_intf->nx_pc);
+    
+    if_intf->imem_addr = id_intf->nx_pc;
+    //if_intf->imem_addr = cl::mux2(uint32_t(id_intf->dec_pc_sel_if), id_intf->nx_pc, ALU_OUT_MOCK);
     if_intf->pc = id_intf->nx_pc + 1;
+
     //LOG("After update - PC: " << if_intf->pc << "; NX PC: " << id_intf->nx_pc);
+}
+
+
+void core::inst_parsing(id_intf_t *id_intf)
+{
+
 }
 
 // Core ID stage

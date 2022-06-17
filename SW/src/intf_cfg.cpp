@@ -26,27 +26,43 @@ void intf_cfg::init_sys(seq_queue *q, sys_intf_t *sys_intf)
     init(q, sys, SYS_SIZE);
 }
 
-void intf_cfg::init_if_id(seq_queue *q, sys_intf_t *sys_intf, if_intf_t *if_intf, 
-    id_intf_t *id_intf, uint32_t *imem_dout)
+void intf_cfg::init_if_id(seq_queue *q, sys_intf_t *sys_intf, if_intf_t *if_intf, id_intf_t *id_intf, 
+    uint32_t *imem_dout)
 {
     logic_init_cfg_t if_id[IF_ID_SIZE] = {
-        //{"nx_pc", RESET_VECTOR, &sys_intf->rst, &if_intf->pc_we_if, &if_intf->pc, &id_intf->nx_pc},
-        {"stall_if_d", 1, &sys_intf->rst, &in_true, 
-            &id_intf->ctrl_intf.stall_if, &id_intf->ctrl_intf.stall_if_d},
-        {"nx_pc", RESET_VECTOR, &sys_intf->rst, &id_intf->ctrl_intf.dec_pc_we_if, 
-            &if_intf->pc, &id_intf->nx_pc},
-        {"imem", 0, &in_false, &in_true, 
-        imem_dout, &id_intf->inst_id}
+        {"stall_if_d", 1, &sys_intf->rst, &in_true, &id_intf->stall_if, &id_intf->stall_if_d},
+       // FIXME {"nx_pc", RESET_VECTOR, &sys_intf->rst, &id_intf->dec_pc_we_if, &if_intf->pc, &id_intf->nx_pc},
+        {"nx_pc", RESET_VECTOR, &sys_intf->rst, &in_true, &if_intf->pc, &id_intf->nx_pc},
+        {"imem", 0, &in_false, &in_true, imem_dout, &id_intf->inst_id}
     };
     init(q, if_id, IF_ID_SIZE);
 }
 
+void intf_cfg::init_id_ex(seq_queue *q, sys_intf_t *sys_intf, id_intf_t *id_intf, ex_intf_t *ex_intf)
+{
+    logic_init_cfg_t id_ex[ID_EX_SIZE] = {
+        {"inst_ex", NOP, &sys_intf->rst, &id_intf->clear_ex, &id_intf->inst_id, &ex_intf->inst_ex},
+        {"funct3_ex", 0, &sys_intf->rst, &id_intf->clear_ex, &id_intf->funct3_id, &ex_intf->funct3_ex},
+        {"rs1_addr_ex", 0, &sys_intf->rst, &id_intf->clear_ex, &id_intf->rs1_addr_id, &ex_intf->rs1_addr_ex},
+        {"rs2_addr_ex", 0, &sys_intf->rst, &id_intf->clear_ex, &id_intf->rs2_addr_id, &ex_intf->rs2_addr_ex},
+        {"rd_addr_ex", 0, &sys_intf->rst, &id_intf->clear_ex, &id_intf->rd_addr_id, &ex_intf->rd_addr_ex},
+        {"rd_we_ex", 0, &sys_intf->rst, &id_intf->clear_ex, &id_intf->dec_rd_we_id, &ex_intf->rd_we_ex},
+        {"store_inst_ex", 0, &sys_intf->rst, &id_intf->clear_ex, &id_intf->dec_store_inst_id, &ex_intf->store_inst_ex},
+        {"branch_inst_ex", 0, &sys_intf->rst, &id_intf->clear_ex, &id_intf->dec_branch_inst_id, &ex_intf->branch_inst_ex},
+        {"jump_inst_ex", 0, &sys_intf->rst, &id_intf->clear_ex, &id_intf->dec_jump_inst_id, &ex_intf->jump_inst_ex},
+    };
+    init(q, id_ex, ID_EX_SIZE);
+}
 
-// void intf_cfg::intf_if_id(seq_queue *q, sys_intf_t *sys_intf, if_intf_t *if_intf, id_intf_t *id_intf)
-// {
-//     logic_init_cfg_t if_id[2] = {
-//         {"branch_inst_id_ex", 0, &sys_intf->rst, &en_true, &ctrl_intf->dec_branch_inst_id, &ctrl_intf.dec_branch_inst_ex},
-//         {"jump_inst_id_ex", 0, &sys_intf->rst, &en_true, &ctrl_intf.dec_jump_inst_id, &ctrl_intf.dec_jump_inst_ex}
-//     };
-//     init(q, if_id);
-// }
+void intf_cfg::init_ex_mem(seq_queue *q, sys_intf_t *sys_intf, id_intf_t *id_intf, ex_intf_t *ex_intf, mem_intf_t *mem_intf)
+{
+    logic_init_cfg_t ex_mem[EX_MEM_SIZE] = {
+        {"inst_mem", NOP, &sys_intf->rst, &id_intf->clear_mem, &ex_intf->inst_ex, &mem_intf->inst_mem},
+        {"funct3_mem", 0, &sys_intf->rst, &id_intf->clear_mem, &ex_intf->funct3_ex, &mem_intf->funct3_mem},
+        {"rs1_addr_mem", 0, &sys_intf->rst, &id_intf->clear_mem, &ex_intf->rs1_addr_ex, &mem_intf->rs1_addr_mem},
+        {"rs2_addr_mem", 0, &sys_intf->rst, &id_intf->clear_mem, &ex_intf->rs2_addr_ex, &mem_intf->rs2_addr_mem},
+        {"rd_addr_mem", 0, &sys_intf->rst, &id_intf->clear_mem, &ex_intf->rd_addr_ex, &mem_intf->rd_addr_mem},
+        {"rd_we_mem", 0, &sys_intf->rst, &id_intf->clear_mem, &ex_intf->rd_we_ex, &mem_intf->rd_we_mem}
+    };
+    init(q, ex_mem, EX_MEM_SIZE);
+}
