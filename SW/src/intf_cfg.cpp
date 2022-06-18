@@ -15,13 +15,13 @@ void intf_cfg::init(seq_queue *q, logic_init_cfg_t *logic_init_cfg, uint32_t loo
         LOG("connected input addr: " << logic_init_cfg[i].input);
     }
 }
-
+#ifndef MULTI_LOGIC
 void intf_cfg::init_sys(seq_queue *q, sys_intf_t *sys_intf)
 {
     logic_init_cfg_t sys[SYS_SIZE] = {
-        {"rst_seq_id", 1, &sys_intf->rst, &in_true, &sys_intf->rst_seq_d1, &sys_intf->rst_seq_id},
-        {"rst_seq_ex", 1, &sys_intf->rst, &in_true, &sys_intf->rst_seq_d2, &sys_intf->rst_seq_ex},
-        {"rst_seq_mem", 1, &sys_intf->rst, &in_true, &sys_intf->rst_seq_d3, &sys_intf->rst_seq_mem}
+        {"rst_seq_id", 1, &sys_intf->rst, &unsued_ture, &sys_intf->rst_seq_d1, &sys_intf->rst_seq_id},
+        {"rst_seq_ex", 1, &sys_intf->rst, &unsued_ture, &sys_intf->rst_seq_d2, &sys_intf->rst_seq_ex},
+        {"rst_seq_mem", 1, &sys_intf->rst, &unsued_ture, &sys_intf->rst_seq_d3, &sys_intf->rst_seq_mem}
     };
     init(q, sys, SYS_SIZE);
 }
@@ -30,10 +30,10 @@ void intf_cfg::init_if_id(seq_queue *q, sys_intf_t *sys_intf, if_intf_t *if_intf
     uint32_t *imem_dout)
 {
     logic_init_cfg_t if_id[IF_ID_SIZE] = {
-        {"stall_if_d", 1, &sys_intf->rst, &in_true, &id_intf->stall_if, &id_intf->stall_if_d},
-       // FIXME {"nx_pc", RESET_VECTOR, &sys_intf->rst, &id_intf->dec_pc_we_if, &if_intf->pc, &id_intf->nx_pc},
-        {"nx_pc", RESET_VECTOR, &sys_intf->rst, &in_true, &if_intf->pc, &id_intf->nx_pc},
-        {"imem", 0, &in_false, &in_true, imem_dout, &id_intf->inst_id}
+        {"stall_if_d", 1, &sys_intf->rst, &unsued_ture, &id_intf->stall_if, &id_intf->stall_if_d},
+//FIXME {"nx_pc", RESET_VECTOR, &sys_intf->rst, &id_intf->dec_pc_we_if, &if_intf->pc, &id_intf->nx_pc},
+        {"nx_pc", RESET_VECTOR, &sys_intf->rst, &unsued_ture, &if_intf->pc, &id_intf->nx_pc},
+        {"imem", 0, &unsued_false, &unsued_ture, imem_dout, &id_intf->inst_id}
     };
     init(q, if_id, IF_ID_SIZE);
 }
@@ -66,3 +66,18 @@ void intf_cfg::init_ex_mem(seq_queue *q, sys_intf_t *sys_intf, id_intf_t *id_int
     };
     init(q, ex_mem, EX_MEM_SIZE);
 }
+
+#else // !MULTI_LOGIC
+
+void intf_cfg::init_pipelines(seq_queue *q, sys_intf_t *sys_intf, if_intf_t *if_intf, id_intf_t *id_intf,
+    ex_intf_t *ex_intf, mem_intf_t *mem_intf)
+{
+    logic_init_cfg_t pipelines_cfg[4] = {
+        {"IF_ID", NOP, &sys_intf->rst, &id_intf->clear_if, &unsued_ture},
+        {"ID_EX", NOP, &sys_intf->rst, &id_intf->clear_id, &unsued_ture},
+        {"EX_MEM", NOP, &sys_intf->rst, &id_intf->clear_ex, &unsued_ture},
+        {"MEM_WB", NOP, &sys_intf->rst, &id_intf->clear_mem, &unsued_ture},
+    };
+}
+
+#endif

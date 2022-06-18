@@ -31,7 +31,7 @@ public:
 
 private: // modules
     // system
-    void  reset_seq(sys_intf_t *sys_intf);
+    void reset_seq(sys_intf_t *sys_intf);
     // if
     void front_end(if_intf_t *if_intf, id_intf_t *id_intf);
     // id

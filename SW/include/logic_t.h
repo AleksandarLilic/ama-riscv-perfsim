@@ -24,6 +24,9 @@ class seq_queue;
 
 // TODO: every input has to have a connect pointer
 
+//#define MULTI_LOGIC
+
+#ifndef MULTI_LOGIC
 
 class logic_t
 {
@@ -33,7 +36,7 @@ private:
     uint32_t rst_value;
     uint32_t *connected_enable;
     uint32_t *connected_reset;
-    //uint32_t *connected_clr;
+    uint32_t *connected_clear;
     uint32_t *connected_input;
     uint32_t *connected_output;
     std::string id;
@@ -57,6 +60,7 @@ public:
     void connect_out(uint32_t *connection);
     void connect_rst(uint32_t *connection);
     void connect_en(uint32_t *connection);
+    void connect_clr(uint32_t *connection);
     void update_hold();
     void update();
 
@@ -78,6 +82,64 @@ public:
     //    uint32_t operator- (const logic_t operand) const;
 
 };
+
+#else // !MULTI_LOGIC
+
+class single_port_t {
+private:
+    uint32_t rst_value;
+    uint32_t *connected_input;
+    uint32_t *connected_output;
+    uint32_t hold;
+    uint32_t current;
+    std::string id;
+public:
+    single_port_t() = delete;
+    single_port_t(uint32_t init_val, uint32_t *din, uint32_t *dout, std::string init_id);
+    void update_hold();
+    void update(uint32_t update_value);
+    void status_log(uint32_t prev);
+    uint32_t get_rst_value() { return rst_value; };
+    uint32_t get_input_value() { return *connected_input; };
+};
+
+
+
+class logic_t
+{
+private:
+    uint32_t *connected_enable;
+    uint32_t *connected_reset;
+    uint32_t *connected_clear;
+    std::string id;
+    std::vector<single_port_t> connected_ports;
+public:
+    //uint32_t len;
+    //uint32_t mask;
+    //void init_mask(uint32_t len_in) { for (uint32_t i = 0; i < len; i++) mask = (mask << 1) | 1; }
+private:
+    void enqueue(seq_queue *q);
+    void init(uint32_t init_val, std::string init_id);
+
+public:
+    // Constructors
+    logic_t() = delete;     // always provide queue
+    logic_t(seq_queue *q, uint32_t init_val, std::string init_id);
+    
+    // Methods
+    void connect_port(uint32_t init_val, uint32_t *din, uint32_t *dout, std::string init_id);
+    void connect_rst(uint32_t *connection);
+    void connect_en(uint32_t *connection);
+    void connect_clr(uint32_t *connection);
+    void update_hold();
+    void update();
+
+    // Getters
+    std::string get_id() const;
+    uint32_t out() const;
+};
+
+#endif
 
 // Non-member operator overloads
 std::ostream &operator<<(std::ostream &stream, const logic_t &operand);
