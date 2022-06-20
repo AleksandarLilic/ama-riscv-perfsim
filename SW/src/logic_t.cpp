@@ -102,7 +102,7 @@ uint32_t logic_t::out() const { return logic_reg; }
 
 #else // !MULTI_LOGIC
 
-single_port_t::single_port_t(uint32_t init_val, uint32_t *din, uint32_t *dout, std::string init_id)
+logic_port_t::logic_port_t(std::string init_id, uint32_t init_val, uint32_t *din, uint32_t *dout)
 {
     rst_value = init_val;
     hold = init_val;
@@ -112,7 +112,7 @@ single_port_t::single_port_t(uint32_t init_val, uint32_t *din, uint32_t *dout, s
     id = init_id;
 }
 
-void single_port_t::status_log(uint32_t prev)
+void logic_port_t::status_log(uint32_t prev)
 {
     LOG("    Update: '" << id
         << "'; Input: " << hold << ", HEX: " << FHEX(hold)
@@ -120,12 +120,12 @@ void single_port_t::status_log(uint32_t prev)
         << "; New Output: " << current << ", HEX: " << FHEX(current) << "; ");
 }
 
-void single_port_t::update_hold()
+void logic_port_t::update_hold()
 {
     hold = *connected_input;
 }
 
-void single_port_t::update(uint32_t update_value)
+void logic_port_t::update(uint32_t update_value)
 {
     uint32_t prev = current;
     current = update_value;
@@ -133,16 +133,25 @@ void single_port_t::update(uint32_t update_value)
     status_log(prev);
 }
 
-void logic_t::connect_port(uint32_t init_val, uint32_t *din, uint32_t *dout, std::string init_id)
+logic_t::logic_t(seq_queue *q, std::string init_id)
 {
-    single_port_t port_data(init_val, din, dout, init_id);
+    id = init_id;
+    q->add(this);
+}
+
+void logic_t::connect_port(std::string init_id, uint32_t init_val, uint32_t *din, uint32_t *dout)
+{
+    logic_port_t port_data(init_id, init_val, din, dout);
     connected_ports.push_back(port_data);
 }
+void logic_t::connect_rst(uint32_t *connection) { connected_reset = connection; }
+void logic_t::connect_en(uint32_t *connection) { connected_enable = connection; }
+void logic_t::connect_clr(uint32_t *connection) { connected_clear = connection; }
 
 void logic_t::update_hold()
 {
     if (*connected_enable & !(*connected_reset | *connected_clear)) {
-        for (single_port_t i : connected_ports)
+        for (logic_port_t i : connected_ports)
             i.update_hold();
     }
 }
@@ -151,7 +160,7 @@ void logic_t::update()
 {
     if (*connected_reset) {
         LOG("Resetting: " << id);
-        for (single_port_t i : connected_ports) {
+        for (logic_port_t i : connected_ports) {
             i.update(i.get_rst_value());
         }
         return;
@@ -159,7 +168,7 @@ void logic_t::update()
 
     if (*connected_clear) {
         LOG("Clearing: " << id);
-        for (single_port_t i : connected_ports) {
+        for (logic_port_t i : connected_ports) {
         i.update(i.get_rst_value());    // clear and reset value are the same for now
         }
         return;
@@ -167,7 +176,7 @@ void logic_t::update()
 
     if (*connected_enable) {
         LOG("Updating: " << id);
-        for (single_port_t i : connected_ports) {
+        for (logic_port_t i : connected_ports) {
             i.update(i.get_input_value());
         }
         return;

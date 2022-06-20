@@ -3,8 +3,6 @@
 #include "defines.h"
 #include "logic_t.h"
 
-#define RESET_VECTOR 0x0
-
 // TODO: interfaces cannot have logic_t, creates issues with queue append and ordering
 // TODO: global queue? visible to anyone, but only one for entire design
 

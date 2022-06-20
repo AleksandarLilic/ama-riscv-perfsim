@@ -49,6 +49,7 @@ void core::update()
     LOG("---------- inst in ID stage: " << std::hex << id_intf.inst_id << std::dec);
 }
 
+#ifndef MULTI_LOGIC
 core::core(seq_queue *q, uint32_t *imem_ptr, uint32_t *dmem_ptr) :
     control(&sys_intf, &if_intf, &id_intf, &ex_intf, &mem_intf)
 {
@@ -60,7 +61,16 @@ core::core(seq_queue *q, uint32_t *imem_ptr, uint32_t *dmem_ptr) :
     //init(q);
     LOG("core queue constructor called");
 }
-
+#else // !MULTI_LOGIC
+core::core(seq_queue *q, uint32_t *imem_ptr, uint32_t *dmem_ptr) :
+    control(&sys_intf, &if_intf, &id_intf, &ex_intf, &mem_intf)
+{
+    mem_init(imem_ptr, dmem_ptr);
+    intf_cfg.init_regs(q, &sys_intf, &if_intf, &id_intf, &ex_intf, &mem_intf);
+    //init(q);
+    LOG("core queue constructor called");
+}
+#endif
 
 // Datapath logic
 #define ALU_OUT_MOCK 12
