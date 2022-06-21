@@ -13,8 +13,8 @@ control::control(sys_intf_t *sys_intf, if_intf_t *if_intf, id_intf_t *id_intf,
 
 void control::update()
 {
-    id_intf->stall_if = sys_intf->rst;
-    if (id_intf->stall_if_d)
+    id_intf->stall_if_id = sys_intf->rst;
+    if (id_intf->stall_if_id_d)
         id_intf->inst_id = NOP;
     update(sys_intf, id_intf, ex_intf, mem_intf);
 }
@@ -67,23 +67,31 @@ void control::pipeline_ctrl(sys_intf_t *sys_intf, id_intf_t *id_intf)
 {
     LOG("--- pipeline control called");
 
-    id_intf->stall_if = id_intf->dec_branch_inst_id | 
+    id_intf->stall_if_id = id_intf->dec_branch_inst_id | 
         id_intf->dec_jump_inst_id /* ||
         dut_m_dd_bubble_ex*/;
     
-    id_intf->clear_if = id_intf->dec_branch_inst_id |
+    id_intf->clear_if_id = id_intf->dec_branch_inst_id |
         id_intf->dec_jump_inst_id;
 
+
+#ifndef MULTI_LOGIC
     // FIXME: inverted logic due to logic_t enable issue
-    id_intf->clear_id = !sys_intf->rst_seq_id /* || dut_m_dd_bubble_ex*/;
-    id_intf->clear_ex = !sys_intf->rst_seq_ex;
-    id_intf->clear_mem = !sys_intf->rst_seq_mem;
+    id_intf->clear_id = !sys_intf->rst_seq_id_ex /* || dut_m_dd_bubble_ex*/;
+    id_intf->clear_ex = !sys_intf->rst_seq_ex_mem;
+    id_intf->clear_mem = !sys_intf->rst_seq_mem_wb;
+#else // !MULTI_LOGIC
+    id_intf->clear_id_ex = sys_intf->rst_seq_id_ex
+        /* || dut_m_dd_bubble_ex*/;
+    id_intf->clear_ex_mem = sys_intf->rst_seq_ex_mem;
+    id_intf->clear_mem_wb = sys_intf->rst_seq_mem_wb;
+#endif
 
     //LOG("id_intf->clear_id: " << id_intf->clear_id);
     //LOG("id_intf->clear_ex: " << id_intf->clear_ex);
     //LOG("id_intf->clear_mem: " << id_intf->clear_mem);
     
-    id_intf->dec_pc_we_if = id_intf->dec_pc_we_if & (~id_intf->stall_if);
+    id_intf->dec_pc_we_if = id_intf->dec_pc_we_if & (~id_intf->stall_if_id);
 }
 
 void control::branch_resolution(sys_intf_t *sys_intf, id_intf_t *id_intf, ex_intf_t *ex_intf)

@@ -139,7 +139,7 @@ int main()
     uint32_t clk_count = 2 + 10 + 9 + 5 + 3 + 6 + 2 + 2 + 1;
     //                      dd
     clk_count = clk_count + 3;
-    //clk_count = 6;
+    clk_count = 6;
 
     seq_queue q;
     std::array<uint32_t, IMEM_SIZE> imem{};

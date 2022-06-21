@@ -40,12 +40,12 @@ typedef struct id_intf_t
     uint32_t funct7_id;
 
     // pipeline
-    uint32_t stall_if;
-    uint32_t stall_if_d;
-    uint32_t clear_if;
-    uint32_t clear_id;
-    uint32_t clear_ex;
-    uint32_t clear_mem;
+    uint32_t stall_if_id;
+    uint32_t stall_if_id_d;
+    uint32_t clear_if_id;
+    uint32_t clear_id_ex;
+    uint32_t clear_ex_mem;
+    uint32_t clear_mem_wb;
 
     // from control, as datapath control
     uint32_t dec_branch_inst_id;
@@ -164,7 +164,7 @@ typedef struct sys_intf_t
     uint32_t rst_seq_d2;
     uint32_t rst_seq_d3;
 
-    uint32_t rst_seq_id;
-    uint32_t rst_seq_ex;
-    uint32_t rst_seq_mem;
+    uint32_t rst_seq_id_ex;
+    uint32_t rst_seq_ex_mem;
+    uint32_t rst_seq_mem_wb;
 } sys_intf_t;

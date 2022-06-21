@@ -100,9 +100,8 @@ public:
     void update(uint32_t update_value);
     void status_log(uint32_t prev);
     uint32_t get_rst_value() { return rst_value; };
-    uint32_t get_input_value() { return *connected_input; };
+    uint32_t get_input_value() { return hold; };
 };
-
 
 
 class logic_t
@@ -112,7 +111,7 @@ private:
     uint32_t *connected_reset;
     uint32_t *connected_clear;
     std::string id;
-    std::vector<logic_port_t> connected_ports;
+    std::vector<logic_port_t *> connected_ports;
 public:
     //uint32_t len;
     //uint32_t mask;

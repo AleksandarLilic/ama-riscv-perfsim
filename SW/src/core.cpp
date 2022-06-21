@@ -30,10 +30,10 @@ void core::reset_seq(sys_intf_t *sys_intf)
     sys_intf->rst_seq_d2 = (sys_intf->rst_seq & 0b10) >> 1;
     sys_intf->rst_seq_d3 = sys_intf->rst_seq & 0b1;
 
-    //LOG("sys_intf->rst_seq: " << sys_intf->rst_seq);
-    //LOG("sys_intf->rst_seq_d1: " << sys_intf->rst_seq_d1);
-    //LOG("sys_intf->rst_seq_d2: " << sys_intf->rst_seq_d2);
-    //LOG("sys_intf->rst_seq_d3: " << sys_intf->rst_seq_d3);
+    LOG("sys_intf->rst_seq: " << sys_intf->rst_seq);
+    LOG("sys_intf->rst_seq_d1: " << sys_intf->rst_seq_d1);
+    LOG("sys_intf->rst_seq_d2: " << sys_intf->rst_seq_d2);
+    LOG("sys_intf->rst_seq_d3: " << sys_intf->rst_seq_d3);
 }
 
 
@@ -66,7 +66,7 @@ core::core(seq_queue *q, uint32_t *imem_ptr, uint32_t *dmem_ptr) :
     control(&sys_intf, &if_intf, &id_intf, &ex_intf, &mem_intf)
 {
     mem_init(imem_ptr, dmem_ptr);
-    intf_cfg.init_regs(q, &sys_intf, &if_intf, &id_intf, &ex_intf, &mem_intf);
+    intf_cfg.init_regs(q, &sys_intf, &if_intf, &id_intf, &ex_intf, &mem_intf, imem_ptr);
     //init(q);
     LOG("core queue constructor called");
 }
