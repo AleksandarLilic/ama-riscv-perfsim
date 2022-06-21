@@ -28,6 +28,8 @@ public:
     ex_intf_t ex_intf{};
     mem_intf_t mem_intf{};
     wb_intf_t wb_intf{};
+    
+    reg_file_intf_t reg_file_intf{};
 
 private: // modules
     // system
@@ -48,9 +50,6 @@ private: // modules
     void load_shift_mask(mem_intf_t *mem_intf);
     // wb
     void writeback(wb_intf_t *wb_intf);
-
-public:
-    //uint32_t pc_mock = 0;
 
 private:
     void init(seq_queue *q);    // initialize all signals within structures (names and initial/reset values)

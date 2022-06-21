@@ -137,9 +137,9 @@ int main()
     // cpu
     //                  rst + r + i + l + s + b + j + u + inv;
     uint32_t clk_count = 2 + 10 + 9 + 5 + 3 + 6 + 2 + 2 + 1;
-    //                      dd
-    clk_count = clk_count + 3;
-    clk_count = 6;
+    //                      dd  dummy
+    clk_count = clk_count + 3  + 3;
+    //clk_count = 6;
 
     seq_queue q;
     std::array<uint32_t, IMEM_SIZE> imem{};
@@ -191,6 +191,9 @@ int main()
     imem[38] = 0x00628433;  imemc[38] = "add     x8,x5,x6";
     imem[39] = 0x00f40593;  imemc[39] = "addi    x11,x8,15";
     imem[40] = 0x06340613;  imemc[40] = "addi    x12,x8,99";
+    imem[41] = 0x06340613;  imemc[41] = "addi    x12,x8,99";
+    imem[42] = 0x06340613;  imemc[42] = "addi    x12,x8,99";
+    imem[43] = 0x06340613;  imemc[43] = "addi    x12,x8,99";
 
     core.reset(1);
     core.update_fe();

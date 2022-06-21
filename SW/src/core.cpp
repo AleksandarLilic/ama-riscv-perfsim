@@ -1,10 +1,5 @@
 #include "../include/core.h"
 
-//void core::init(seq_queue *q)
-//{
-//    LOG("core init called");    
-//}
-
 void core::mem_init(uint32_t *imem_ptr, uint32_t *dmem_ptr) 
 { 
     LOG("mem_init called");
@@ -45,8 +40,12 @@ void core::update_fe()
 void core::update()
 {
     reset_seq(&sys_intf);
+    inst_parsing(&id_intf);
     control.update();
+    reg_file.read();
+
     LOG("---------- inst in ID stage: " << std::hex << id_intf.inst_id << std::dec);
+    reg_file.write();
 }
 
 #ifndef MULTI_LOGIC
@@ -63,10 +62,11 @@ core::core(seq_queue *q, uint32_t *imem_ptr, uint32_t *dmem_ptr) :
 }
 #else // !MULTI_LOGIC
 core::core(seq_queue *q, uint32_t *imem_ptr, uint32_t *dmem_ptr) :
-    control(&sys_intf, &if_intf, &id_intf, &ex_intf, &mem_intf)
+    control(&sys_intf, &if_intf, &id_intf, &ex_intf, &mem_intf, &wb_intf),
+    reg_file(&reg_file_intf, &id_intf, &mem_intf, &wb_intf)
 {
     mem_init(imem_ptr, dmem_ptr);
-    intf_cfg.init_regs(q, &sys_intf, &if_intf, &id_intf, &ex_intf, &mem_intf, imem_ptr);
+    intf_cfg.init_regs(q, &sys_intf, &reg_file_intf, &if_intf, &id_intf, &ex_intf, &mem_intf, imem_ptr);
     //init(q);
     LOG("core queue constructor called");
 }
@@ -89,7 +89,14 @@ void core::front_end(if_intf_t *if_intf, id_intf_t *id_intf)
 
 void core::inst_parsing(id_intf_t *id_intf)
 {
+    LOG("--- inst_parsing");
 
+    id_intf->opc7_id = inst_field::opc7(id_intf->inst_id);
+    id_intf->funct3_id = inst_field::funct3(id_intf->inst_id);
+    id_intf->funct7_id = inst_field::funct7(id_intf->inst_id);
+    id_intf->rs1_addr_id = inst_field::rs1_addr(id_intf->inst_id);
+    id_intf->rs2_addr_id = inst_field::rs2_addr(id_intf->inst_id);
+    id_intf->rd_addr_id = inst_field::rd_addr(id_intf->inst_id);
 }
 
 // Core ID stage

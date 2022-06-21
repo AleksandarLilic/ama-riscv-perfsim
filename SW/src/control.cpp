@@ -1,16 +1,18 @@
 #include "../include/control.h"
 
-//extern void imemc_print_ex();
+// constructor
 control::control(sys_intf_t *sys_intf, if_intf_t *if_intf, id_intf_t *id_intf,
-    ex_intf_t *ex_intf, mem_intf_t *mem_intf)
+    ex_intf_t *ex_intf, mem_intf_t *mem_intf, wb_intf_t *wb_intf)
 {
     this->sys_intf = sys_intf;
     this->if_intf = if_intf;
     this->id_intf = id_intf;
     this->ex_intf = ex_intf;
     this->mem_intf = mem_intf;
+    this->wb_intf = wb_intf;
 }
 
+// methods
 void control::update()
 {
     id_intf->stall_if_id = sys_intf->rst;
@@ -22,23 +24,7 @@ void control::update()
 void control::update(sys_intf_t *sys_intf, id_intf_t *id_intf, ex_intf_t *ex_intf,
     mem_intf_t *mem_intf)
 {
-    LOG("--- control called");
-    id_intf->opc7_id = inst_field::opc7(id_intf->inst_id);
-    id_intf->funct3_id = inst_field::funct3(id_intf->inst_id);
-    id_intf->funct7_id = inst_field::funct7(id_intf->inst_id);
-    id_intf->rs1_addr_id = inst_field::rs1_addr(id_intf->inst_id);
-    id_intf->rs2_addr_id = inst_field::rs2_addr(id_intf->inst_id);
-    id_intf->rd_addr_id = inst_field::rd_addr(id_intf->inst_id);
-    // from ex
-    //id_intf->funct3_ex = inst_field::funct3(ex_intf->inst_ex);
-    //id_intf->rs1_addr_ex = inst_field::rs1_addr(ex_intf->inst_ex);
-    //id_intf->rs2_addr_ex = inst_field::rs2_addr(ex_intf->inst_ex);
-    //id_intf->rd_addr_ex = inst_field::rd_addr(ex_intf->inst_ex);
-    // from mem
-    //id_intf->rs1_addr_mem = inst_field::rs1_addr(mem_intf->inst_mem);
-    //id_intf->rs2_addr_mem = inst_field::rs2_addr(mem_intf->inst_mem);
-    //id_intf->rd_addr_mem = inst_field::rd_addr(mem_intf->inst_mem);
-    //LOG("ctrl, funct7 = " << std::hex << (id_intf->funct7_id) << std::dec);
+    LOG("--- control");
 
     decoder.update(sys_intf, id_intf);
     op_fwd.update(sys_intf, id_intf, ex_intf, mem_intf);
@@ -49,18 +35,6 @@ void control::update(sys_intf_t *sys_intf, id_intf_t *id_intf, ex_intf_t *ex_int
     pipeline_ctrl(sys_intf, id_intf);
 
     // /* new func: */ control_store_mask(id_intf);
-
-
-    // ------- for test only, imitate sequential assignment
-    /*id_intf->in_inst_mem = id_intf->in_inst_ex;
-    id_intf->rd_we_mem = id_intf->rd_we_ex;
-
-    id_intf->in_inst_ex = id_intf->in_inst_id;
-    id_intf->rd_we_ex = id_intf->dec_rd_we_id;
-    id_intf->dec_store_inst_ex = id_intf->dec_store_inst_id;*/
-
-    // id_intf->dec_branch_inst_ex = id_intf->dec_branch_inst_id;
-    // id_intf->dec_jump_inst_ex = id_intf->dec_jump_inst_id;
 }
 
 void control::pipeline_ctrl(sys_intf_t *sys_intf, id_intf_t *id_intf)
@@ -81,12 +55,11 @@ void control::pipeline_ctrl(sys_intf_t *sys_intf, id_intf_t *id_intf)
     id_intf->clear_ex = !sys_intf->rst_seq_ex_mem;
     id_intf->clear_mem = !sys_intf->rst_seq_mem_wb;
 #else // !MULTI_LOGIC
-    id_intf->clear_id_ex = sys_intf->rst_seq_id_ex
-        /* || dut_m_dd_bubble_ex*/;
+    id_intf->clear_id_ex = sys_intf->rst_seq_id_ex /* || dut_m_dd_bubble_ex*/;
     id_intf->clear_ex_mem = sys_intf->rst_seq_ex_mem;
     id_intf->clear_mem_wb = sys_intf->rst_seq_mem_wb;
 #endif
-
+    // debug:
     //LOG("id_intf->clear_id: " << id_intf->clear_id);
     //LOG("id_intf->clear_ex: " << id_intf->clear_ex);
     //LOG("id_intf->clear_mem: " << id_intf->clear_mem);
@@ -96,7 +69,7 @@ void control::pipeline_ctrl(sys_intf_t *sys_intf, id_intf_t *id_intf)
 
 void control::branch_resolution(sys_intf_t *sys_intf, id_intf_t *id_intf, ex_intf_t *ex_intf)
 {
-    LOG("--- branch resolution called");
+    LOG("--- branch resolution");
     LOG("branch inst ex: " << ex_intf->branch_inst_ex);
 
     // this function works on data in the ex stage
