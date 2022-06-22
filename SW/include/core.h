@@ -51,7 +51,6 @@ private: // modules
     void writeback(wb_intf_t *wb_intf);
 
 private:
-    void init(seq_queue *q);    // initialize all signals within structures (names and initial/reset values)
     void mem_init(uint32_t *imem_ptr, uint32_t *dmem_ptr);
 
 public:

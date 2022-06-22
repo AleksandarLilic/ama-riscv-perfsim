@@ -8,10 +8,31 @@ uint32_t inst_field::rd_addr(uint32_t inst) { return (inst & RD_M) >> 7; }
 uint32_t inst_field::rs1_addr(uint32_t inst) { return (inst & RS1_M) >> 15; }
 uint32_t inst_field::rs2_addr(uint32_t inst) { return (inst & RS2_M) >> 20; }
 uint32_t inst_field::imm_i(uint32_t inst) { return (inst & IMM_I_M) >> 20; }
-uint32_t inst_field::imm_s(uint32_t inst) { return ((int(inst) & IMM_S_HI_M) >> 20) | ((inst & IMM_S_LO_M) >> 7); }
-uint32_t inst_field::imm_b(uint32_t inst) 
+uint32_t inst_field::imm_s(uint32_t inst) 
 { 
-    return ((int(inst) & IMM_B_SB_M) >> 17) | 
-        ((inst & IMM_B_HI_M) >> 1)// |
-        ; 
+    return ((int(inst) & IMM_30_25_M) >> 20) |
+        ((inst & IMM_11_8_M) >> 7) |
+        ((inst & IMM_7_M) >> 7);
+}
+uint32_t inst_field::imm_b(uint32_t inst)
+{ 
+    return ((int(inst) & IMM_31_M) >> 19) |
+        ((inst & IMM_7_M) << 4) |
+        ((inst & IMM_30_25_M) >> 20) |
+        ((inst & IMM_11_8_M) >> 7);
+}
+
+uint32_t inst_field::imm_j(uint32_t inst)
+{
+    return ((int(inst) & IMM_31_M) >> 11) |
+        ((inst & IMM_19_12_M)) |
+        ((inst & IMM_20_M) >> 9) |
+        ((inst & IMM_30_25_M) >> 20) |
+        ((inst & IMM_24_21_M) >> 20);
+}
+
+uint32_t inst_field::imm_u(uint32_t inst)
+{
+    return ((int(inst) & IMM_31_20_M)) |
+        ((inst & IMM_19_12_M));
 }

@@ -28,8 +28,8 @@ typedef struct id_intf_t
     uint32_t inst_id;
 
     uint32_t nx_pc;
-    uint32_t imm_id;
     uint32_t store_inst;
+    uint32_t imm_gen_out;
     // reg file out
     uint32_t rf_data_a;
     uint32_t rf_data_b;

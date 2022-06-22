@@ -18,8 +18,9 @@ control::control(sys_intf_t *sys_intf, if_intf_t *if_intf, id_intf_t *id_intf,
 void control::update()
 {
     id_intf->stall_if_id = sys_intf->rst;
-    if (id_intf->stall_if_id_d)
-        id_intf->inst_id = NOP;
+   // if (id_intf->stall_if_id_d)
+   //     id_intf->inst_id = NOP;
+    LOG("inst going to control: " << FHEX(id_intf->inst_id));
     update(sys_intf, id_intf, ex_intf, mem_intf);
 }
 

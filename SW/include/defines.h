@@ -26,12 +26,15 @@
 #define RS1_M uint32_t((0b1'1111)<<15)
 #define RS2_M uint32_t((0b1'1111)<<20)
 #define IMM_I_M uint32_t((0b111'1111'1111)<<20)
-#define IMM_S_HI_M int32_t((0b111'1111)<<25)
-#define IMM_S_LO_M uint32_t((0b1'1111)<<7)
-#define IMM_B_SB_M int32_t((0b1)<<31)
-#define IMM_B_HI_M uint32_t((0b11'1111)<<25)
-#define IMM_B_LO_M uint32_t((0b1111)<<8)
-#define IMM_B_11_M uint32_t((0b1)<<7)
+#define IMM_SHAMT uint32_t(0b1'1111)
+#define IMM_31_M int32_t((0b1)<<31)
+#define IMM_31_20_M int32_t((0b1111'1111'1111)<<20)
+#define IMM_30_25_M int32_t((0b111'1111)<<25)
+#define IMM_20_M uint32_t((0b1)<<20)
+#define IMM_19_12_M int32_t((0b1111'1111)<<12)
+#define IMM_24_21_M int32_t((0b1111)<<21)
+#define IMM_11_8_M uint32_t((0b1111)<<8)
+#define IMM_7_M uint32_t((0b1)<<7)
 
 // Instructions hard-coded
 #define NOP             uint32_t(0x13)  // addi x0 x0 0

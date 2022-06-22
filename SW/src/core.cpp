@@ -1,5 +1,14 @@
 #include "../include/core.h"
 
+core::core(seq_queue *q, uint32_t *imem_ptr, uint32_t *dmem_ptr) :
+    control(&sys_intf, &if_intf, &id_intf, &ex_intf, &mem_intf, &wb_intf),
+    reg_file(&reg_file_intf, &id_intf, &mem_intf, &wb_intf)
+{
+    mem_init(imem_ptr, dmem_ptr);
+    intf_cfg.init_regs(q, &sys_intf, &reg_file_intf, &if_intf, &id_intf, &ex_intf, &mem_intf, imem_ptr);
+    LOG("core queue constructor called");
+}
+
 void core::mem_init(uint32_t *imem_ptr, uint32_t *dmem_ptr) 
 { 
     LOG("mem_init called");
@@ -31,7 +40,6 @@ void core::reset_seq(sys_intf_t *sys_intf)
     // LOG("sys_intf->rst_seq_d3: " << sys_intf->rst_seq_d3);
 }
 
-
 void core::update_fe()
 {
     front_end(&if_intf, &id_intf);
@@ -43,38 +51,16 @@ void core::update()
     inst_parsing(&id_intf);
     control.update();
     reg_file.read();
+    imm_gen(&id_intf);
 
     LOG("---------- inst in ID stage: " << std::hex << id_intf.inst_id << std::dec);
     reg_file.write();
 }
 
-#ifndef MULTI_LOGIC
-core::core(seq_queue *q, uint32_t *imem_ptr, uint32_t *dmem_ptr) :
-    control(&sys_intf, &if_intf, &id_intf, &ex_intf, &mem_intf)
-{
-    mem_init(imem_ptr, dmem_ptr);
-    intf_cfg.init_sys(q, &sys_intf);
-    intf_cfg.init_if_id(q, &sys_intf, &if_intf, &id_intf, imem_ptr);
-    intf_cfg.init_id_ex(q, &sys_intf, &id_intf, &ex_intf);
-    intf_cfg.init_ex_mem(q, &sys_intf, &id_intf, &ex_intf, &mem_intf);
-    //init(q);
-    LOG("core queue constructor called");
-}
-#else // !MULTI_LOGIC
-core::core(seq_queue *q, uint32_t *imem_ptr, uint32_t *dmem_ptr) :
-    control(&sys_intf, &if_intf, &id_intf, &ex_intf, &mem_intf, &wb_intf),
-    reg_file(&reg_file_intf, &id_intf, &mem_intf, &wb_intf)
-{
-    mem_init(imem_ptr, dmem_ptr);
-    intf_cfg.init_regs(q, &sys_intf, &reg_file_intf, &if_intf, &id_intf, &ex_intf, &mem_intf, imem_ptr);
-    //init(q);
-    LOG("core queue constructor called");
-}
-#endif
-
 // Datapath logic
 #define ALU_OUT_MOCK 12
 
+// Core IF stage
 void core::front_end(if_intf_t *if_intf, id_intf_t *id_intf)
 {
     LOG("Current PC: " << if_intf->pc << "; NX PC: " << id_intf->nx_pc);
@@ -86,7 +72,7 @@ void core::front_end(if_intf_t *if_intf, id_intf_t *id_intf)
     //LOG("After update - PC: " << if_intf->pc << "; NX PC: " << id_intf->nx_pc);
 }
 
-
+// Core ID stage
 void core::inst_parsing(id_intf_t *id_intf)
 {
     LOG("--- inst_parsing");
@@ -99,8 +85,24 @@ void core::inst_parsing(id_intf_t *id_intf)
     id_intf->rd_addr_id = inst_field::rd_addr(id_intf->inst_id);
 }
 
-// Core ID stage
-
+void core::imm_gen(id_intf_t *id_intf)
+{
+    LOG("imm_gen called");
+    switch (id_intf->dec_ig_sel_id) {
+    case uint32_t(imm_gen_t::disabled): id_intf->imm_gen_out = 0u; break;
+    case uint32_t(imm_gen_t::i_type): id_intf->imm_gen_out = inst_field::imm_i(id_intf->inst_id); break;
+    case uint32_t(imm_gen_t::s_type): id_intf->imm_gen_out = inst_field::imm_s(id_intf->inst_id); break;
+    case uint32_t(imm_gen_t::b_type): id_intf->imm_gen_out = inst_field::imm_b(id_intf->inst_id); break;
+    case uint32_t(imm_gen_t::j_type): id_intf->imm_gen_out = inst_field::imm_j(id_intf->inst_id); break;
+    case uint32_t(imm_gen_t::u_type): id_intf->imm_gen_out = inst_field::imm_u(id_intf->inst_id); break;
+    default: LOGE("Immediate Generate invalid type");
+    }
+    // fix srai
+    if (id_intf->dec_ig_sel_id == uint32_t(imm_gen_t::i_type) && (id_intf->funct3_id == 0b101))
+        id_intf->imm_gen_out &= IMM_SHAMT;
+    LOG("    imm_gen_sel: " << id_intf->dec_ig_sel_id);
+    LOG("    imm_gen_out: " << int(id_intf->imm_gen_out));
+}
 
 //void core::ex_stage()
 //{
