@@ -25,4 +25,3 @@ TEST(HelloTest, TestEquals) {
 	EXPECT_EQ(ff.m_get(), 100);
 
 }
-
