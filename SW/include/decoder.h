@@ -10,8 +10,14 @@
 
 class decoder
 {
+private:
+    sys_intf_t *sys_intf;
+    id_intf_t *id_intf;
+
 public:
-    void update(sys_intf_t *sys_intf, id_intf_t *id_intf);
+    void update();
+    decoder() = delete;
+    decoder(sys_intf_t *sys_intf, id_intf_t *id_intf);
 
 private:
     void r_type(id_intf_t *id_intf);

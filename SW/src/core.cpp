@@ -25,10 +25,10 @@ void core::reset_seq(sys_intf_t *sys_intf)
     sys_intf->rst_seq_d2 = (sys_intf->rst_seq & 0b10) >> 1;
     sys_intf->rst_seq_d3 = sys_intf->rst_seq & 0b1;
 
-    LOG("sys_intf->rst_seq: " << sys_intf->rst_seq);
-    LOG("sys_intf->rst_seq_d1: " << sys_intf->rst_seq_d1);
-    LOG("sys_intf->rst_seq_d2: " << sys_intf->rst_seq_d2);
-    LOG("sys_intf->rst_seq_d3: " << sys_intf->rst_seq_d3);
+    // LOG("sys_intf->rst_seq: " << sys_intf->rst_seq);
+    // LOG("sys_intf->rst_seq_d1: " << sys_intf->rst_seq_d1);
+    // LOG("sys_intf->rst_seq_d2: " << sys_intf->rst_seq_d2);
+    // LOG("sys_intf->rst_seq_d3: " << sys_intf->rst_seq_d3);
 }
 
 

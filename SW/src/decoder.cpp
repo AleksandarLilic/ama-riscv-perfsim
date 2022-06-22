@@ -1,6 +1,12 @@
 #include "../include/decoder.h"
 
-void decoder::update(sys_intf_t *sys_intf, id_intf_t *id_intf)
+decoder::decoder(sys_intf_t *sys_intf, id_intf_t *id_intf)
+{
+    this->sys_intf = sys_intf;
+    this->id_intf = id_intf;
+}
+
+void decoder::update()
 {
     LOG("--- dec called");
     if (!sys_intf->rst) {

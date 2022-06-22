@@ -8,6 +8,8 @@
 #define LOGE(x) std::cout << " >>> ERROR: "<< x << std::endl
 #define FHEX(x) std::hex << x << std::dec
 
+#define LOG_DBG 0
+
 // Combinational logic
 #define CL_UNUSED uint32_t(0xFFFF'FFFF)
 

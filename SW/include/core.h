@@ -40,7 +40,6 @@ private: // modules
     void inst_parsing(id_intf_t *id_intf);
     control control;
     reg_file reg_file;
-    //reg_file reg_file(sys_intf_t *sys_intf, id_intf_t *id_intf, mem_intf_t *mem_intf);
     void imm_gen(id_intf_t *id_intf);
     // ex
     void branch_compare(ex_intf_t *ex_intf);

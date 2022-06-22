@@ -1,6 +1,14 @@
 #include "../include/op_fwd.h"
 
-void op_fwd::update(sys_intf_t *sys_intf, id_intf_t *id_intf, ex_intf_t *ex_intf, mem_intf_t *mem_intf)
+op_fwd::op_fwd(sys_intf_t *sys_intf, id_intf_t *id_intf, ex_intf_t *ex_intf, mem_intf_t *mem_intf)
+{
+    this->sys_intf = sys_intf;
+    this->id_intf = id_intf;
+    this->ex_intf = ex_intf;
+    this->mem_intf = mem_intf;
+}
+
+void op_fwd::update()
 {
     LOG("--- op_fwd called");
     dependency_detection(id_intf, ex_intf, mem_intf);

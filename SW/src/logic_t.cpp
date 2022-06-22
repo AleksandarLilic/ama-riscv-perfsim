@@ -11,6 +11,7 @@
 #include "../include/logic_t.h"
 #include "../include/seq_queue.h"
 
+
 #ifndef MULTI_LOGIC
 
 // Constructor
@@ -130,7 +131,9 @@ void logic_port_t::update(uint32_t update_value)
     uint32_t prev = current;
     current = update_value;
     *connected_output = update_value;
+#if LOG_DBG
     status_log(prev);
+#endif
 }
 
 logic_t::logic_t(seq_queue *q, std::string init_id)

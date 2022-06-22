@@ -15,9 +15,16 @@ private:
     bool dd_rs2_ex;
     bool dd_rs1_mem;
     bool dd_rs2_mem;
+    sys_intf_t *sys_intf;
+    id_intf_t *id_intf;
+    ex_intf_t *ex_intf;
+    mem_intf_t *mem_intf;
 
 public:
-    void update(sys_intf_t *sys_intf, id_intf_t *id_intf, ex_intf_t *ex_intf, mem_intf_t *mem_intf);
+    void update();
+    op_fwd() = delete;
+    op_fwd(sys_intf_t *sys_intf, id_intf_t *id_intf, ex_intf_t *ex_intf, mem_intf_t *mem_intf);
+
 
 private:
     void dependency_detection(id_intf_t *id_intf, ex_intf_t *ex_intf, mem_intf_t *mem_intf);
