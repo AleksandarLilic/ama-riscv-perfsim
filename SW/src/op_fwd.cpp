@@ -10,7 +10,7 @@ op_fwd::op_fwd(sys_intf_t *sys_intf, id_intf_t *id_intf, ex_intf_t *ex_intf, mem
 
 void op_fwd::update()
 {
-    LOG("--- op_fwd called");
+    LOG("--- op_fwd::update");
     dependency_detection(id_intf, ex_intf, mem_intf);
     LOG("dependency detection: ");
     LOG ("    dd_rs1_ex: " << dd_rs1_ex);
@@ -72,13 +72,13 @@ void op_fwd::op_fwd_alu(id_intf_t *id_intf)
 {
     // Operand A
     if ((dd_rs1_ex) && ((id_intf->dec_alu_a_sel_id == uint32_t(alu_op_a_sel_t::rs1))) /* && (!bubble_load) */)
-        id_intf->of_alu_a_sel_fwd_id = uint32_t(alu_op_a_sel_fwd_t::fwd_mem);             // forward previous ALU result
+        id_intf->of_alu_a_sel_fwd_id = uint32_t(alu_op_a_sel_fwd_t::fwd_mem);   // forward previous ALU result
     else
-        id_intf->of_alu_a_sel_fwd_id = uint32_t(alu_op_a_sel_fwd_t(id_intf->dec_alu_a_sel_id));   // don't forward
+        id_intf->of_alu_a_sel_fwd_id = id_intf->dec_alu_a_sel_id;   // don't forward
 
     // Operand B
     if ((dd_rs2_ex) && ((id_intf->dec_alu_b_sel_id == uint32_t(alu_op_b_sel_t::rs2))) /* && (!bubble_load) */)
-        id_intf->of_alu_b_sel_fwd_id = uint32_t(alu_op_b_sel_fwd_t::fwd_mem);             // forward previous ALU result
+        id_intf->of_alu_b_sel_fwd_id = uint32_t(alu_op_b_sel_fwd_t::fwd_mem);   // forward previous ALU result
     else
-        id_intf->of_alu_b_sel_fwd_id = uint32_t(alu_op_b_sel_fwd_t(id_intf->dec_alu_b_sel_id));   // don't forward
+        id_intf->of_alu_b_sel_fwd_id = id_intf->dec_alu_b_sel_id;   // don't forward
 }

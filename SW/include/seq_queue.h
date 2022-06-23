@@ -14,7 +14,6 @@ public:
     void reset();
 private:
     void add(logic_t *ptr);
-    //friend void logic_t::enqueue(seq_queue *q);
     friend logic_t;
 };
 

@@ -3,15 +3,6 @@
 #include "defines.h"
 #include "logic_t.h"
 
-// TODO: interfaces cannot have logic_t, creates issues with queue append and ordering
-// TODO: global queue? visible to anyone, but only one for entire design
-
-// struct if_intf_t;
-// struct id_intf_t;
-// struct ex_intf_t;
-// struct mem_intf_t;
-// struct wb_intf_t;
-
 // stage interfaces
 typedef struct if_intf_t
 {
@@ -125,10 +116,8 @@ typedef struct wb_intf_t
 
 } wb_intf_t;
 
-
 typedef struct reg_file_intf_t
 {
-    const uint32_t reg_r0 = 0u;
     uint32_t in_r1, out_r1;
     uint32_t in_r2, out_r2;
     uint32_t in_r3, out_r3;
@@ -161,38 +150,6 @@ typedef struct reg_file_intf_t
     uint32_t in_r30, out_r30;
     uint32_t in_r31, out_r31;
 } reg_file_t;
-
-
-// Pipeline interfaces
-// typedef struct seq_if_id_intf_t
-// {
-//     logic_t pc;
-//     logic_t inst_id;
-// 
-//     seq_if_id_intf_t() = delete;
-//     seq_if_id_intf_t(seq_queue *q) :
-//         pc(q, RESET_VECTOR, "Program Counter"),
-//         inst_id(q, 0, "inst_id")
-//     {
-//         LOG("seq_if_id_intf called");
-//     }
-// 
-// } seq_if_id_intf_t;
-// 
-// typedef struct seq_id_ex_intf_t
-// {
-//     logic_t rf_read_op_a_ex;
-//     logic_t rf_read_op_b_ex;
-// 
-//     seq_id_ex_intf_t() = delete;
-//     seq_id_ex_intf_t(seq_queue *q) : 
-//         rf_read_op_a_ex(q, 0, "rf_read_op_a_ex"),
-//         rf_read_op_b_ex(q, 0, "rf_read_op_b_ex")
-//     {
-//         LOG("seq_id_ex_intf called");
-//     };
-// 
-// } seq_id_ex_intf_t;
 
 // System interfaces
 typedef struct sys_intf_t

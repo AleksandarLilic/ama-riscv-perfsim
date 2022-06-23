@@ -39,6 +39,9 @@
 // Instructions hard-coded
 #define NOP             uint32_t(0x13)  // addi x0 x0 0
 
+// System level items
+#define RESET_VECTOR 0
+
 // Decoder types
 enum class opc7_t{ 
     r_type = 0b011'0011,  // R-type

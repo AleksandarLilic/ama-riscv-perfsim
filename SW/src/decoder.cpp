@@ -8,7 +8,7 @@ decoder::decoder(sys_intf_t *sys_intf, id_intf_t *id_intf)
 
 void decoder::update()
 {
-    LOG("--- dec called");
+    LOG("--- dec::update");
     if (!sys_intf->rst) {
         LOG("dec id_intf->opc7_id hex = " << std::hex << static_cast<int>(id_intf->opc7_id) << std::dec);
         switch (opc7_t(id_intf->opc7_id)) {
@@ -16,7 +16,7 @@ void decoder::update()
         case opc7_t::i_type: i_type(id_intf); break;
         case opc7_t::load: load(id_intf); break;
         case opc7_t::store: store(id_intf); break;
-        case opc7_t::branch: branch(id_intf); LOGW("branching incomplete"); break;
+        case opc7_t::branch: branch(id_intf); break;
         case opc7_t::jalr: jalr(id_intf); break;
         case opc7_t::jal: jal (id_intf); break;
         case opc7_t::lui: lui(id_intf); break;
@@ -29,13 +29,6 @@ void decoder::update()
         reset(id_intf);
         LOG("dec sys_intf.rst = " << sys_intf->rst);
     }
-
-
-    //LOG(id_intf->id_intf_out_decoder.alu_op_sel_id);
-
-    //int32_t imm_s = inst_field::imm_s(0xF000'0800);
-    //LOG("imm_s mask test: " << std::hex << imm_s);
-
 }
 
 void decoder::r_type(id_intf_t *id_intf)
@@ -68,7 +61,7 @@ void decoder::r_type(id_intf_t *id_intf)
     id_intf->dec_wb_sel_id = uint32_t(wb_sel_t::alu);
     id_intf->dec_rd_we_id = 1;
 
-    LOG("dec alu sel op = " << static_cast<int>(id_intf->dec_alu_op_sel_id));
+    LOG("dec alu sel op = " << id_intf->dec_alu_op_sel_id);
 }
 
 void decoder::i_type(id_intf_t *id_intf)
@@ -362,9 +355,3 @@ void decoder::reset(id_intf_t *id_intf)
     id_intf->dec_rd_we_id = 0;
 
 }
-
-//uint32_t decoder::store_mask(id_intf_t *id_intf)
-//{
-//    LOGW("placeholder store called");
-//    return 0;
-//}

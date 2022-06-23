@@ -1,8 +1,16 @@
 #include "../include/reg_file.h"
 
+reg_file::reg_file(reg_file_intf_t *reg_file_intf, id_intf_t *id_intf, mem_intf_t *mem_intf, wb_intf_t *wb_intf)
+{
+    this->reg_file_intf = reg_file_intf;
+    this->id_intf = id_intf;
+    this->mem_intf = mem_intf;
+    this->wb_intf = wb_intf;
+}
+
 void reg_file::write()
 {
-    LOG("reg_file::write called");
+    LOG("--- reg_file::write");
     if (mem_intf->rd_we_mem) {
         switch (rf_t(mem_intf->rd_addr_mem)) {
         case rf_t::x0_zero: break;
@@ -45,7 +53,7 @@ void reg_file::write()
 
 void reg_file::read()
 {
-    LOG("reg_file::read called");
+    LOG("--- reg_file::read");
 
     switch (rf_t(id_intf->rs1_addr_id)) {
     case rf_t::x0_zero: id_intf->rf_data_a = 0u; break;
@@ -120,13 +128,4 @@ void reg_file::read()
     }
     LOG("    Reg File - addr a: " << id_intf->rs1_addr_id << "; addr b : " << id_intf->rs2_addr_id );
     LOG("    Reg File - data a: " << id_intf->rf_data_a << "; data b : " << id_intf->rf_data_b );
-}
-
-reg_file::reg_file(reg_file_intf_t *reg_file_intf, id_intf_t *id_intf, mem_intf_t *mem_intf, 
-    wb_intf_t *wb_intf)
-{
-    this->reg_file_intf = reg_file_intf;
-    this->id_intf = id_intf;
-    this->mem_intf = mem_intf;
-    this->wb_intf = wb_intf;
 }
