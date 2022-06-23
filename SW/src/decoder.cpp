@@ -11,16 +11,16 @@ void decoder::update()
     LOG("--- dec called");
     if (!sys_intf->rst) {
         LOG("dec id_intf->opc7_id hex = " << std::hex << static_cast<int>(id_intf->opc7_id) << std::dec);
-        switch (id_intf->opc7_id) {
-        case uint32_t(opc7_t::r_type): r_type(id_intf); break;
-        case uint32_t(opc7_t::i_type): i_type(id_intf); break;
-        case uint32_t(opc7_t::load): load(id_intf); break;
-        case uint32_t(opc7_t::store): store(id_intf); break;
-        case uint32_t(opc7_t::branch): branch(id_intf); LOGW("branching incomplete"); break;
-        case uint32_t(opc7_t::jalr): jalr(id_intf); break;
-        case uint32_t(opc7_t::jal): jal (id_intf); break;
-        case uint32_t(opc7_t::lui): lui(id_intf); break;
-        case uint32_t(opc7_t::auipc): auipc(id_intf); break;
+        switch (opc7_t(id_intf->opc7_id)) {
+        case opc7_t::r_type: r_type(id_intf); break;
+        case opc7_t::i_type: i_type(id_intf); break;
+        case opc7_t::load: load(id_intf); break;
+        case opc7_t::store: store(id_intf); break;
+        case opc7_t::branch: branch(id_intf); LOGW("branching incomplete"); break;
+        case opc7_t::jalr: jalr(id_intf); break;
+        case opc7_t::jal: jal (id_intf); break;
+        case opc7_t::lui: lui(id_intf); break;
+        case opc7_t::auipc: auipc(id_intf); break;
         //case uint32_t(opc7_t::system): system(id_intf); break;
         default: unsupported(id_intf); break;
         }

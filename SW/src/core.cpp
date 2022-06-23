@@ -88,13 +88,13 @@ void core::inst_parsing(id_intf_t *id_intf)
 void core::imm_gen(id_intf_t *id_intf)
 {
     LOG("imm_gen called");
-    switch (id_intf->dec_ig_sel_id) {
-    case uint32_t(imm_gen_t::disabled): id_intf->imm_gen_out = 0u; break;
-    case uint32_t(imm_gen_t::i_type): id_intf->imm_gen_out = inst_field::imm_i(id_intf->inst_id); break;
-    case uint32_t(imm_gen_t::s_type): id_intf->imm_gen_out = inst_field::imm_s(id_intf->inst_id); break;
-    case uint32_t(imm_gen_t::b_type): id_intf->imm_gen_out = inst_field::imm_b(id_intf->inst_id); break;
-    case uint32_t(imm_gen_t::j_type): id_intf->imm_gen_out = inst_field::imm_j(id_intf->inst_id); break;
-    case uint32_t(imm_gen_t::u_type): id_intf->imm_gen_out = inst_field::imm_u(id_intf->inst_id); break;
+    switch (imm_gen_t(id_intf->dec_ig_sel_id)) {
+    case imm_gen_t::disabled: id_intf->imm_gen_out = 0u; break;
+    case imm_gen_t::i_type: id_intf->imm_gen_out = inst_field::imm_i(id_intf->inst_id); break;
+    case imm_gen_t::s_type: id_intf->imm_gen_out = inst_field::imm_s(id_intf->inst_id); break;
+    case imm_gen_t::b_type: id_intf->imm_gen_out = inst_field::imm_b(id_intf->inst_id); break;
+    case imm_gen_t::j_type: id_intf->imm_gen_out = inst_field::imm_j(id_intf->inst_id); break;
+    case imm_gen_t::u_type: id_intf->imm_gen_out = inst_field::imm_u(id_intf->inst_id); break;
     default: LOGE("Immediate Generate invalid type");
     }
     // fix srai
