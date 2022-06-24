@@ -49,6 +49,7 @@ void reg_file::write()
         }
     }
     LOG("    Reg File - addr d: " << mem_intf->rd_addr_mem << "; data d : " << wb_intf->data_d);
+    status_log();
 }
 
 void reg_file::read()
@@ -128,4 +129,17 @@ void reg_file::read()
     }
     LOG("    Reg File - addr a: " << id_intf->rs1_addr_id << "; addr b : " << id_intf->rs2_addr_id );
     LOG("    Reg File - data a: " << id_intf->rf_data_a << "; data b : " << id_intf->rf_data_b );
+}
+
+void reg_file::status_log()
+{
+    //LOG("Arch State - Register File");
+    //for (uint32_t i = 0; i < 32; i++) {
+    //    std::string item = "out_r1";
+    //    LOG("    X" << i << ": " << reg_file_intf->item);
+    //}
+    LOG("reg file x8: " << reg_file_intf->out_r8);
+    LOG("reg file x10: " << reg_file_intf->out_r10);
+    LOG("reg file x11: " << reg_file_intf->out_r11);
+    LOG("reg file x12: " << reg_file_intf->out_r12);
 }

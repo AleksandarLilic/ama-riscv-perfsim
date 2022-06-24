@@ -196,9 +196,14 @@ int main()
     imem[43] = 0x06340613;  imemc[43] = "addi    x12,x8,99";
 
     core.reset(1);
-    core.update_fe();
+    core.update_system();
+    core.update_wb();
+    core.update_mem();
+//  dmem_dout = dmem[dmem_addr];
+    core.update_ex();
+    core.update_id();
     imem_dout = imem[core.if_intf.imem_addr];
-    core.update();
+    core.update_if();
     
     LOG("---------- inst in IF stage: " << FHEX(imem_dout) <<
         "; ASM: " << imemc[core.if_intf.imem_addr]);
@@ -208,9 +213,14 @@ int main()
     core.reset(0);
 
     while (clk_count) {
-        core.update_fe();
+        core.update_system();
+        core.update_wb();
+        core.update_mem();
+//      dmem_dout = dmem[dmem_addr];
+        core.update_ex();
+        core.update_id();
         imem_dout = imem[core.if_intf.imem_addr];
-        core.update();
+        core.update_if();
         
         LOG("---------- inst in IF stage: " << FHEX(imem_dout) <<
             "; ASM: " << imemc[core.if_intf.imem_addr]);

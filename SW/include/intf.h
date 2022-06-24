@@ -84,6 +84,7 @@ typedef struct id_intf_t
 typedef struct ex_intf_t
 {
     uint32_t inst_ex;
+    uint32_t pc_ex;
     uint32_t funct3_ex;
     uint32_t rs1_addr_ex;
     uint32_t rs2_addr_ex;
@@ -98,21 +99,28 @@ typedef struct ex_intf_t
     uint32_t bc_a_lt_b;
     uint32_t alu_out;
     uint32_t store_offset;
+
+    uint32_t wb_sel_ex;
 } ex_intf_t;
 
 typedef struct mem_intf_t
 {
     uint32_t inst_mem;
+    uint32_t alu_mem;
+    uint32_t pc_mem;
     uint32_t funct3_mem;
     uint32_t rs1_addr_mem;
     uint32_t rs2_addr_mem;
     uint32_t rd_addr_mem;
     uint32_t rd_we_mem;
+    uint32_t wb_sel_mem;
+
 } mem_intf_t;
 
 typedef struct wb_intf_t
 {
-    uint32_t data_d = 3;
+    uint32_t load_sm_out;
+    uint32_t data_d;
 
 } wb_intf_t;
 
