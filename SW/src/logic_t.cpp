@@ -55,6 +55,9 @@ void logic_t::connect_port(std::string init_id, uint32_t init_val, uint32_t *din
     logic_port_t *port;
     port = new logic_port_t(init_id, init_val, din, dout);
     connected_ports.push_back(port);
+#if LOG_DBG
+    LOG("Connected Port: " << init_id);
+#endif
 }
 void logic_t::connect_rst(uint32_t *connection) { connected_reset = connection; }
 void logic_t::connect_en(uint32_t *connection) { connected_enable = connection; }

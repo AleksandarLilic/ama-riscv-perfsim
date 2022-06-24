@@ -126,37 +126,9 @@ typedef struct wb_intf_t
 
 typedef struct reg_file_intf_t
 {
-    uint32_t in_r1, out_r1;
-    uint32_t in_r2, out_r2;
-    uint32_t in_r3, out_r3;
-    uint32_t in_r4, out_r4;
-    uint32_t in_r5, out_r5;
-    uint32_t in_r6, out_r6;
-    uint32_t in_r7, out_r7;
-    uint32_t in_r8, out_r8;
-    uint32_t in_r9, out_r9;
-    uint32_t in_r10, out_r10;
-    uint32_t in_r11, out_r11;
-    uint32_t in_r12, out_r12;
-    uint32_t in_r13, out_r13;
-    uint32_t in_r14, out_r14;
-    uint32_t in_r15, out_r15;
-    uint32_t in_r16, out_r16;
-    uint32_t in_r17, out_r17;
-    uint32_t in_r18, out_r18;
-    uint32_t in_r19, out_r19;
-    uint32_t in_r20, out_r20;
-    uint32_t in_r21, out_r21;
-    uint32_t in_r22, out_r22;
-    uint32_t in_r23, out_r23;
-    uint32_t in_r24, out_r24;
-    uint32_t in_r25, out_r25;
-    uint32_t in_r26, out_r26;
-    uint32_t in_r27, out_r27;
-    uint32_t in_r28, out_r28;
-    uint32_t in_r29, out_r29;
-    uint32_t in_r30, out_r30;
-    uint32_t in_r31, out_r31;
+    std::vector<uint32_t> in;
+    std::vector<uint32_t> out;
+    reg_file_intf_t() : in(32, NOT_RESET), out(32, NOT_RESET) {}
 } reg_file_t;
 
 // System interfaces

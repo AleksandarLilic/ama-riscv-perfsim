@@ -88,35 +88,8 @@ void intf_cfg::init_ex_mem(logic_t *logic_ptr, id_intf_t *id_intf, ex_intf_t *ex
 
 void intf_cfg::init_reg_file(logic_t *logic_ptr, reg_file_intf_t *reg_file_intf)
 {
-    logic_ptr->connect_port("r1", 0, &reg_file_intf->in_r1, &reg_file_intf->out_r1);
-    logic_ptr->connect_port("r2", 0, &reg_file_intf->in_r2, &reg_file_intf->out_r2);
-    logic_ptr->connect_port("r3", 0, &reg_file_intf->in_r3, &reg_file_intf->out_r3);
-    logic_ptr->connect_port("r4", 0, &reg_file_intf->in_r4, &reg_file_intf->out_r4);
-    logic_ptr->connect_port("r5", 0, &reg_file_intf->in_r5, &reg_file_intf->out_r5);
-    logic_ptr->connect_port("r6", 0, &reg_file_intf->in_r6, &reg_file_intf->out_r6);
-    logic_ptr->connect_port("r7", 0, &reg_file_intf->in_r7, &reg_file_intf->out_r7);
-    logic_ptr->connect_port("r8", 0, &reg_file_intf->in_r8, &reg_file_intf->out_r8);
-    logic_ptr->connect_port("r9", 0, &reg_file_intf->in_r9, &reg_file_intf->out_r9);
-    logic_ptr->connect_port("r10", 0, &reg_file_intf->in_r10, &reg_file_intf->out_r10);
-    logic_ptr->connect_port("r11", 0, &reg_file_intf->in_r11, &reg_file_intf->out_r11);
-    logic_ptr->connect_port("r12", 0, &reg_file_intf->in_r12, &reg_file_intf->out_r12);
-    logic_ptr->connect_port("r13", 0, &reg_file_intf->in_r13, &reg_file_intf->out_r13);
-    logic_ptr->connect_port("r14", 0, &reg_file_intf->in_r14, &reg_file_intf->out_r14);
-    logic_ptr->connect_port("r15", 0, &reg_file_intf->in_r15, &reg_file_intf->out_r15);
-    logic_ptr->connect_port("r16", 0, &reg_file_intf->in_r16, &reg_file_intf->out_r16);
-    logic_ptr->connect_port("r17", 0, &reg_file_intf->in_r17, &reg_file_intf->out_r17);
-    logic_ptr->connect_port("r18", 0, &reg_file_intf->in_r18, &reg_file_intf->out_r18);
-    logic_ptr->connect_port("r19", 0, &reg_file_intf->in_r19, &reg_file_intf->out_r19);
-    logic_ptr->connect_port("r20", 0, &reg_file_intf->in_r20, &reg_file_intf->out_r20);
-    logic_ptr->connect_port("r21", 0, &reg_file_intf->in_r21, &reg_file_intf->out_r21);
-    logic_ptr->connect_port("r22", 0, &reg_file_intf->in_r22, &reg_file_intf->out_r22);
-    logic_ptr->connect_port("r23", 0, &reg_file_intf->in_r23, &reg_file_intf->out_r23);
-    logic_ptr->connect_port("r24", 0, &reg_file_intf->in_r24, &reg_file_intf->out_r24);
-    logic_ptr->connect_port("r25", 0, &reg_file_intf->in_r25, &reg_file_intf->out_r25);
-    logic_ptr->connect_port("r26", 0, &reg_file_intf->in_r26, &reg_file_intf->out_r26);
-    logic_ptr->connect_port("r27", 0, &reg_file_intf->in_r27, &reg_file_intf->out_r27);
-    logic_ptr->connect_port("r28", 0, &reg_file_intf->in_r28, &reg_file_intf->out_r28);
-    logic_ptr->connect_port("r29", 0, &reg_file_intf->in_r29, &reg_file_intf->out_r29);
-    logic_ptr->connect_port("r30", 0, &reg_file_intf->in_r30, &reg_file_intf->out_r30);
-    logic_ptr->connect_port("r31", 0, &reg_file_intf->in_r31, &reg_file_intf->out_r31);
+    for (uint32_t i = 0; i < reg_file_intf->in.size(); i++) {
+        std::string s = "r" + std::to_string(i);
+        logic_ptr->connect_port(s, 0, &reg_file_intf->in[i], &reg_file_intf->out[i]);
+    }
 }

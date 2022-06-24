@@ -4,6 +4,7 @@
 #include "logic_t.h"
 #include "intf.h"
 #include "seq_queue.h"
+#include <string>
 
 #define CFG_REGS 8
 

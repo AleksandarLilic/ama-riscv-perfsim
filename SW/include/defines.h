@@ -17,6 +17,8 @@
 #define IMEM_SIZE 16'384
 #define DMEM_SIZE 16'384
 
+#define NOT_RESET 0xAAAA'AAAA
+
 // Instruction field masks
 #define OPC7_M uint32_t(0b0111'1111)
 #define FUNCT7_M uint32_t((0b111'1111)<<25)

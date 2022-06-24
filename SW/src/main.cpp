@@ -137,8 +137,8 @@ int main()
     // cpu
     //                  rst + r + i + l + s + b + j + u + inv;
     uint32_t clk_count = 2 + 10 + 9 + 5 + 3 + 6 + 2 + 2 + 1;
-    //                      dd  dummy
-    clk_count = clk_count + 3  + 3;
+    //                      dd  dummy  NOP
+    clk_count = clk_count + 3  + 3    + 5 ;
     //clk_count = 6;
 
     seq_queue q;
@@ -194,6 +194,11 @@ int main()
     imem[41] = 0x06340613;  imemc[41] = "addi    x12,x8,99";
     imem[42] = 0x06340613;  imemc[42] = "addi    x12,x8,99";
     imem[43] = 0x06340613;  imemc[43] = "addi    x12,x8,99";
+    imem[44] = 0x00000013;  imemc[44] = "NOP";
+    imem[45] = 0x00000013;  imemc[45] = "NOP";
+    imem[46] = 0x00000013;  imemc[46] = "NOP";
+    imem[47] = 0x00000013;  imemc[47] = "NOP";
+    imem[48] = 0x00000013;  imemc[48] = "NOP";
 
     core.reset(1);
     core.update_system();
