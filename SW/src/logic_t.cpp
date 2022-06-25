@@ -21,6 +21,8 @@ logic_port_t::logic_port_t(std::string init_id, uint32_t init_val, uint32_t *din
     id = init_id;
 }
 
+logic_port_t::~logic_port_t() {}
+
 void logic_port_t::status_log(uint32_t prev)
 {
     LOG("    Update: '" << id
@@ -48,6 +50,12 @@ logic_t::logic_t(seq_queue *q, std::string init_id)
 {
     id = init_id;
     q->add(this);
+}
+
+logic_t::~logic_t()
+{
+    for (logic_port_t *i : connected_ports)
+        delete i;
 }
 
 void logic_t::connect_port(std::string init_id, uint32_t init_val, uint32_t *din, uint32_t *dout)

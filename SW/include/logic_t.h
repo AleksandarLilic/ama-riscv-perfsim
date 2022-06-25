@@ -27,11 +27,13 @@ private:
 public:
     logic_port_t() = delete;
     logic_port_t(std::string init_id, uint32_t init_val, uint32_t *din, uint32_t *dout);
+    ~logic_port_t();
     void update_hold();
     void update(uint32_t update_value);
     void status_log(uint32_t prev);
-    uint32_t get_rst_value() { return rst_value; };
-    uint32_t get_input_value() { return hold; };
+    uint32_t get_rst_value() const { return rst_value; };
+    uint32_t get_input_value() const { return hold; };
+    std::string get_id() const { return id; };
 };
 
 class logic_t
@@ -51,6 +53,7 @@ public:
 public:
     logic_t() = delete;
     logic_t(seq_queue *q, std::string init_id);
+    ~logic_t();
     
 public:
     void connect_port(std::string init_id, uint32_t init_val, uint32_t *din, uint32_t *dout);
@@ -60,7 +63,7 @@ public:
     void update_hold();
     void update();
 
-    std::string get_id() const;
+    std::string get_id() const { return id; };
     uint32_t out() const;
 };
 

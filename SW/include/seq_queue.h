@@ -8,10 +8,13 @@ class seq_queue
 {
 private:
     std::vector<logic_t*> queue;
+
 public:
     void update_hold();
     void update();
     void reset();
+    ~seq_queue();
+
 private:
     void add(logic_t *ptr);
     friend logic_t;

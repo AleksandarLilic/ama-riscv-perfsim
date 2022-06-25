@@ -16,3 +16,8 @@ void seq_queue::update()
     for (logic_t *i : queue)
         i->update();
 }
+seq_queue::~seq_queue()
+{
+    for (logic_t *i : queue)
+        delete i;
+}
