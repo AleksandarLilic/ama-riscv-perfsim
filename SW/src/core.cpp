@@ -121,3 +121,8 @@ void core::update_wb()
         csr_placeholder);
     reg_file.write();
 }
+
+void core::status_log()
+{
+    reg_file.status_log();
+}

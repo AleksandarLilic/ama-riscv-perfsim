@@ -41,6 +41,8 @@ public:
     void update_mem();
     void update_wb();
 
+    void status_log();
+
 private:
     // id
     control control;

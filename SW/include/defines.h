@@ -1,12 +1,15 @@
 #pragma once
 
 #include <iostream>
+#include <iomanip>
 
 // LOG features
 #define LOG(x) std::cout << x << std::endl
+#define LOG_L(x) std::cout << x
 #define LOGW(x) std::cout << " >>> WARNING: "<< x << std::endl
 #define LOGE(x) std::cout << " >>> ERROR: "<< x << std::endl
 #define FHEX(x) std::hex << x << std::dec
+#define FRF(x,y) "X" << std::left << std::setw(2) << x << ": " << std::left << std::setw(12) << y << " "
 
 #define LOG_DBG 0
 

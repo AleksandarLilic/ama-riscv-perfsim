@@ -19,7 +19,6 @@ void reg_file::write()
     }
 
     LOG("    Reg File - addr d: " << mem_intf->rd_addr_mem << "; data d : " << wb_intf->data_d);
-    status_log();
 }
 
 void reg_file::read()
@@ -52,13 +51,12 @@ void reg_file::read()
 
 void reg_file::status_log()
 {
-    //LOG("Arch State - Register File");
-    //for (uint32_t i = 0; i < 32; i++) {
-    //    std::string item = "out_r1";
-    //    LOG("    X" << i << ": " << reg_file_intf->item);
-    //}
-    LOG("reg file x8: " << reg_file_intf->out[8]);
-    LOG("reg file x10: " << reg_file_intf->out[10]);
-    LOG("reg file x11: " << reg_file_intf->out[11]);
-    LOG("reg file x12: " << reg_file_intf->out[12]);
+    std::cout << std::endl;
+    LOG("Arch State - Register File");
+    for (uint32_t i = 0; i < reg_file_intf->out.size(); i+=4) {
+        for (uint32_t j = i; j < i + 4; j++)
+            LOG_L(FRF(j, reg_file_intf->out[j]));
+        std::cout << std::endl;
+    }
+    std::cout << std::endl;
 }

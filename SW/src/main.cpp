@@ -200,6 +200,7 @@ int main()
     imem[47] = 0x00000013;  imemc[47] = "NOP";
     imem[48] = 0x00000013;  imemc[48] = "NOP";
 
+    core.status_log();
     core.reset(1);
     core.update_system();
     core.update_wb();
@@ -218,6 +219,7 @@ int main()
     core.reset(0);
 
     while (clk_count) {
+        core.status_log();
         core.update_system();
         core.update_wb();
         core.update_mem();
