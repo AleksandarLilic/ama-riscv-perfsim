@@ -3,25 +3,30 @@
 #include <iostream>
 #include <iomanip>
 
+// Debug verbosity
+#define LOG_DBG 0
 // LOG features
 #define LOG(x) std::cout << x << std::endl
 #define LOG_L(x) std::cout << x
 #define LOGW(x) std::cout << " >>> WARNING: "<< x << std::endl
 #define LOGE(x) std::cout << " >>> ERROR: "<< x << std::endl
+// Format
 #define FHEX(x) std::hex << x << std::dec
-#define FRF(x,y) "  X" << std::left << std::setw(2) << x << ": " << std::left << std::setw(12) << y << "  "
-#define FRF_M(x,y) "> X" << std::left << std::setw(2) << x << ": " << std::left << std::setw(12) << y << "< "
-
-#define LOG_DBG 0
-
+#define FBIN(x) std::bin << x << std::dec
+// Format Reg File
+#define FRF_DEF(x,y) std::left << std::setw(2) << x << ": " << std::left << std::setw(12) << int(y)
+#define FRF(x,y) "  X" << FRF_DEF(x,y) << "  "
+#define FRF_M(x,y) "> X" << FRF_DEF(x,y) << "< "
 // Combinational logic
 #define CL_UNUSED uint32_t(0xFFFF'FFFF)
-
 // Memory sizes
 #define IMEM_SIZE 16'384
 #define DMEM_SIZE 16'384
-
+// Patterns
 #define NOT_RESET 0xAAAA'AAAA
+#define NO_REG_UPDATE 32
+// CFG
+#define CFG_REGS 8
 
 // Instruction field masks
 #define OPC7_M uint32_t(0b0111'1111)

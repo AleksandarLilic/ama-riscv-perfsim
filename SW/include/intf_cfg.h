@@ -1,12 +1,9 @@
 #pragma once
 
 #include "defines.h"
-#include "logic_t.h"
 #include "intf.h"
-#include "seq_queue.h"
+#include "logic_t.h"
 #include <string>
-
-#define CFG_REGS 8
 
 typedef struct logic_init_cfg_t {
     std::string id;
@@ -17,7 +14,6 @@ typedef struct logic_init_cfg_t {
 
 class intf_cfg
 {
-public:
 private:
     uint32_t unused_true = 1;
     uint32_t unused_false = 0;

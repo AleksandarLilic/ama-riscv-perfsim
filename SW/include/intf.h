@@ -1,7 +1,7 @@
 #pragma once
 
 #include "defines.h"
-#include "logic_t.h"
+#include <vector>
 
 // stage interfaces
 typedef struct if_intf_t
@@ -128,9 +128,7 @@ typedef struct reg_file_intf_t
 {
     std::vector<uint32_t> in;
     std::vector<uint32_t> out;
-    reg_file_intf_t() : in(32, NOT_RESET), out(32, NOT_RESET) {
-        out[0] = 0u;    // Hardwired to zero
-    }
+    reg_file_intf_t() : in(32, NOT_RESET), out(32, NOT_RESET) { out[0] = 0u; } // Hardwired zero
 } reg_file_t;
 
 // System interfaces

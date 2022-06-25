@@ -1,19 +1,16 @@
 #pragma once
 
 #include "defines.h"
-#include "inst_field.h"
 #include "intf.h"
-#include "seq_queue.h"
-#include "logic_t.h"
-#include "cl.h"
 #include "intf_cfg.h"
 #include "modules.h"
-
-#include <array>
 
 class core
 {
 public:
+    if_intf_t if_intf{};    // FIXME: hack, move back to private
+
+private:
     intf_cfg intf_cfg;
 
     uint32_t *imem_ptr;
@@ -21,7 +18,7 @@ public:
 
     sys_intf_t sys_intf{};
 
-    if_intf_t if_intf{};
+    //if_intf_t if_intf{};
     id_intf_t id_intf{};
     ex_intf_t ex_intf{};
     mem_intf_t mem_intf{};
@@ -54,8 +51,4 @@ private:
     store_shift store_shift;
     // mem
     load_shift_mask load_shift_mask;
-
-private:
-    void mem_init(uint32_t *imem_ptr, uint32_t *dmem_ptr);
-
 };

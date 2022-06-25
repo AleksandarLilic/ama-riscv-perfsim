@@ -1,8 +1,8 @@
 #pragma once
 
-#include <vector>
 #include "defines.h"
 #include "logic_t.h"
+#include <vector>
 
 class seq_queue
 {
@@ -16,4 +16,3 @@ private:
     void add(logic_t *ptr);
     friend logic_t;
 };
-

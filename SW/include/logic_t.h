@@ -13,7 +13,7 @@
 #include "defines.h"
 #include <vector>
 
-// forward declaration, seq_queue.h included in the logic_t.cpp
+// Forward declaration, seq_queue.h included in the logic_t.cpp
 class seq_queue;
 
 class logic_port_t {
@@ -49,11 +49,10 @@ public:
     //void init_mask(uint32_t len_in) { for (uint32_t i = 0; i < len; i++) mask = (mask << 1) | 1; }
 
 public:
-    // Constructors
-    logic_t() = delete;     // always provide queue
+    logic_t() = delete;
     logic_t(seq_queue *q, std::string init_id);
     
-    // Methods
+public:
     void connect_port(std::string init_id, uint32_t init_val, uint32_t *din, uint32_t *dout);
     void connect_rst(uint32_t *connection);
     void connect_en(uint32_t *connection);
@@ -61,7 +60,6 @@ public:
     void update_hold();
     void update();
 
-    // Getters
     std::string get_id() const;
     uint32_t out() const;
 };

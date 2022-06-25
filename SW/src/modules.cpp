@@ -42,7 +42,11 @@ alu::alu(ex_intf_t *ex_intf)
 void alu::update()
 {
     LOG("alu called -> placeholder");
-    ex_intf->alu_out++;
+    ex_intf->alu_out--;
+//    uint32_t local_alu = 0;
+//    switch(alu_sel)
+//        case 0x00: *alu_out = alu_in_a + alu_in_b; break;
+//        case 0x08: *alu_out = alu_in_a - alu_in_b; break;
 }
 
 store_shift::store_shift(ex_intf_t *ex_intf)

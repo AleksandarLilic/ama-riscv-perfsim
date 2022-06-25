@@ -3,8 +3,6 @@
 #include "defines.h"
 #include "intf.h"
 
-#define NO_REG_UPDATE 32
-
 class reg_file
 {
 private:

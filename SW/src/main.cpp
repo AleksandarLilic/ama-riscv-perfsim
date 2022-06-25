@@ -1,139 +1,21 @@
 #include "defines.h"
-#include "logic_t.h"
-#include "cl.h"
 #include "seq_queue.h"
+
 #include "core.h"
-#include "memory.h"
-#include "intf_cfg.h"
+//#include "memory.h"
 
 #include <array>
 
-#define TEST 0
-
-#if TEST
-//typedef struct
-//{
-//    uint32_t init;
-//    std::string name;
-//} log_cfg;
-//
-//
-//log_cfg cfg1[] = {
-//    {0, "pc"},
-//    {0, "pc_sel"},
-//    {0, "we_en"},
-//    {0, "reg_we"},
-//    {0, "b_uns"}
-//};
-//
-//void initw()
-//{
-//    seq_queue q;
-//    for (uint32_t i = 0; i < sizeof(cfg1) / sizeof(*cfg1); ++i) {
-//        logic_t pc();
-//        q.add(pc);
-//    };
-//}
-#endif
-
 void queue_update_all(seq_queue *q)
 {
-    // TODO:
-    //std::vector<queue*> all_queues;
-    //for (queue *i : all_queues)
-    //    i->update_hold();
-    //for (queue *i : all_queues)
-    //    i->update();
-
     LOG("\n\n------ Running queue update:\n");
     q->update_hold();
     q->update();
     LOG("\n------ Queue update finished \n\n");
 }
 
-
 int main()
 {
-#if TEST
-    logic_t test();
-    //test.clk_update();
-    //LOG(test.get());
-
-    uint32_t f1 = 0xAA005500 >> 15;
-    uint32_t f2 = 55;
-
-    uint32_t res = 0;
-    res = cl::mux2(1u, f1, f2);
-
-    LOG("res: " << res);
-    res = cl::mux4(0u, f1, 22u, CL_UNUSED, 44u);
-    LOG("res: " << res);
-    
-    res = cl::mux4(2u, 11u, 22u, CL_UNUSED, 44u);
-    LOG("res: " << res);
-    
-    res = cl::mux4(15u, 11u, 22u, CL_UNUSED, 44u);
-    LOG("res: " << res);
-
-    res = cl::mux8(7u, 11u, 22u, CL_UNUSED, 44u, 55u, 66u, CL_UNUSED, CL_UNUSED);
-    LOG("res: " << res);
-
-    res = cl::mux8(9u, 11u, 22u, CL_UNUSED, 44u, 55u, 66u, CL_UNUSED, CL_UNUSED);
-    LOG("res: " << res);
-
-    seq_queue q;
-    seq_queue *qp = &q;
-    uint32_t reg1_out;
-    uint32_t reg2_out;
-    logic_t reg1(qp, 5u, "reg1");
-    logic_t reg2(qp, 22u, "reg2");
-
-    uint32_t conn_test;
-    reg1.connect(&conn_test);
-    LOG("conn_test: " << conn_test);
-    uint32_t conn_test2;
-    reg1.connect(&conn_test2);
-    LOG("conn_test2: " << conn_test2);
-
-    //q.add(&reg1);
-    //q.add(&reg2);
-
-    reg1 = 17;
-    reg2 = 44;
-
-    q.update();
-    LOG("conn_test after update: " << conn_test);
-    LOG("conn_test2 after update: " << conn_test2);
-
-    //intf_ex_stage{mux_sel_09};
-
-    res = cl::mux4(1u, reg1.out(), reg2.out(), CL_UNUSED, 0u);
-    LOG("res: " << res);
-
-    logic_t ff1(qp, 5, "ff1");
-    logic_t ff2(qp, 22, "ff2");
-
-    LOG("ff1: " << ff1.out());
-    LOG("ff2: " << ff2.out());
-
-    ff1 = 99;
-    // check this, does not work 
-    ff2 = ff1;
-    //ff2 = ff1.out();
-
-
-    q.update();
-
-    LOG(ff1.get_name() << " on update: " << ff1.out());
-    LOG(ff2.get_name() << " on update: " << ff2.out());
-
-    LOG(ff2);
-
-
-    //initw();
-
-
-#else
     // cpu
     //                  rst + r + i + l + s + b + j + u + inv;
     uint32_t clk_count = 2 + 10 + 9 + 5 + 3 + 6 + 2 + 2 + 1;
@@ -146,6 +28,7 @@ int main()
     uint32_t imem_dout;
     std::array<uint32_t, DMEM_SIZE> dmem{};
     uint32_t dmem_dout;
+
     core core(&q, &imem_dout, &dmem_dout);
 
     std::array<std::string, IMEM_SIZE> imemc{};
@@ -211,8 +94,8 @@ int main()
     imem_dout = imem[core.if_intf.imem_addr];
     core.update_if();
     
-    LOG("---------- inst in IF stage: " << FHEX(imem_dout) <<
-        "; ASM: " << imemc[core.if_intf.imem_addr]);
+    LOG("---------- inst in IF stage: " << 
+        FHEX(imem_dout) << "; ASM: " << imemc[core.if_intf.imem_addr]);
     
     queue_update_all(&q);
     clk_count--;
@@ -229,41 +112,12 @@ int main()
         imem_dout = imem[core.if_intf.imem_addr];
         core.update_if();
         
-        LOG("---------- inst in IF stage: " << FHEX(imem_dout) <<
-            "; ASM: " << imemc[core.if_intf.imem_addr]);
+        LOG("---------- inst in IF stage: " << 
+            FHEX(imem_dout) << "; ASM: " << imemc[core.if_intf.imem_addr]);
         
         queue_update_all(&q);
         clk_count--;
         //if (clk_count==35)core.reset(0);
     }
-
-
-#endif
-
-    /*
-    
-    core.seq_update()
-        //----- MEM/WB stage updates
-        dut_m_reg_file_write_update();
-        dut_m_csr_write_update();
-        dut_m_mem_wb_pipeline_update();
-
-        //----- EX/MEM stage updates
-        dut_m_load_sm_seq_update();
-        dut_m_ex_mem_pipeline_update();
-
-        //----- ID/EX stage updates
-        dut_m_imm_gen_seq_update();
-        dut_m_id_ex_pipeline_update();
-        dut_m_rst_sequence_update();
-
-        //----- IF/ID stage updates
-        dut_m_imem_update();
-        dut_m_pc_update();
-        dut_m_if_pipeline_update();
-
-    
-    */
-
     std::cin.get();
 }

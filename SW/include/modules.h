@@ -1,11 +1,10 @@
 #pragma once
 
 #include "defines.h"
-#include "seq_queue.h"
-#include "logic_t.h"
 #include "intf.h"
 #include "inst_field.h"
 #include "cl.h"
+
 #include "control.h"
 #include "reg_file.h"
 
