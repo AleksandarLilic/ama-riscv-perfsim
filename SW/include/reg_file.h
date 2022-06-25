@@ -3,8 +3,12 @@
 #include "defines.h"
 #include "intf.h"
 
+#define NO_REG_UPDATE 32
+
 class reg_file
 {
+private:
+    uint32_t updated_register = NO_REG_UPDATE;
 private:
     id_intf_t *id_intf;
     mem_intf_t *mem_intf;
@@ -18,4 +22,5 @@ public:
     void read();
     void status_log();
 private:
+    void status_updated_register();
 };

@@ -88,7 +88,7 @@ void intf_cfg::init_ex_mem(logic_t *logic_ptr, id_intf_t *id_intf, ex_intf_t *ex
 
 void intf_cfg::init_reg_file(logic_t *logic_ptr, reg_file_intf_t *reg_file_intf)
 {
-    for (uint32_t i = 0; i < reg_file_intf->in.size(); i++) {
+    for (uint32_t i = 1; i < reg_file_intf->in.size(); i++) {
         std::string s = "r" + std::to_string(i);
         logic_ptr->connect_port(s, 0, &reg_file_intf->in[i], &reg_file_intf->out[i]);
     }
