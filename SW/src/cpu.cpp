@@ -1,7 +1,8 @@
 #include "../include/cpu.h"
 
 cpu::cpu(seq_queue *q) :
-    core(q, &imem_dout, &dmem_dout)
+    core(q, &imem_dout, &dmem_dout)/*,
+    imem(IMEM_SIZE, NOT_RESET)*/
 {
     this->q = q;
 
@@ -69,6 +70,6 @@ void cpu::update()
     core.update_id();
     core.update_if();
     imem_dout = imem[core.if_intf.imem_addr];
-    LOG("---------- inst in IF stage: " << 
+    LOG("    Instruction in IF stage: " << 
         FHEX(imem_dout) << "; ASM: " << imemc[core.if_intf.imem_addr]);
 }

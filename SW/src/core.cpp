@@ -21,6 +21,7 @@ void core::reset(bool rst_in)
 
 void core::update_system()
 {
+    LOG("> UPDATE_SYSTEM");
     if (sys_intf.rst)
         sys_intf.rst_seq = 0b0111;
     else
@@ -41,7 +42,7 @@ void core::update_system()
 void core::update_if()
 {
     const uint32_t ALU_OUT_MOCK = 12;
-    LOG(">> UPDATE_IF");
+    LOG("> UPDATE_IF");
 
     //if_intf.imem_addr = id_intf.nx_pc;
     //if_intf.imem_addr = cl::mux2(uint32_t(id_intf.dec_pc_sel_if), id_intf.nx_pc, ALU_OUT_MOCK);
@@ -49,7 +50,7 @@ void core::update_if()
     if_intf.imem_addr = cl::mux2(0u, id_intf.nx_pc, ALU_OUT_MOCK);
     if_intf.pc_inc4 = if_intf.imem_addr + 1;
 
-    LOG("Current PC: " << id_intf.nx_pc << 
+    LOG("    Current PC: " << id_intf.nx_pc << 
         "; Current IMEM Addr: " << if_intf.imem_addr << 
         "; NX PC: " << if_intf.pc_inc4);
 
@@ -58,8 +59,8 @@ void core::update_if()
 
 void core::update_id()
 {
-    LOG(">> UPDATE_ID");
-    LOG("--- inst_parsing");
+    LOG("> UPDATE_ID");
+    LOG("    Instruction in ID stage: " << FHEX(id_intf.inst_id));
     id_intf.opc7_id = inst_field::opc7(id_intf.inst_id);
     id_intf.funct3_id = inst_field::funct3(id_intf.inst_id);
     id_intf.funct7_id = inst_field::funct7(id_intf.inst_id);
@@ -70,12 +71,11 @@ void core::update_id()
     control.update();
     reg_file.read();
     imm_gen.update();
-    LOG("---------- inst in ID stage: " << std::hex << id_intf.inst_id << std::dec);
 }
 
 void core::update_ex()
 {
-    LOG(">> UPDATE_EX");
+    LOG("> UPDATE_EX");
     branch_compare.update();
     alu.update();
     store_shift.update();
@@ -89,13 +89,13 @@ void core::update_ex()
 
 void core::update_mem()
 {
-    LOG(">> UPDATE_MEM");
+    LOG("> UPDATE_MEM");
     load_shift_mask.update();
 }
 
 void core::update_wb()
 {
-    LOG(">> UPDATE_WB");
+    LOG("> UPDATE_WB");
     uint32_t pc_mem_inc4 = mem_intf.alu_mem + 1;
     uint32_t csr_placeholder = 0;
     wb_intf.data_d = cl::mux4(mem_intf.wb_sel_mem, 

@@ -10,8 +10,6 @@ reg_file::reg_file(reg_file_intf_t *reg_file_intf, id_intf_t *id_intf, mem_intf_
 
 void reg_file::write()
 {
-    LOG("--- reg_file::write");
-
     // Default write, keep previous outputs
     for (uint32_t i = 1; i < reg_file_intf->out.size(); i++) {
         reg_file_intf->in[i] = reg_file_intf->out[i];
@@ -24,15 +22,13 @@ void reg_file::write()
         else
             LOGE("Invalid Reg File address");
 
-    LOG("    Reg File - addr d: " << mem_intf->rd_addr_mem << "; data d : " << wb_intf->data_d);
+    LOG("    Reg File write - Addres D: " << mem_intf->rd_addr_mem << "; Data D : " << wb_intf->data_d);
     }
     status_updated_register();
 }
 
 void reg_file::read()
 {
-    LOG("--- reg_file::read");
-
     if ((rf_t(id_intf->rs1_addr_id) == rf_t::x0_zero)) {
         id_intf->rf_data_a = 0;
     }
@@ -52,15 +48,14 @@ void reg_file::read()
         else
             LOGE("Invalid Reg File address for B port");
     }
-
-    LOG("    Reg File - addr a: " << id_intf->rs1_addr_id << "; addr b : " << id_intf->rs2_addr_id );
-    LOG("    Reg File - data a: " << id_intf->rf_data_a << "; data b : " << id_intf->rf_data_b );
+    LOG("    Reg File write - Addres A: " << id_intf->rs1_addr_id << "; Data A : " << id_intf->rf_data_a);
+    LOG("    Reg File write - Addres B: " << id_intf->rs2_addr_id << "; Data B : " << id_intf->rf_data_b);
 }
 
 void reg_file::status_log()
 {
     std::cout << std::endl;
-    LOG("Arch State - Register File");
+    LOG("> Arch State - Register File");
     for (uint32_t i = 0; i < reg_file_intf->out.size(); i+=4) {
         for (uint32_t j = i; j < i + 4; j++) {
             if (j == updated_register) // mark changed register

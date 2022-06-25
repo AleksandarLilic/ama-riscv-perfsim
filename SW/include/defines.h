@@ -5,7 +5,7 @@
 #include <bitset>
 
 // Debug verbosity
-#define LOG_DBG 1
+#define LOG_DBG 0
 // LOG features
 #define LOG(x) std::cout << x << std::endl
 #define LOG_L(x) std::cout << x

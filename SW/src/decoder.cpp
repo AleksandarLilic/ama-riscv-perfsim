@@ -8,9 +8,8 @@ decoder::decoder(sys_intf_t *sys_intf, id_intf_t *id_intf)
 
 void decoder::update()
 {
-    LOG("--- dec::update");
     if (!sys_intf->rst) {
-        LOG("dec id_intf->opc7_id hex = " << std::hex << static_cast<int>(id_intf->opc7_id) << std::dec);
+        LOG("    Decoder id_intf->opc7_id hex = " << std::hex << static_cast<int>(id_intf->opc7_id) << std::dec);
         switch (opc7_t(id_intf->opc7_id)) {
         case opc7_t::r_type: r_type(id_intf); break;
         case opc7_t::i_type: i_type(id_intf); break;
@@ -27,13 +26,14 @@ void decoder::update()
     }
     else /* (sys_intf.rst) */ {
         reset(id_intf);
-        LOG("dec sys_intf.rst = " << sys_intf->rst);
     }
 }
 
 void decoder::r_type(id_intf_t *id_intf)
 {
-    LOG("dec r type called");
+#if LOG_DBG 
+    LOG("    Decoder R-type"); 
+#endif
     uint32_t alu_op_sel = ((inst_field::funct7_b5(id_intf->inst_id)) << 3) | id_intf->funct3_id;
 
     id_intf->dec_branch_inst_id = 0;
@@ -60,17 +60,16 @@ void decoder::r_type(id_intf_t *id_intf)
 
     id_intf->dec_wb_sel_id = uint32_t(wb_sel_t::alu);
     id_intf->dec_rd_we_id = 1;
-
-    LOG("dec alu sel op = " << id_intf->dec_alu_op_sel_id);
 }
 
 void decoder::i_type(id_intf_t *id_intf)
 {
-    LOG("dec i type called");
+#if LOG_DBG 
+    LOG("    Decoder I-type");
+#endif
     uint32_t alu_op_sel_other = id_intf->funct3_id;
     uint32_t alu_op_sel_shift = ((inst_field::funct7_b5(id_intf->inst_id)) << 3) | id_intf->funct3_id;
     uint32_t alu_op_sel = ((id_intf->funct3_id & 0x3) == 1) ? alu_op_sel_shift : alu_op_sel_other;
-    LOG("dec alu sel op = " << alu_op_sel);
 
     //id_intf->assign_dec(decoder_out::r_type);
     //id_intf->dec_alu_op_sel_id = uint32_t(alu_op_sel);
@@ -108,7 +107,9 @@ void decoder::i_type(id_intf_t *id_intf)
 
 void decoder::load(id_intf_t *id_intf)
 {
-    LOG("dec load called");
+#if LOG_DBG 
+    LOG("    Decoder Load");
+#endif
 
     id_intf->dec_branch_inst_id = 0;
     id_intf->dec_jump_inst_id = 0;
@@ -138,7 +139,9 @@ void decoder::load(id_intf_t *id_intf)
 
 void decoder::store(id_intf_t *id_intf)
 {
-    LOG("dec store called");
+#if LOG_DBG 
+    LOG("    Decoder Store");
+#endif
 
     id_intf->dec_branch_inst_id = 0;
     id_intf->dec_jump_inst_id = 0;
@@ -164,13 +167,13 @@ void decoder::store(id_intf_t *id_intf)
 
     id_intf->dec_wb_sel_id = uint32_t(wb_sel_t::alu);
     id_intf->dec_rd_we_id = 0;
-
-    LOG("dec store mask = " << id_intf->dec_store_mask_ex);
 }
 
 void decoder::branch(id_intf_t *id_intf)
 {
-    LOG("dec branch called");
+#if LOG_DBG 
+    LOG("    Decoder Branch");
+#endif
 
     id_intf->dec_branch_inst_id = 1;
     id_intf->dec_jump_inst_id = 0;
@@ -196,13 +199,13 @@ void decoder::branch(id_intf_t *id_intf)
 
     id_intf->dec_wb_sel_id = uint32_t(wb_sel_t::alu);
     id_intf->dec_rd_we_id = 0;
-
-    LOG("dec branch compare unsigned = " << id_intf->dec_bc_uns_id);
 }
 
 void decoder::jalr(id_intf_t *id_intf)
 {
-    LOG("dec jalr called");
+#if LOG_DBG 
+    LOG("    Decoder JALR");
+#endif
 
     id_intf->dec_branch_inst_id = 0;
     id_intf->dec_jump_inst_id = 1;
@@ -232,7 +235,9 @@ void decoder::jalr(id_intf_t *id_intf)
 
 void decoder::jal(id_intf_t *id_intf)
 {
-    LOG("dec jal called");
+#if LOG_DBG 
+    LOG("    Decoder JAL");
+#endif
 
     id_intf->dec_branch_inst_id = 0;
     id_intf->dec_jump_inst_id = 1;
@@ -262,7 +267,9 @@ void decoder::jal(id_intf_t *id_intf)
 
 void decoder::lui(id_intf_t *id_intf)
 {
-    LOG("dec lui called");
+#if LOG_DBG 
+    LOG("    Decoder LUI");
+#endif
 
     id_intf->dec_branch_inst_id = 0;
     id_intf->dec_jump_inst_id = 0;
@@ -292,7 +299,9 @@ void decoder::lui(id_intf_t *id_intf)
 
 void decoder::auipc(id_intf_t *id_intf)
 {
-    LOG("dec auipc called");
+#if LOG_DBG 
+    LOG("    Decoder AUIPC");
+#endif
 
     id_intf->dec_branch_inst_id = 0;
     id_intf->dec_jump_inst_id = 0;
@@ -328,6 +337,9 @@ void decoder::unsupported(id_intf_t *id_intf)
 
 void decoder::reset(id_intf_t *id_intf)
 {
+#if LOG_DBG 
+    LOG("    Decoder Reset");
+#endif
     id_intf->dec_branch_inst_id = 0;
     id_intf->dec_jump_inst_id = 0;
     id_intf->dec_store_inst_id = 0;
