@@ -2,21 +2,22 @@
 
 #include <iostream>
 #include <iomanip>
+#include <bitset>
 
 // Debug verbosity
-#define LOG_DBG 0
+#define LOG_DBG 1
 // LOG features
 #define LOG(x) std::cout << x << std::endl
 #define LOG_L(x) std::cout << x
 #define LOGW(x) std::cout << " >>> WARNING: "<< x << std::endl
 #define LOGE(x) std::cout << " >>> ERROR: "<< x << std::endl
 // Format
-#define FHEX(x) std::hex << x << std::dec
-#define FBIN(x) std::bin << x << std::dec
+#define FHEX(x) std::hex << "0x" << x << std::dec
+#define FBIN(x,num) "0b" << std::bitset<num>(x)
 // Format Reg File
 #define FRF_DEF(x,y) std::left << std::setw(2) << x << ": " << std::left << std::setw(12) << int(y)
-#define FRF(x,y) "  X" << FRF_DEF(x,y) << "  "
-#define FRF_M(x,y) "> X" << FRF_DEF(x,y) << "< "
+#define FRF(x,y) "  x" << FRF_DEF(x,y) << "  "
+#define FRF_M(x,y) "> x" << FRF_DEF(x,y) << "< "
 // Combinational logic
 #define CL_UNUSED uint32_t(0xFFFF'FFFF)
 // Memory sizes
@@ -52,6 +53,11 @@
 
 // System level items
 #define RESET_VECTOR 0
+
+enum class reset_t {
+    set = 1,
+    clear = 0
+};
 
 // Decoder types
 enum class opc7_t{ 

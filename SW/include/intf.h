@@ -6,8 +6,8 @@
 // stage interfaces
 typedef struct if_intf_t
 {
-    uint32_t imem_addr;
-    uint32_t pc;
+    uint32_t imem_addr = NOT_RESET & (0x0FFF);
+    uint32_t pc_inc4 = NOT_RESET & (0x0FFF);
     uint32_t pc_sel_if;
     uint32_t pc_we_if = 1u;
     uint32_t alu_out_ex;
@@ -16,9 +16,9 @@ typedef struct if_intf_t
 
 typedef struct id_intf_t
 {
-    uint32_t inst_id;
+    uint32_t inst_id = NOT_RESET & (0x0FFF);
 
-    uint32_t nx_pc;
+    uint32_t nx_pc = NOT_RESET & (0x0FFF);
     uint32_t store_inst;
     uint32_t imm_gen_out;
     // reg file out

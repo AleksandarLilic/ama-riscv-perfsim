@@ -31,7 +31,7 @@ void core::update_system()
     sys_intf.rst_seq_d3 = sys_intf.rst_seq & 0b1;
 
 #if LOG_DBG
-    LOG("sys_intf.rst_seq: " << sys_intf.rst_seq);
+    LOG("sys_intf.rst_seq: " << sys_intf.rst_seq << ", bin:" << FBIN(sys_intf.rst_seq, 3));
     LOG("sys_intf.rst_seq_d1: " << sys_intf.rst_seq_d1);
     LOG("sys_intf.rst_seq_d2: " << sys_intf.rst_seq_d2);
     LOG("sys_intf.rst_seq_d3: " << sys_intf.rst_seq_d3);
@@ -42,11 +42,17 @@ void core::update_if()
 {
     const uint32_t ALU_OUT_MOCK = 12;
     LOG(">> UPDATE_IF");
-    LOG("Current PC: " << if_intf.pc << "; NX PC: " << id_intf.nx_pc);
 
-    if_intf.imem_addr = id_intf.nx_pc;
+    //if_intf.imem_addr = id_intf.nx_pc;
     //if_intf.imem_addr = cl::mux2(uint32_t(id_intf.dec_pc_sel_if), id_intf.nx_pc, ALU_OUT_MOCK);
-    if_intf.pc = id_intf.nx_pc + 1;
+
+    if_intf.imem_addr = cl::mux2(0u, id_intf.nx_pc, ALU_OUT_MOCK);
+    if_intf.pc_inc4 = if_intf.imem_addr + 1;
+
+    LOG("Current PC: " << id_intf.nx_pc << 
+        "; Current IMEM Addr: " << if_intf.imem_addr << 
+        "; NX PC: " << if_intf.pc_inc4);
+
     //LOG("After update - PC: " << if_intf.pc << "; NX PC: " << id_intf.nx_pc);
 }
 
