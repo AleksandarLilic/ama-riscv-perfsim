@@ -30,6 +30,7 @@ private:
 public:
     void init_regs(seq_queue *q, sys_intf_t *sys_intf, reg_file_intf_t *reg_file_intf, 
         if_intf_t *if_intf, id_intf_t *id_intf, ex_intf_t *ex_intf, mem_intf_t *mem_intf, uint32_t *imem_dout);
+    // void init_memory(uint32_t *imem_dout, uint32_t *dmem_dout);
 
 private:
     logic_init_cfg_t regs_cfg[CFG_REGS];
