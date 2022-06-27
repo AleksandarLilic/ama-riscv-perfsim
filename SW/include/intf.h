@@ -1,22 +1,13 @@
 #pragma once
 
 #include "defines.h"
-#include "logic_t.h"
-
-// TODO: interfaces cannot have logic_t, creates issues with queue append and ordering
-// TODO: global queue? visible to anyone, but only one for entire design
-
-// struct if_intf_t;
-// struct id_intf_t;
-// struct ex_intf_t;
-// struct mem_intf_t;
-// struct wb_intf_t;
+#include <vector>
 
 // stage interfaces
 typedef struct if_intf_t
 {
-    uint32_t imem_addr;
-    uint32_t pc;
+    uint32_t imem_addr = NOT_RESET & (0x0FFF);
+    uint32_t pc_inc4 = NOT_RESET & (0x0FFF);
     uint32_t pc_sel_if;
     uint32_t pc_we_if = 1u;
     uint32_t alu_out_ex;
@@ -25,9 +16,9 @@ typedef struct if_intf_t
 
 typedef struct id_intf_t
 {
-    uint32_t inst_id;
+    uint32_t inst_id = NOT_RESET & (0x0FFF);
 
-    uint32_t nx_pc;
+    uint32_t nx_pc = NOT_RESET & (0x0FFF);
     uint32_t store_inst;
     uint32_t imm_gen_out;
     // reg file out
@@ -93,6 +84,7 @@ typedef struct id_intf_t
 typedef struct ex_intf_t
 {
     uint32_t inst_ex;
+    uint32_t pc_ex;
     uint32_t funct3_ex;
     uint32_t rs1_addr_ex;
     uint32_t rs2_addr_ex;
@@ -107,92 +99,37 @@ typedef struct ex_intf_t
     uint32_t bc_a_lt_b;
     uint32_t alu_out;
     uint32_t store_offset;
+
+    uint32_t wb_sel_ex;
 } ex_intf_t;
 
 typedef struct mem_intf_t
 {
     uint32_t inst_mem;
+    uint32_t alu_mem;
+    uint32_t pc_mem;
     uint32_t funct3_mem;
     uint32_t rs1_addr_mem;
     uint32_t rs2_addr_mem;
     uint32_t rd_addr_mem;
     uint32_t rd_we_mem;
+    uint32_t wb_sel_mem;
+
 } mem_intf_t;
 
 typedef struct wb_intf_t
 {
-    uint32_t data_d = 3;
+    uint32_t load_sm_out;
+    uint32_t data_d;
 
 } wb_intf_t;
 
-
 typedef struct reg_file_intf_t
 {
-    const uint32_t reg_r0 = 0u;
-    uint32_t in_r1, out_r1;
-    uint32_t in_r2, out_r2;
-    uint32_t in_r3, out_r3;
-    uint32_t in_r4, out_r4;
-    uint32_t in_r5, out_r5;
-    uint32_t in_r6, out_r6;
-    uint32_t in_r7, out_r7;
-    uint32_t in_r8, out_r8;
-    uint32_t in_r9, out_r9;
-    uint32_t in_r10, out_r10;
-    uint32_t in_r11, out_r11;
-    uint32_t in_r12, out_r12;
-    uint32_t in_r13, out_r13;
-    uint32_t in_r14, out_r14;
-    uint32_t in_r15, out_r15;
-    uint32_t in_r16, out_r16;
-    uint32_t in_r17, out_r17;
-    uint32_t in_r18, out_r18;
-    uint32_t in_r19, out_r19;
-    uint32_t in_r20, out_r20;
-    uint32_t in_r21, out_r21;
-    uint32_t in_r22, out_r22;
-    uint32_t in_r23, out_r23;
-    uint32_t in_r24, out_r24;
-    uint32_t in_r25, out_r25;
-    uint32_t in_r26, out_r26;
-    uint32_t in_r27, out_r27;
-    uint32_t in_r28, out_r28;
-    uint32_t in_r29, out_r29;
-    uint32_t in_r30, out_r30;
-    uint32_t in_r31, out_r31;
+    std::vector<uint32_t> in;
+    std::vector<uint32_t> out;
+    reg_file_intf_t() : in(32, NOT_RESET), out(32, NOT_RESET) { out[0] = 0u; } // Hardwired zero
 } reg_file_t;
-
-
-// Pipeline interfaces
-// typedef struct seq_if_id_intf_t
-// {
-//     logic_t pc;
-//     logic_t inst_id;
-// 
-//     seq_if_id_intf_t() = delete;
-//     seq_if_id_intf_t(seq_queue *q) :
-//         pc(q, RESET_VECTOR, "Program Counter"),
-//         inst_id(q, 0, "inst_id")
-//     {
-//         LOG("seq_if_id_intf called");
-//     }
-// 
-// } seq_if_id_intf_t;
-// 
-// typedef struct seq_id_ex_intf_t
-// {
-//     logic_t rf_read_op_a_ex;
-//     logic_t rf_read_op_b_ex;
-// 
-//     seq_id_ex_intf_t() = delete;
-//     seq_id_ex_intf_t(seq_queue *q) : 
-//         rf_read_op_a_ex(q, 0, "rf_read_op_a_ex"),
-//         rf_read_op_b_ex(q, 0, "rf_read_op_b_ex")
-//     {
-//         LOG("seq_id_ex_intf called");
-//     };
-// 
-// } seq_id_ex_intf_t;
 
 // System interfaces
 typedef struct sys_intf_t

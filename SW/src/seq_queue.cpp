@@ -5,21 +5,19 @@ void seq_queue::add(logic_t *ptr)
     queue.push_back(ptr);
 }
 
-void seq_queue::update_hold()        // separate into 2 calls for multiple queues in the design, make q of q
+void seq_queue::update_hold()
 {
     for (logic_t *i : queue)
         i->update_hold();
 }
 
-void seq_queue::update()        // separate into 2 calls for multiple queues in the design, make q of q
+void seq_queue::update()
 {
     for (logic_t *i : queue)
         i->update();
 }
-
-//void seq_queue::reset()
-//{
-//    for (logic_t *i : queue)
-//        i->reset(true);
-//}
-
+seq_queue::~seq_queue()
+{
+    for (logic_t *i : queue)
+        delete i;
+}

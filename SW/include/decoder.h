@@ -1,12 +1,8 @@
 #pragma once
 
 #include "defines.h"
-#include "inst_field.h"
 #include "intf.h"
-#include "seq_queue.h"
-#include "logic_t.h"
-#include "cl.h"
-#include <array>
+#include "inst_field.h"
 
 class decoder
 {

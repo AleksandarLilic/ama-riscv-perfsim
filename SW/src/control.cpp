@@ -20,15 +20,13 @@ void control::update()
     id_intf->stall_if_id = sys_intf->rst;
    // if (id_intf->stall_if_id_d)
    //     id_intf->inst_id = NOP;
-    LOG("inst going to control: " << FHEX(id_intf->inst_id));
+    LOG("    Instruction going to control: " << FHEX(id_intf->inst_id));
     update(sys_intf, id_intf, ex_intf, mem_intf);
 }
 
 void control::update(sys_intf_t *sys_intf, id_intf_t *id_intf, ex_intf_t *ex_intf,
     mem_intf_t *mem_intf)
 {
-    LOG("--- control");
-
     decoder.update();
     op_fwd.update();
     branch_resolution(sys_intf, id_intf, ex_intf);
@@ -40,8 +38,6 @@ void control::update(sys_intf_t *sys_intf, id_intf_t *id_intf, ex_intf_t *ex_int
 
 void control::pipeline_ctrl(sys_intf_t *sys_intf, id_intf_t *id_intf)
 {
-    LOG("--- pipeline control called");
-
     id_intf->stall_if_id = id_intf->dec_branch_inst_id | 
         id_intf->dec_jump_inst_id /* ||
         dut_m_dd_bubble_ex*/;
@@ -49,17 +45,10 @@ void control::pipeline_ctrl(sys_intf_t *sys_intf, id_intf_t *id_intf)
     id_intf->clear_if_id = id_intf->dec_branch_inst_id |
         id_intf->dec_jump_inst_id;
 
-
-#ifndef MULTI_LOGIC
-    // FIXME: inverted logic due to logic_t enable issue
-    id_intf->clear_id = !sys_intf->rst_seq_id_ex /* || dut_m_dd_bubble_ex*/;
-    id_intf->clear_ex = !sys_intf->rst_seq_ex_mem;
-    id_intf->clear_mem = !sys_intf->rst_seq_mem_wb;
-#else // !MULTI_LOGIC
     id_intf->clear_id_ex = sys_intf->rst_seq_id_ex /* || dut_m_dd_bubble_ex*/;
     id_intf->clear_ex_mem = sys_intf->rst_seq_ex_mem;
     id_intf->clear_mem_wb = sys_intf->rst_seq_mem_wb;
-#endif
+
     // debug:
     //LOG("id_intf->clear_id: " << id_intf->clear_id);
     //LOG("id_intf->clear_ex: " << id_intf->clear_ex);
@@ -70,9 +59,6 @@ void control::pipeline_ctrl(sys_intf_t *sys_intf, id_intf_t *id_intf)
 
 void control::branch_resolution(sys_intf_t *sys_intf, id_intf_t *id_intf, ex_intf_t *ex_intf)
 {
-    LOG("--- branch resolution");
-    LOG("branch inst ex: " << ex_intf->branch_inst_ex);
-
     br_sel_t branch_type = br_sel_t(((ex_intf->funct3_ex & 0b100) >> 1) |
         (ex_intf->funct3_ex & 0b001));
     uint32_t branch_taken = 0;
@@ -88,9 +74,10 @@ void control::branch_resolution(sys_intf_t *sys_intf, id_intf_t *id_intf, ex_int
     branch_taken &= ~sys_intf->rst; // if in reset, override branch taken
     branch_taken &= ex_intf->branch_inst_ex;  // only taken if it actually is a branch
     if (branch_taken || ex_intf->jump_inst_ex) id_intf->dec_pc_sel_if = uint32_t(pc_sel_t::alu);
-    
-    LOG("branch taken: " << branch_taken);
-    LOG("dec_sel: " << static_cast<int>(id_intf->dec_pc_sel_if));
+#if LOG_DBG
+    LOG("    branch taken: " << branch_taken);
+    LOG("    dec_sel: " << static_cast<int>(id_intf->dec_pc_sel_if));
+#endif
 }
 
 void control::store_mask(id_intf_t *id_intf, ex_intf_t *ex_intf)
@@ -120,7 +107,7 @@ void control::store_mask(id_intf_t *id_intf, ex_intf_t *ex_intf)
 
     id_intf->dec_store_mask_ex = inst_en & (mask >> (4 - mask_offset));
     if (ex_intf->store_inst_ex) {
-        LOG("id_intf->dec_store_mask_id: " << id_intf->dec_store_mask_ex);
+        LOG("    id_intf->dec_store_mask_id: " << id_intf->dec_store_mask_ex);
         //LOG("b3: " << b3 << "; b2: " << b2 << "; b1: " << b1 << "; b0: " << b0);
     }
 }

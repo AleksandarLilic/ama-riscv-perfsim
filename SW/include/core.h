@@ -1,21 +1,16 @@
 #pragma once
 
 #include "defines.h"
-#include "inst_field.h"
 #include "intf.h"
-#include "seq_queue.h"
-#include "logic_t.h"
-#include "cl.h"
 #include "intf_cfg.h"
-#include "control.h"
-#include "reg_file.h"
-
-#include <array>
+#include "modules.h"
 
 class core
 {
 public:
-    // interfaces
+    if_intf_t if_intf{};    // FIXME: hack, move back to private
+
+private:
     intf_cfg intf_cfg;
 
     uint32_t *imem_ptr;
@@ -23,7 +18,7 @@ public:
 
     sys_intf_t sys_intf{};
 
-    if_intf_t if_intf{};
+    //if_intf_t if_intf{};
     id_intf_t id_intf{};
     ex_intf_t ex_intf{};
     mem_intf_t mem_intf{};
@@ -31,33 +26,29 @@ public:
     
     reg_file_intf_t reg_file_intf{};
 
-private: // modules
-    // system
-    void reset_seq(sys_intf_t *sys_intf);
-    // if
-    void front_end(if_intf_t *if_intf, id_intf_t *id_intf);
-    // id
-    void inst_parsing(id_intf_t *id_intf);
-    control control;
-    reg_file reg_file;
-    void imm_gen(id_intf_t *id_intf);
-    // ex
-    void branch_compare(ex_intf_t *ex_intf);
-    void alu(ex_intf_t *ex_intf);
-    void store_shift(ex_intf_t *ex_intf);
-    // mem
-    void load_shift_mask(mem_intf_t *mem_intf);
-    // wb
-    void writeback(wb_intf_t *wb_intf);
-
-private:
-    void mem_init(uint32_t *imem_ptr, uint32_t *dmem_ptr);
-
 public:
     core() = delete;
     core(seq_queue *q, uint32_t *imem_ptr, uint32_t *dmem_ptr);
     void reset(bool rst_in);
-    void update();
-    void update_fe();
+    
+    void update_system();
+    void update_if();
+    void update_id();
+    void update_ex();
+    void update_mem();
+    void update_wb();
 
+    void status_log();
+
+private:
+    // id
+    control control;
+    reg_file reg_file;
+    imm_gen imm_gen;
+    // ex
+    branch_compare branch_compare;
+    alu alu;
+    store_shift store_shift;
+    // mem
+    load_shift_mask load_shift_mask;
 };
