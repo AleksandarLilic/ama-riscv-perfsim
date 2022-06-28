@@ -38,16 +38,32 @@ void branch_compare::update()
 alu::alu(ex_intf_t *ex_intf)
 {
     this->ex_intf = ex_intf;
+
+    // TODO: possibly rework this unused init into constructor initialization list
+    for (uint32_t i = 0; i < alu_func_array.size(); i++)
+        alu_func_array[i] = &alu::alu_unsued;
+    
+    alu_func_array[uint32_t(alu_op_t::op_add)] = &alu::alu_add;
+    alu_func_array[uint32_t(alu_op_t::op_sub)] = &alu::alu_sub;
+    alu_func_array[uint32_t(alu_op_t::op_sll)] = &alu::alu_sll;
+    alu_func_array[uint32_t(alu_op_t::op_srl)] = &alu::alu_srl;
+    alu_func_array[uint32_t(alu_op_t::op_sra)] = &alu::alu_sra;
+    alu_func_array[uint32_t(alu_op_t::op_slt)] = &alu::alu_slt;
+    alu_func_array[uint32_t(alu_op_t::op_sltu)] = &alu::alu_sltu;
+    alu_func_array[uint32_t(alu_op_t::op_xor)] = &alu::alu_xor;
+    alu_func_array[uint32_t(alu_op_t::op_or)] = &alu::alu_or;
+    alu_func_array[uint32_t(alu_op_t::op_and)] = &alu::alu_and;
+    alu_func_array[uint32_t(alu_op_t::op_pass_b)] = &alu::alu_pass_b;
 }
 
 void alu::update()
 {
-    LOGW("alu called -> placeholder");
-    ex_intf->alu_out--;
-//    uint32_t local_alu = 0;
-//    switch(alu_sel)
-//        case 0x00: *alu_out = alu_in_a + alu_in_b; break;
-//        case 0x08: *alu_out = alu_in_a - alu_in_b; break;
+    alu_func f_ptr = alu_func_array[ex_intf->alu_op_sel_ex];
+    //alu_func f_ptr = alu_func_array[0];
+    ex_intf->alu_out = (this->*f_ptr)(1, 2);
+    //ex_intf->alu_out = (this->*f_ptr)(ex_intf->data_a_ex, ex_intf->data_b_ex);
+
+    LOG("    ALU Output: " << int32_t(ex_intf->alu_out));
 }
 
 store_shift::store_shift(ex_intf_t *ex_intf)

@@ -91,6 +91,7 @@ typedef struct ex_intf_t
     uint32_t rd_addr_ex;
     uint32_t rd_we_ex;
 
+    uint32_t alu_op_sel_ex;
     uint32_t store_inst_ex;
     uint32_t branch_inst_ex;
     uint32_t jump_inst_ex;

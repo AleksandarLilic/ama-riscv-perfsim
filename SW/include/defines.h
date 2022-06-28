@@ -119,6 +119,8 @@ enum class imm_gen_t {
     u_type = 5
 };
 
+#define ALU_OPERATIONS uint32_t(16)
+
 enum class alu_op_t {
     op_add = (0b0000),
     op_sub = (0b1000),
