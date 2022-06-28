@@ -20,9 +20,9 @@ void imm_gen::update()
     if (id_intf->dec_ig_sel_id == uint32_t(imm_gen_t::i_type) && (id_intf->funct3_id == 0b101))
         id_intf->imm_gen_out &= IMM_SHAMT;
 #if LOG_DBG
-    LOG("    imm_gen_sel: " << id_intf->dec_ig_sel_id);
-    LOG("    imm_gen_out: " << int(id_intf->imm_gen_out));
+    LOG("    Imm Gen Select: " << id_intf->dec_ig_sel_id);
 #endif
+    LOG("    Imm Gen Output: " << int32_t(id_intf->imm_gen_out));
 }
 
 branch_compare::branch_compare(ex_intf_t *ex_intf)

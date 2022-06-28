@@ -9,7 +9,9 @@ decoder::decoder(sys_intf_t *sys_intf, id_intf_t *id_intf)
 void decoder::update()
 {
     if (!sys_intf->rst) {
-        LOG("    Decoder id_intf->opc7_id hex = " << std::hex << static_cast<int>(id_intf->opc7_id) << std::dec);
+        LOG("    Decoder OPC7 = " << 
+            FHEX(static_cast<uint32_t>(id_intf->opc7_id)) << "; "
+            FBIN(static_cast<uint32_t>(id_intf->opc7_id), 7));
         switch (opc7_t(id_intf->opc7_id)) {
         case opc7_t::r_type: r_type(id_intf); break;
         case opc7_t::i_type: i_type(id_intf); break;
@@ -331,7 +333,7 @@ void decoder::auipc(id_intf_t *id_intf)
 
 void decoder::unsupported(id_intf_t *id_intf)
 {
-    LOGE("Unsupported instruction. Opcode: " << static_cast<int>(id_intf->opc7_id));
+    LOGE("Unsupported instruction. Opcode: " << static_cast<uint32_t>(id_intf->opc7_id));
 }
 
 

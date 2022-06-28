@@ -76,7 +76,7 @@ void control::branch_resolution(sys_intf_t *sys_intf, id_intf_t *id_intf, ex_int
     if (branch_taken || ex_intf->jump_inst_ex) id_intf->dec_pc_sel_if = uint32_t(pc_sel_t::alu);
 #if LOG_DBG
     LOG("    branch taken: " << branch_taken);
-    LOG("    dec_sel: " << static_cast<int>(id_intf->dec_pc_sel_if));
+    LOG("    dec_sel: " << static_cast<uint32_t>(id_intf->dec_pc_sel_if));
 #endif
 }
 

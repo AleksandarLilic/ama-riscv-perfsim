@@ -16,7 +16,7 @@
 #define FHEX(x) std::hex << "0x" << x << std::dec
 #define FBIN(x,num) "0b" << std::bitset<num>(x)
 // Format Reg File
-#define FRF_DEF(x,y) std::left << std::setw(2) << x << ": " << std::left << std::setw(12) << int(y)
+#define FRF_DEF(x,y) std::left << std::setw(2) << x << ": " << std::left << std::setw(12) << int32_t(y)
 #define FRF(x,y) "  x" << FRF_DEF(x,y) << "  "
 #define FRF_M(x,y) "> x" << FRF_DEF(x,y) << "< "
 // Combinational logic
