@@ -18,7 +18,7 @@ int main()
     uint32_t clk_count = (rst_count+1) + 10 + 9 + 5 + 3 + 6 + 2 + 2 + 1;
     //                      dd  dummy  NOP
     clk_count = clk_count + 3  + 3    + 5 ;
-    //clk_count = 6;
+    //clk_count = 12;
 
     seq_queue q;
     cpu *cpu0 = new cpu(&q);

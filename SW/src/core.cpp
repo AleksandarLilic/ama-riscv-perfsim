@@ -71,20 +71,21 @@ void core::update_id()
     control.update();
     reg_file.read();
     imm_gen.update();
+    
+    id_intf.rf_data_a_fwd = cl::mux2(id_intf.of_rf_a_sel_fwd_id, id_intf.rf_data_a, wb_intf.data_d);
+    id_intf.rf_data_b_fwd = cl::mux2(id_intf.of_rf_b_sel_fwd_id, id_intf.rf_data_b, wb_intf.data_d);
 }
 
 void core::update_ex()
 {
     LOG("> UPDATE_EX");
+    LOGW("ALU muxes not final");
+    ex_intf.alu_in_a = ex_intf.rf_data_a_ex;
+    ex_intf.alu_in_b = cl::mux2(ex_intf.alu_b_sel_ex, ex_intf.rf_data_b_ex, ex_intf.imm_gen_out_ex);
+
     branch_compare.update();
     alu.update();
     store_shift.update();
-//   uint32_t mux_out = cl::mux4(ctrl_if_ex.test_logic_type.get(), seq_dp_id_ex_if.rf_read_op_a, fwd_mem, pc_ex, CL_UNUSED);
-//   
-//   alu_in_a = mux_out;
-//   core::alu(alu_in_a, alu_in_b, alu_sel, &alu_out);
-//
-//   dp_ex_mem.mux_out_ex = mux_out;
 }
 
 void core::update_mem()
@@ -103,6 +104,10 @@ void core::update_wb()
         mem_intf.alu_mem, 
         pc_mem_inc4, 
         csr_placeholder);
+#if LOG_DBG
+    LOG("    WB mux select: " << mem_intf.wb_sel_mem);
+    LOG("    WB mux output: " << wb_intf.data_d);
+#endif
     reg_file.write();
 }
 

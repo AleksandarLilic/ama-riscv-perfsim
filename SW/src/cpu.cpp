@@ -21,8 +21,21 @@ void cpu::update()
     imem_dout = imem.read(core.if_intf.imem_addr);
 
 #if ASM_IMEM
-    LOG("    Instruction in IF stage: " << 
-        FHEX(imem_dout) << "; ASM: " << imem.read_asm(core.if_intf.imem_addr));
+    static std::string imemc_s[5]{};
+    imemc_s[4] = imemc_s[3];    // wb
+    imemc_s[3] = imemc_s[2];    // mem
+    imemc_s[2] = imemc_s[1];    // ex
+    imemc_s[1] = imemc_s[0];    // id
+    imemc_s[0] = imem.read_asm(core.if_intf.imem_addr); // if
+    LOG("    Instruction in IF stage: " << FHEX(imem_dout));
+    
+    LOG("\nInstruction pipeline:");
+    LOG("    Instruction in IF stage:  " << imemc_s[0]);
+    LOG("    Instruction in ID stage:  " << imemc_s[1]);
+    LOG("    Instruction in EX stage:  " << imemc_s[2]);
+    LOG("    Instruction in MEM stage: " << imemc_s[3]);
+    LOG("    Instruction in WB stage:  " << imemc_s[4]);
+
 #else
     LOG("    Instruction in IF stage: " <<
         FHEX(imem_dout));

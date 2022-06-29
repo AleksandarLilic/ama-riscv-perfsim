@@ -60,8 +60,8 @@ void alu::update()
 {
     alu_func f_ptr = alu_func_array[ex_intf->alu_op_sel_ex];
     //alu_func f_ptr = alu_func_array[0];
-    ex_intf->alu_out = (this->*f_ptr)(1, 2);
-    //ex_intf->alu_out = (this->*f_ptr)(ex_intf->data_a_ex, ex_intf->data_b_ex);
+    //ex_intf->alu_out = (this->*f_ptr)(1, 2);
+    ex_intf->alu_out = (this->*f_ptr)(ex_intf->alu_in_a, ex_intf->alu_in_b);
 
     LOG("    ALU Output: " << int32_t(ex_intf->alu_out));
 }

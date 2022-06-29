@@ -24,6 +24,8 @@ typedef struct id_intf_t
     // reg file out
     uint32_t rf_data_a;
     uint32_t rf_data_b;
+    uint32_t rf_data_a_fwd;
+    uint32_t rf_data_b_fwd;
 
     uint32_t in_store_mask_offset;
 
@@ -90,7 +92,12 @@ typedef struct ex_intf_t
     uint32_t rs2_addr_ex;
     uint32_t rd_addr_ex;
     uint32_t rd_we_ex;
+    uint32_t rf_data_a_ex;
+    uint32_t rf_data_b_ex;
+    uint32_t imm_gen_out_ex;
 
+    uint32_t alu_a_sel_ex;
+    uint32_t alu_b_sel_ex;
     uint32_t alu_op_sel_ex;
     uint32_t store_inst_ex;
     uint32_t branch_inst_ex;
@@ -98,6 +105,8 @@ typedef struct ex_intf_t
     
     uint32_t bc_a_eq_b;
     uint32_t bc_a_lt_b;
+    uint32_t alu_in_a;
+    uint32_t alu_in_b;
     uint32_t alu_out;
     uint32_t store_offset;
 
