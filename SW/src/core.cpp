@@ -79,10 +79,22 @@ void core::update_id()
 void core::update_ex()
 {
     LOG("> UPDATE_EX");
-    LOGW("ALU muxes not final");
-    ex_intf.alu_in_a = ex_intf.rf_data_a_ex;
-    ex_intf.alu_in_b = cl::mux2(ex_intf.alu_b_sel_ex, ex_intf.rf_data_b_ex, ex_intf.imm_gen_out_ex);
-
+    ex_intf.alu_in_a = cl::mux4(ex_intf.alu_a_sel_ex,
+        ex_intf.rf_data_a_ex,
+        ex_intf.pc_ex,
+        wb_intf.data_d,
+        CL_UNUSED);
+    ex_intf.alu_in_b = cl::mux4(ex_intf.alu_b_sel_ex, 
+        ex_intf.rf_data_b_ex, 
+        ex_intf.imm_gen_out_ex,
+        wb_intf.data_d,
+        CL_UNUSED);
+#if LOG_DBG
+    LOG("    ALU A sel: " << ex_intf.alu_a_sel_ex);
+    LOG("    ALU in A: " << ex_intf.alu_in_a);
+    LOG("    ALU B sel: " << ex_intf.alu_b_sel_ex);
+    LOG("    ALU in B: " << ex_intf.alu_in_b);
+#endif
     branch_compare.update();
     alu.update();
     store_shift.update();
@@ -92,11 +104,6 @@ void core::update_mem()
 {
     LOG("> UPDATE_MEM");
     load_shift_mask.update();
-}
-
-void core::update_wb()
-{
-    LOG("> UPDATE_WB");
     uint32_t pc_mem_inc4 = mem_intf.alu_mem + 1;
     uint32_t csr_placeholder = 0;
     wb_intf.data_d = cl::mux4(mem_intf.wb_sel_mem, 
@@ -104,11 +111,15 @@ void core::update_wb()
         mem_intf.alu_mem, 
         pc_mem_inc4, 
         csr_placeholder);
-#if LOG_DBG
     LOG("    WB mux select: " << mem_intf.wb_sel_mem);
     LOG("    WB mux output: " << wb_intf.data_d);
-#endif
     reg_file.write();
+}
+
+void core::update_wb()
+{
+    LOG("> UPDATE_WB");
+    //reg_file.write();
 }
 
 void core::status_log()

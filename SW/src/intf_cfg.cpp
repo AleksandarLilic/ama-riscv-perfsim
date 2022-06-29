@@ -68,8 +68,8 @@ void intf_cfg::init_id_ex(logic_t *logic_ptr, id_intf_t *id_intf, ex_intf_t *ex_
     logic_ptr->connect_port("rf_data_b_ex", 0, &id_intf->rf_data_b_fwd, &ex_intf->rf_data_b_ex);
     logic_ptr->connect_port("rd_addr_ex", 0, &id_intf->rd_addr_id, &ex_intf->rd_addr_ex);
     logic_ptr->connect_port("imm_gen_out_ex", 0, &id_intf->imm_gen_out, &ex_intf->imm_gen_out_ex);
-    logic_ptr->connect_port("alu_a_sel_ex", 0, &id_intf->dec_alu_a_sel_id, &ex_intf->alu_a_sel_ex);
-    logic_ptr->connect_port("alu_b_sel_ex", 0, &id_intf->dec_alu_b_sel_id, &ex_intf->alu_b_sel_ex);
+    logic_ptr->connect_port("alu_a_sel_ex", 0, &id_intf->of_alu_a_sel_fwd_id, &ex_intf->alu_a_sel_ex);
+    logic_ptr->connect_port("alu_b_sel_ex", 0, &id_intf->of_alu_b_sel_fwd_id, &ex_intf->alu_b_sel_ex);
     logic_ptr->connect_port("alu_op_sel_ex", 0, &id_intf->dec_alu_op_sel_id, &ex_intf->alu_op_sel_ex);
     logic_ptr->connect_port("rd_we_ex", 0, &id_intf->dec_rd_we_id, &ex_intf->rd_we_ex);
     logic_ptr->connect_port("store_inst_ex", 0, &id_intf->dec_store_inst_id, &ex_intf->store_inst_ex);

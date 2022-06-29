@@ -58,7 +58,8 @@ void imem::burn_mem()
     memory[36] = 0xfa1ff06f;  memory_asm[36] = "jal     x0,4000005c <loop>";
     memory[37] = 0x01000537;  memory_asm[37] = "lui     x10,0x1000";
     memory[38] = 0x01000517;  memory_asm[38] = "auipc   x10,0x1000";
-    memory[39] = 0x01000500;  memory_asm[39] = "invalid instr";
+    //memory[39] = 0x01000500;  memory_asm[39] = "invalid instr";
+    memory[39] = 0x00000013;  memory_asm[39] = "NOP";
     memory[40] = 0x00628433;  memory_asm[40] = "add     x8,x5,x6";
     memory[41] = 0x00f40593;  memory_asm[41] = "addi    x11,x8,15";
     memory[42] = 0x06340613;  memory_asm[42] = "addi    x12,x8,99";
