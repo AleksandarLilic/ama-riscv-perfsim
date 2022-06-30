@@ -32,29 +32,21 @@ void core::update_system()
     sys_intf.rst_seq_d3 = sys_intf.rst_seq & 0b1;
 
 #if LOG_DBG
-    LOG("sys_intf.rst_seq: " << sys_intf.rst_seq << ", bin:" << FBIN(sys_intf.rst_seq, 3));
-    LOG("sys_intf.rst_seq_d1: " << sys_intf.rst_seq_d1);
-    LOG("sys_intf.rst_seq_d2: " << sys_intf.rst_seq_d2);
-    LOG("sys_intf.rst_seq_d3: " << sys_intf.rst_seq_d3);
+    LOG("    RST Seq: " << sys_intf.rst_seq << ", bin:" << FBIN(sys_intf.rst_seq, 3));
 #endif
 }
 
 void core::update_if()
 {
-    const uint32_t ALU_OUT_MOCK = 12;
     LOG("> UPDATE_IF");
 
-    //if_intf.imem_addr = id_intf.nx_pc;
-    //if_intf.imem_addr = cl::mux2(uint32_t(id_intf.dec_pc_sel_if), id_intf.nx_pc, ALU_OUT_MOCK);
-
-    if_intf.imem_addr = cl::mux2(0u, id_intf.nx_pc, ALU_OUT_MOCK);
+    //if_intf.imem_addr = cl::mux2(uint32_t(id_intf.dec_pc_sel_if), id_intf.nx_pc, ex_intf.alu_out);
+    if_intf.imem_addr = cl::mux2(0u, id_intf.nx_pc, ex_intf.alu_out);
     if_intf.pc_inc4 = if_intf.imem_addr + 1;
 
     LOG("    Current PC: " << id_intf.nx_pc << 
         "; Current IMEM Addr: " << if_intf.imem_addr << 
         "; NX PC: " << if_intf.pc_inc4);
-
-    //LOG("After update - PC: " << if_intf.pc << "; NX PC: " << id_intf.nx_pc);
 }
 
 void core::update_id()
@@ -79,6 +71,9 @@ void core::update_id()
 void core::update_ex()
 {
     LOG("> UPDATE_EX");
+    ex_intf.bc_in_a = cl::mux2(ex_intf.bc_a_sel_ex, ex_intf.rf_data_a_ex, wb_intf.data_d);
+    ex_intf.bcs_in_b = cl::mux2(ex_intf.bcs_b_sel_ex, ex_intf.rf_data_b_ex, wb_intf.data_d);
+
     ex_intf.alu_in_a = cl::mux4(ex_intf.alu_a_sel_ex,
         ex_intf.rf_data_a_ex,
         ex_intf.pc_ex,
@@ -89,12 +84,18 @@ void core::update_ex()
         ex_intf.imm_gen_out_ex,
         wb_intf.data_d,
         CL_UNUSED);
+
 #if LOG_DBG
+    LOG("    BC A sel: " << ex_intf.bc_a_sel_ex);
+    LOG("    BC in A: " << ex_intf.bc_in_a);
+    LOG("    BCS B sel: " << ex_intf.bcs_b_sel_ex);
+    LOG("    BCS in B: " << ex_intf.bcs_in_b);
     LOG("    ALU A sel: " << ex_intf.alu_a_sel_ex);
     LOG("    ALU in A: " << ex_intf.alu_in_a);
     LOG("    ALU B sel: " << ex_intf.alu_b_sel_ex);
     LOG("    ALU in B: " << ex_intf.alu_in_b);
 #endif
+
     branch_compare.update();
     alu.update();
     store_shift.update();
@@ -106,20 +107,22 @@ void core::update_mem()
     load_shift_mask.update();
     uint32_t pc_mem_inc4 = mem_intf.alu_mem + 1;
     uint32_t csr_placeholder = 0;
+
     wb_intf.data_d = cl::mux4(mem_intf.wb_sel_mem, 
         wb_intf.load_sm_out, 
         mem_intf.alu_mem, 
         pc_mem_inc4, 
         csr_placeholder);
+
     LOG("    WB mux select: " << mem_intf.wb_sel_mem);
     LOG("    WB mux output: " << wb_intf.data_d);
+
     reg_file.write();
 }
 
 void core::update_wb()
 {
     LOG("> UPDATE_WB");
-    //reg_file.write();
 }
 
 void core::status_log()

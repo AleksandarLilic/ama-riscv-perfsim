@@ -41,7 +41,7 @@ void logic_port_t::update(uint32_t update_value)
     uint32_t prev = current;
     current = update_value;
     *connected_output = update_value;
-#if LOG_DBG
+#if LOG_LOGIC_T
     status_log(prev);
 #endif
 }
@@ -63,7 +63,7 @@ void logic_t::connect_port(std::string init_id, uint32_t init_val, uint32_t *din
     logic_port_t *port;
     port = new logic_port_t(init_id, init_val, din, dout);
     connected_ports.push_back(port);
-#if LOG_DBG
+#if LOG_LOGIC_T
     LOG("Connected Port: " << init_id);
 #endif
 }

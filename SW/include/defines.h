@@ -5,7 +5,8 @@
 #include <bitset>
 
 // Debug verbosity
-#define LOG_DBG 0
+#define LOG_DBG 1
+#define LOG_LOGIC_T 0
 #define ASM_IMEM 1
 #define FORCE_RF 1
 // LOG features

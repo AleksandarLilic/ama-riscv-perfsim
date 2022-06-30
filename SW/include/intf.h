@@ -99,12 +99,19 @@ typedef struct ex_intf_t
     uint32_t alu_a_sel_ex;
     uint32_t alu_b_sel_ex;
     uint32_t alu_op_sel_ex;
+
     uint32_t store_inst_ex;
     uint32_t branch_inst_ex;
     uint32_t jump_inst_ex;
-    
+
+    uint32_t bc_a_sel_ex;
+    uint32_t bcs_b_sel_ex;
+    uint32_t bc_uns_ex;
+    uint32_t bc_in_a;
+    uint32_t bcs_in_b;
     uint32_t bc_a_eq_b;
     uint32_t bc_a_lt_b;
+    
     uint32_t alu_in_a;
     uint32_t alu_in_b;
     uint32_t alu_out;

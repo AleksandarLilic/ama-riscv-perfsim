@@ -62,19 +62,26 @@ void intf_cfg::init_id_ex(logic_t *logic_ptr, id_intf_t *id_intf, ex_intf_t *ex_
     logic_ptr->connect_port("inst_ex", NOP, &id_intf->inst_id, &ex_intf->inst_ex);
     logic_ptr->connect_port("pc_ex", 0, &id_intf->nx_pc, &ex_intf->pc_ex);
     logic_ptr->connect_port("funct3_ex", 0, &id_intf->funct3_id, &ex_intf->funct3_ex);
+    
     logic_ptr->connect_port("rs1_addr_ex", 0, &id_intf->rs1_addr_id, &ex_intf->rs1_addr_ex);
     logic_ptr->connect_port("rs2_addr_ex", 0, &id_intf->rs2_addr_id, &ex_intf->rs2_addr_ex);
     logic_ptr->connect_port("rf_data_a_ex", 0, &id_intf->rf_data_a_fwd, &ex_intf->rf_data_a_ex);
     logic_ptr->connect_port("rf_data_b_ex", 0, &id_intf->rf_data_b_fwd, &ex_intf->rf_data_b_ex);
+    logic_ptr->connect_port("rd_we_ex", 0, &id_intf->dec_rd_we_id, &ex_intf->rd_we_ex);
     logic_ptr->connect_port("rd_addr_ex", 0, &id_intf->rd_addr_id, &ex_intf->rd_addr_ex);
     logic_ptr->connect_port("imm_gen_out_ex", 0, &id_intf->imm_gen_out, &ex_intf->imm_gen_out_ex);
+    
     logic_ptr->connect_port("alu_a_sel_ex", 0, &id_intf->of_alu_a_sel_fwd_id, &ex_intf->alu_a_sel_ex);
     logic_ptr->connect_port("alu_b_sel_ex", 0, &id_intf->of_alu_b_sel_fwd_id, &ex_intf->alu_b_sel_ex);
     logic_ptr->connect_port("alu_op_sel_ex", 0, &id_intf->dec_alu_op_sel_id, &ex_intf->alu_op_sel_ex);
-    logic_ptr->connect_port("rd_we_ex", 0, &id_intf->dec_rd_we_id, &ex_intf->rd_we_ex);
+    logic_ptr->connect_port("bc_a_sel_ex", 0, &id_intf->of_bc_a_sel_fwd_id, &ex_intf->bc_a_sel_ex);
+    logic_ptr->connect_port("bcs_b_sel_ex", 0, &id_intf->of_bcs_b_sel_fwd_id, &ex_intf->bcs_b_sel_ex);
+    logic_ptr->connect_port("bc_uns_ex", 0, &id_intf->dec_bc_uns_id, &ex_intf->bc_uns_ex);
+    
     logic_ptr->connect_port("store_inst_ex", 0, &id_intf->dec_store_inst_id, &ex_intf->store_inst_ex);
     logic_ptr->connect_port("branch_inst_ex", 0, &id_intf->dec_branch_inst_id, &ex_intf->branch_inst_ex);
     logic_ptr->connect_port("jump_inst_ex", 0, &id_intf->dec_jump_inst_id, &ex_intf->jump_inst_ex);
+    
     logic_ptr->connect_port("wb_sel_ex", 0, &id_intf->dec_wb_sel_id, &ex_intf->wb_sel_ex);
 }
 

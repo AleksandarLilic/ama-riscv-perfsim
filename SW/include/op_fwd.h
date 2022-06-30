@@ -28,5 +28,3 @@ private:
     void op_fwd_bcs(id_intf_t *id_intf);
     void op_fwd_alu(id_intf_t *id_intf);
 };
-
-
