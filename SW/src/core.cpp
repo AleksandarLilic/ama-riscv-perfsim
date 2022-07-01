@@ -104,12 +104,15 @@ void core::update_ex()
 void core::update_mem()
 {
     LOG("> UPDATE_MEM");
-    load_shift_mask.update();
+    mem_intf.dmem_out++;
+    if(mem_intf.load_sm_en_mem)
+        load_shift_mask.update();
+    LOG("    Load SM output: " << mem_intf.load_sm_out);
     uint32_t pc_mem_inc4 = mem_intf.alu_mem + 1;
     uint32_t csr_placeholder = 0;
 
     wb_intf.data_d = cl::mux4(mem_intf.wb_sel_mem, 
-        wb_intf.load_sm_out, 
+        mem_intf.load_sm_out, 
         mem_intf.alu_mem, 
         pc_mem_inc4, 
         csr_placeholder);

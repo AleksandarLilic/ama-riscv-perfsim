@@ -84,7 +84,10 @@ store_shift::store_shift(ex_intf_t *ex_intf)
 
 void store_shift::update()
 {
-    LOGW("store_shift called -> placeholder");
+    ex_intf->store_offset = ex_intf->alu_out & 0x3;
+    ex_intf->dmem_in = ex_intf->bcs_in_b << ex_intf->store_offset;
+    LOG("    Store Offset: " << ex_intf->store_offset);
+    LOG("    DMEM Store Input: " << ex_intf->dmem_in);
 }
 
 load_shift_mask::load_shift_mask(mem_intf_t *mem_intf)
@@ -94,5 +97,41 @@ load_shift_mask::load_shift_mask(mem_intf_t *mem_intf)
 
 void load_shift_mask::update()
 {
-    LOGW("store_shift called -> placeholder");
+    uint32_t load_width = mem_intf->funct3_mem & 0b11;
+    uint32_t offset = mem_intf->alu_mem & 0b11;
+    uint32_t load_sign_bit = (load_width & 0b100) >> 2;
+#ifdef LOG_DBG
+    LOG("    Load SM input: " << mem_intf->dmem_out);
+    LOG("    Width: " << load_width);
+    LOG("    Offset: " << offset);
+    LOG("    Sign Bit: " << load_sign_bit);
+#endif
+
+    uint32_t unaligned_access = (
+        (load_width == 0b01 && offset == 3) ||  // half out of bounds
+        (load_width == 0b10 && offset != 0));   // word out of bounds
+
+    if (unaligned_access) {
+        LOGE("DMEM unaligned access not supported. Returning zero.");
+        mem_intf->load_sm_out = 0u;
+        return;
+    }
+
+    uint32_t load_width_bytes = load_width << 3;
+    uint32_t mask = 0xFF;
+    uint32_t get_data_sign = 0x80 << load_width_bytes;
+    uint32_t sign_mask = 0x0;
+    uint32_t offset_bytes = offset << 3;
+
+    mask = ~(~mask << load_width_bytes);  // fill with 1s from right
+    sign_mask = ~mask;
+    mask = mask | ((mask << 8) & 0xFF00'0000);  // add byte[3] if word
+    mask = mask << offset_bytes;
+
+    mem_intf->load_sm_out = (mem_intf->dmem_out & mask) >> offset_bytes;
+
+    uint32_t data_neg = mem_intf->load_sm_out & get_data_sign;
+
+    if (load_sign_bit && data_neg)
+        mem_intf->load_sm_out |= sign_mask;
 }
