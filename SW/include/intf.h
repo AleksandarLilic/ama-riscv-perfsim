@@ -3,6 +3,17 @@
 #include "defines.h"
 #include <vector>
 
+typedef struct core_intf_t
+{
+    uint32_t *imem_addr;
+    uint32_t imem_dout;
+    uint32_t dmem_addr;
+    uint32_t dmem_din;
+    uint32_t dmem_dout;
+    uint32_t dmem_en;
+    uint32_t dmem_we;
+} core_intf_t;
+
 // stage interfaces
 typedef struct if_intf_t
 {

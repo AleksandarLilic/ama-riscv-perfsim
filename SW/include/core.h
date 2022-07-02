@@ -8,17 +8,16 @@
 class core
 {
 public:
-    if_intf_t if_intf{};    // FIXME: hack, move back to private
 
 private:
     intf_cfg intf_cfg;
 
-    uint32_t *imem_ptr;
-    uint32_t *dmem_ptr;
+    uint32_t *imem_dout_ptr;
+    uint32_t *dmem_dout_ptr;
 
     sys_intf_t sys_intf{};
 
-    //if_intf_t if_intf{};
+    if_intf_t if_intf{};
     id_intf_t id_intf{};
     ex_intf_t ex_intf{};
     mem_intf_t mem_intf{};
@@ -28,7 +27,8 @@ private:
 
 public:
     core() = delete;
-    core(seq_queue *q, uint32_t *imem_ptr, uint32_t *dmem_ptr);
+    //core(seq_queue *q, uint32_t *imem_ptr, uint32_t *dmem_ptr);
+    core(seq_queue *q, core_intf_t *core_intf);
     void reset(bool rst_in);
     
     void update_system();

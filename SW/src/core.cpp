@@ -1,6 +1,7 @@
 #include "../include/core.h"
 
-core::core(seq_queue *q, uint32_t *imem_ptr, uint32_t *dmem_ptr) :
+//core::core(seq_queue *q, uint32_t *imem_ptr, uint32_t *dmem_ptr) :
+core::core(seq_queue *q, core_intf_t *core_intf):
     control(&sys_intf, &if_intf, &id_intf, &ex_intf, &mem_intf, &wb_intf),
     reg_file(&reg_file_intf, &id_intf, &mem_intf, &wb_intf),
     imm_gen(&id_intf),
@@ -9,9 +10,11 @@ core::core(seq_queue *q, uint32_t *imem_ptr, uint32_t *dmem_ptr) :
     store_shift(&ex_intf),
     load_shift_mask(&mem_intf)
 {
-    this->imem_ptr = imem_ptr;
-    this->dmem_ptr = dmem_ptr;
-    intf_cfg.init_regs(q, &sys_intf, &reg_file_intf, &if_intf, &id_intf, &ex_intf, &mem_intf, imem_ptr);
+    imem_dout_ptr = &core_intf->imem_dout;
+    dmem_dout_ptr = &core_intf->dmem_dout;
+    core_intf->imem_addr = &if_intf.imem_addr;
+
+    intf_cfg.init_regs(q, &sys_intf, &reg_file_intf, &if_intf, &id_intf, &ex_intf, &mem_intf, imem_dout_ptr);
 }
 
 void core::reset(bool rst_in)

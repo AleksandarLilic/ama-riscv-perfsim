@@ -50,6 +50,52 @@ int main()
 #else
 int main()
 {
+    uint32_t din = 0xFF;
+    uint32_t we = 0b0100;
+
+    uint32_t mask[4][2] = {
+            {0x0, 0x0000'00FF},
+            {0x0, 0x0000'FF00},
+            {0x0, 0x00FF'0000},
+            {0x0, 0xFF00'0000} };
+
+    //LOG("mask[0][0]: " << FHEX(mask[0][0]));
+    //LOG("mask[1][0]: " << FHEX(mask[1][0]));
+    //LOG("mask[2][0]: " << FHEX(mask[2][0]));
+    //LOG("mask[3][0]: " << FHEX(mask[3][0]));
+    //LOG("mask[0][1]: " << FHEX(mask[0][1]));
+    //LOG("mask[1][1]: " << FHEX(mask[1][1]));
+    //LOG("mask[2][1]: " << FHEX(mask[2][1]));
+    //LOG("mask[3][1]: " << FHEX(mask[3][1]));
+
+    //LOG("we 3: " << (we & 0x4));
+    //uint32_t we3 = we & 0x4;
+    //LOG("we 3: " << (we & 0x4));
+    //LOG("mask[0][(we & 0x1)]: " << FHEX(mask[0][(we & 0x4)]));
+    //LOG("mask[0][(we & 0x1)]: " << FHEX(mask[0][we3]));
+
+    //uint32_t din0 = din & (mask[0][(we & 0x1)]);
+    //LOG("din & mask[0][(we & 0x1)]: " << din0);
+
+    //uint32_t din1 = din & (mask[1][(we & 0x2)]);
+    //LOG("din & mask[1][(we & 0x2)]: " << din1);
+
+    ////uint32_t din2 = din & (mask[2][(we & 0x4)]);
+    //uint32_t din2 = din & (mask[2][(we3)]);
+    //LOG("din & mask[2][(we & 0x4)]: " << din2);
+
+    //uint32_t din3 = din & (mask[3][(we & 0x8)]);
+    //LOG("din & mask[3][(we & 0x8)]: " << din3);
+
+    uint32_t in = din & mask[0][(we & 0x1)] |
+        din & mask[1][(we & 0x2) >> 1] |
+        din & mask[2][(we & 0x4) >> 2] |
+        din & mask[3][(we & 0x8) >> 3];
+    
+    LOG("in: " << in);
+    std::cin.get();
+    return 1;    
+/*
     uint32_t funct3 = 0b100;
 
 
@@ -105,6 +151,7 @@ int main()
     LOG("out: " << FHEX(out) << ", " << int32_t(out));
 
     std::cin.get();
-
+*/
 }
+
 #endif

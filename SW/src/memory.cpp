@@ -75,5 +75,27 @@ void imem::burn_mem()
 
 dmem::dmem()
 {
-    LOGW("dmem created -> placeholder");
+    memory[0] = 0xFF;
+    memory[1] = 0x01;
+    memory[2] = 0x02;
+    memory[3] = 0x03;
+    memory[4] = 0x04;
+    memory[5] = 0x05;
+    memory[6] = 0x06;
+    memory[7] = 0x07;
+    memory[8] = 0x08;
+    memory[9] = 0x09;
+
+}
+
+uint32_t dmem::access(uint32_t en, uint32_t we, uint32_t addr, uint32_t din) {
+    if (en) {
+        // Byte Enable Write
+        uint32_t in = din & mask[0][we & 0x1] |
+            din & mask[1][(we & 0x2) >> 1] |
+            din & mask[2][(we & 0x4) >> 2] |
+            din & mask[3][(we & 0x8) >> 3];
+
+        return memory[addr];
+    }
 }
