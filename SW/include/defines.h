@@ -30,7 +30,7 @@
 #define NOT_RESET 0xAAAA'AAAA
 #define NO_REG_UPDATE 32
 // CFG
-#define CFG_REGS 8
+#define CFG_REGS 9
 
 // Instruction field masks
 #define OPC7_M uint32_t(0b0111'1111)

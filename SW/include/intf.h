@@ -5,13 +5,13 @@
 
 typedef struct core_intf_t
 {
-    uint32_t *imem_addr;
-    uint32_t imem_dout;
-    uint32_t dmem_addr;
-    uint32_t dmem_din;
-    uint32_t dmem_dout;
-    uint32_t dmem_en;
-    uint32_t dmem_we;
+    uint32_t *imem_addr;    // core output  - cpu input
+    uint32_t imem_dout;     // core input   - cpu output
+    uint32_t *dmem_addr;    // core output  - cpu input
+    uint32_t *dmem_din;     // core output  - cpu input
+    uint32_t *dmem_en;      // core output  - cpu input
+    uint32_t *dmem_we;      // core output  - cpu input
+    uint32_t dmem_dout;     // core input   - cpu output
 } core_intf_t;
 
 // stage interfaces
@@ -127,7 +127,10 @@ typedef struct ex_intf_t
     uint32_t alu_in_b;
     uint32_t alu_out;
     uint32_t store_offset;
-    uint32_t dmem_in;
+    uint32_t dmem_addr = NOT_RESET & (0x0FFF);
+    uint32_t dmem_din = NOT_RESET & (0x0FFF);
+    uint32_t dmem_en_ex;
+    uint32_t dmem_we_ex;
 
     uint32_t load_sm_en_ex;
     uint32_t wb_sel_ex;
@@ -143,12 +146,12 @@ typedef struct mem_intf_t
     uint32_t rs2_addr_mem;
     uint32_t rd_addr_mem;
     uint32_t rd_we_mem;
-    
+
+    uint32_t dmem_dout = NOT_RESET & (0x0FFF);
     uint32_t load_sm_en_mem;
     uint32_t wb_sel_mem;
 
-    uint32_t dmem_out;
-    uint32_t load_sm_out;
+    uint32_t load_sm_out = NOT_RESET & (0x0FFF);
 } mem_intf_t;
 
 typedef struct wb_intf_t

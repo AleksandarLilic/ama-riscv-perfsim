@@ -10,11 +10,16 @@ core::core(seq_queue *q, core_intf_t *core_intf):
     store_shift(&ex_intf),
     load_shift_mask(&mem_intf)
 {
-    imem_dout_ptr = &core_intf->imem_dout;
-    dmem_dout_ptr = &core_intf->dmem_dout;
     core_intf->imem_addr = &if_intf.imem_addr;
+    imem_dout_ptr = &core_intf->imem_dout;
+    core_intf->dmem_addr = &ex_intf.dmem_addr;
+    core_intf->dmem_din = &ex_intf.dmem_din;
+    core_intf->dmem_en = &ex_intf.dmem_en_ex;
+    core_intf->dmem_we = &ex_intf.dmem_we_ex;
+    dmem_dout_ptr = &core_intf->dmem_dout;
 
-    intf_cfg.init_regs(q, &sys_intf, &reg_file_intf, &if_intf, &id_intf, &ex_intf, &mem_intf, imem_dout_ptr);
+    intf_cfg.init_regs(q, &sys_intf, &reg_file_intf, &if_intf, &id_intf, &ex_intf, &mem_intf, 
+        imem_dout_ptr, dmem_dout_ptr);
 }
 
 void core::reset(bool rst_in)
@@ -101,16 +106,24 @@ void core::update_ex()
 
     branch_compare.update();
     alu.update();
+    ex_intf.dmem_addr = ex_intf.alu_out >> 2;
     store_shift.update();
+
+#if LOG_DBG
+    LOG("    DMEM en: " << ex_intf.dmem_en_ex);
+    LOG("    DMEM we: " << ex_intf.dmem_we_ex);
+    LOG("    DMEM addr: " << ex_intf.dmem_addr);
+    LOG("    DMEM din: " << ex_intf.dmem_din);
+#endif
 }
 
 void core::update_mem()
 {
     LOG("> UPDATE_MEM");
-    mem_intf.dmem_out++;
+    LOG("    DMEM out: " << mem_intf.dmem_dout << ", " << FHEX(mem_intf.dmem_dout));
     if(mem_intf.load_sm_en_mem)
         load_shift_mask.update();
-    LOG("    Load SM output: " << mem_intf.load_sm_out);
+    LOG("    Load SM output: " << mem_intf.load_sm_out << ", " << FHEX(mem_intf.load_sm_out));
     uint32_t pc_mem_inc4 = mem_intf.alu_mem + 1;
     uint32_t csr_placeholder = 0;
 

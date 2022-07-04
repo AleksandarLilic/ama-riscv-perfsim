@@ -15,11 +15,17 @@ void cpu::update()
     core.status_log();
     core.reset(reset_status);
     core.update_system();
+    // WB
     core.update_wb();
+    // MEM
     core.update_mem();
-    core_intf.dmem_dout = dmem.access(1, 0, 5, 0);    // mock values
+    // EX
     core.update_ex();
+    core_intf.dmem_dout = dmem.access(*core_intf.dmem_en, *core_intf.dmem_we, 
+        *core_intf.dmem_addr, *core_intf.dmem_din);
+    // ID
     core.update_id();
+    // IF
     core.update_if();
     core_intf.imem_dout = imem.read(*core_intf.imem_addr);
 

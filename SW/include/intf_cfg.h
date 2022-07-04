@@ -24,12 +24,14 @@ private:
     void init_if_id(logic_t *logic_ptr_pc, logic_t *logic_ptr_stall, logic_t *logic_ptr_imem, 
         if_intf_t *if_intf, id_intf_t *id_intf, uint32_t *imem_dout);
     void init_id_ex(logic_t *logic_ptr, id_intf_t *id_intf, ex_intf_t *ex_intf);
-    void init_ex_mem(logic_t *logic_ptr, id_intf_t *id_intf, ex_intf_t *ex_intf, mem_intf_t *mem_intf);
+    void init_ex_mem(logic_t *logic_ptr, logic_t *logic_ptr_dmem, id_intf_t *id_intf, ex_intf_t *ex_intf, 
+        mem_intf_t *mem_intf, uint32_t *dmem_dout);
     void init_reg_file(logic_t *logic_ptr, reg_file_intf_t *reg_file_intf);
 
 public:
     void init_regs(seq_queue *q, sys_intf_t *sys_intf, reg_file_intf_t *reg_file_intf, 
-        if_intf_t *if_intf, id_intf_t *id_intf, ex_intf_t *ex_intf, mem_intf_t *mem_intf, uint32_t *imem_dout);
+        if_intf_t *if_intf, id_intf_t *id_intf, ex_intf_t *ex_intf, mem_intf_t *mem_intf, 
+        uint32_t *imem_dout, uint32_t *dmem_dout);
     // void init_memory(uint32_t *imem_dout, uint32_t *dmem_dout);
 
 private:

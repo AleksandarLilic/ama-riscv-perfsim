@@ -85,9 +85,9 @@ store_shift::store_shift(ex_intf_t *ex_intf)
 void store_shift::update()
 {
     ex_intf->store_offset = ex_intf->alu_out & 0x3;
-    ex_intf->dmem_in = ex_intf->bcs_in_b << ex_intf->store_offset;
+    ex_intf->dmem_din = ex_intf->bcs_in_b << ex_intf->store_offset;
     LOG("    Store Offset: " << ex_intf->store_offset);
-    LOG("    DMEM Store Input: " << ex_intf->dmem_in);
+    LOG("    DMEM Store Input: " << ex_intf->dmem_din);
 }
 
 load_shift_mask::load_shift_mask(mem_intf_t *mem_intf)
@@ -101,7 +101,7 @@ void load_shift_mask::update()
     uint32_t offset = mem_intf->alu_mem & 0b11;
     uint32_t load_sign_bit = (load_width & 0b100) >> 2;
 #ifdef LOG_DBG
-    LOG("    Load SM input: " << mem_intf->dmem_out);
+    LOG("    Load SM input: " << mem_intf->dmem_dout);
     LOG("    Width: " << load_width);
     LOG("    Offset: " << offset);
     LOG("    Sign Bit: " << load_sign_bit);
@@ -128,7 +128,7 @@ void load_shift_mask::update()
     mask = mask | ((mask << 8) & 0xFF00'0000);  // add byte[3] if word
     mask = mask << offset_bytes;
 
-    mem_intf->load_sm_out = (mem_intf->dmem_out & mask) >> offset_bytes;
+    mem_intf->load_sm_out = (mem_intf->dmem_dout & mask) >> offset_bytes;
 
     uint32_t data_neg = mem_intf->load_sm_out & get_data_sign;
 
