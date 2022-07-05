@@ -18,10 +18,11 @@ control::control(sys_intf_t *sys_intf, if_intf_t *if_intf, id_intf_t *id_intf,
 void control::update()
 {
     id_intf->stall_if_id = sys_intf->rst;
-   // if (id_intf->stall_if_id_d)
-   //     id_intf->inst_id = NOP;
+    if (id_intf->stall_if_id_d)     // Convert to NOP on stall
+        id_intf->inst_id = NOP;
     LOG("    Instruction going to control: " << FHEX(id_intf->inst_id));
     update(sys_intf, id_intf, ex_intf, mem_intf);
+    global_inst_to_ctrl = id_intf->inst_id;
 }
 
 void control::update(sys_intf_t *sys_intf, id_intf_t *id_intf, ex_intf_t *ex_intf,
@@ -32,7 +33,7 @@ void control::update(sys_intf_t *sys_intf, id_intf_t *id_intf, ex_intf_t *ex_int
     branch_resolution(sys_intf, id_intf, ex_intf);
     store_mask(id_intf, ex_intf);
 
-    //id_intf->dec_pc_we_if = id_intf->dec_pc_we_if && !id_intf->stall_if;
+    id_intf->dec_pc_we_if = id_intf->dec_pc_we_if && !id_intf->stall_if_id;
     pipeline_ctrl(sys_intf, id_intf);
 }
 

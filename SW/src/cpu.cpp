@@ -34,7 +34,10 @@ void cpu::update()
     imemc_s[4] = imemc_s[3];    // wb
     imemc_s[3] = imemc_s[2];    // mem
     imemc_s[2] = imemc_s[1];    // ex
-    imemc_s[1] = imemc_s[0];    // id
+    if (global_inst_to_ctrl == 0x13) // id
+        imemc_s[1] = "NOP";
+    else
+        imemc_s[1] = imemc_s[0];
     imemc_s[0] = imem.read_asm(*core_intf.imem_addr); // if
     LOG("    Instruction in IF stage: " << FHEX(core_intf.imem_dout));
     

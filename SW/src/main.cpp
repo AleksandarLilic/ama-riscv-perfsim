@@ -4,6 +4,9 @@
 #include "cpu.h"
 //#define TEST
 #ifndef TEST
+
+uint32_t global_inst_to_ctrl = 0;
+
 void queue_update_all(seq_queue *q)
 {
     LOG("\n\n------ Running queue update:\n");
@@ -20,7 +23,8 @@ int main()
     //                      dd  dummy  NOP
     clk_count = clk_count + 3  + 3    + 5 ;
     //clk_count = 12;
-    clk_count = 32;
+    //clk_count = 32;
+    clk_count = 40;
 
     seq_queue q;
     cpu *cpu0 = new cpu(&q);

@@ -22,8 +22,8 @@ void intf_cfg::init_regs(seq_queue *q, sys_intf_t *sys_intf, reg_file_intf_t *re
     logic_init_cfg_t regs_cfg[CFG_REGS] = {
      //      {"ID", <reset_sig>, <clear_sig>, <enable_sig>},
      /* 0 */ {"SYS", &sys_intf->rst, &unused_false, &unused_true},
-     /* 1 */ //{"PC", &sys_intf->rst, &unused_false, &id_intf->dec_pc_we_if},   // FIXME: use pc_we_if
-     /* 1 */ {"PC", &sys_intf->rst, &unused_false, &unused_true},
+     /* 1 */ {"PC", &sys_intf->rst, &unused_false, &id_intf->dec_pc_we_if},   // FIXME: use pc_we_if
+     /* 1 */ //{"PC", &sys_intf->rst, &unused_false, &unused_true},
      /* 2 */ {"stall_if_d", &sys_intf->rst, &unused_false, &unused_true},
      /* 3 */ {"IMEM", &unused_false, &unused_false, &unused_true},
      /* 4 */ {"ID_EX", &sys_intf->rst, &id_intf->clear_id_ex, &unused_true},

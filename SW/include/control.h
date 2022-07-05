@@ -6,6 +6,8 @@
 #include "decoder.h"
 #include "op_fwd.h"
 
+extern uint32_t global_inst_to_ctrl;
+
 class control
 {
 private:
