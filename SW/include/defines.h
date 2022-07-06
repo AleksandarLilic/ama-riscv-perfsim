@@ -8,7 +8,7 @@
 #define LOG_DBG 1
 #define LOG_LOGIC_T 0
 #define ASM_IMEM 1
-#define FORCE_RF 1
+#define FORCE_RF 0
 // LOG features
 #define LOG(x) std::cout << x << std::endl
 #define LOG_L(x) std::cout << x

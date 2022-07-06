@@ -27,7 +27,7 @@ void cpu::update()
     core.update_id();
     // IF
     core.update_if();
-    core_intf.imem_dout = imem.read(*core_intf.imem_addr);
+    core_intf.imem_dout = imem.read((*core_intf.imem_addr) >> 2);
 
 #if ASM_IMEM
     static std::string imemc_s[5]{};
@@ -38,7 +38,7 @@ void cpu::update()
         imemc_s[1] = "NOP";
     else
         imemc_s[1] = imemc_s[0];
-    imemc_s[0] = imem.read_asm(*core_intf.imem_addr); // if
+    imemc_s[0] = imem.read_asm((*core_intf.imem_addr) >> 2); // if
     LOG("    Instruction in IF stage: " << FHEX(core_intf.imem_dout));
     
     LOG("\nInstruction pipeline:");

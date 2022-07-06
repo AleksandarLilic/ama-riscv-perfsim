@@ -18,7 +18,7 @@ core::core(seq_queue *q, core_intf_t *core_intf):
     core_intf->dmem_we = &ex_intf.dmem_we_ex;
     dmem_dout_ptr = &core_intf->dmem_dout;
 
-    intf_cfg.init_regs(q, &sys_intf, &reg_file_intf, &if_intf, &id_intf, &ex_intf, &mem_intf, 
+    intf_cfg.init_regs(q, &sys_intf, &reg_file_intf, &if_intf, &id_intf, &ex_intf, &mem_intf, &wb_intf,
         imem_dout_ptr, dmem_dout_ptr);
 }
 
@@ -48,15 +48,14 @@ void core::update_if()
 {
     LOG("> UPDATE_IF");
 
-    if_intf.imem_addr = cl::mux2(uint32_t(id_intf.dec_pc_sel_if), id_intf.nx_pc, ex_intf.alu_out);
-    //if_intf.imem_addr = cl::mux2(0u, id_intf.nx_pc, ex_intf.alu_out);
-    if_intf.pc_inc4 = if_intf.imem_addr + 1;
+    if_intf.imem_addr = cl::mux2(uint32_t(id_intf.dec_pc_sel_if), id_intf.nx_pc, (ex_intf.alu_out));
+    if_intf.pc_inc4 = if_intf.imem_addr + 4;
     LOG("    PC write enable: " << id_intf.dec_pc_we_if);
     LOG("    PC sel: " << id_intf.dec_pc_sel_if);
     LOG("    IF/ID stall: " << id_intf.stall_if_id);
 
     LOG("    Current PC: " << id_intf.nx_pc << 
-        "; Current IMEM Addr: " << if_intf.imem_addr << 
+        "; Current IMEM Addr (mux out): " << if_intf.imem_addr << 
         "; NX PC: " << if_intf.pc_inc4);
 }
 
@@ -64,6 +63,12 @@ void core::update_id()
 {
     LOG("> UPDATE_ID");
     LOG("    Instruction in ID stage: " << FHEX(id_intf.inst_id));
+    
+    id_intf.stall_if_id = sys_intf.rst;
+    if (id_intf.stall_if_id_d)     // Convert to NOP on stall
+        id_intf.inst_id = NOP;
+    LOG("    Instruction going to control: " << FHEX(id_intf.inst_id));
+
     id_intf.opc7_id = inst_field::opc7(id_intf.inst_id);
     id_intf.funct3_id = inst_field::funct3(id_intf.inst_id);
     id_intf.funct7_id = inst_field::funct7(id_intf.inst_id);
@@ -82,6 +87,7 @@ void core::update_id()
 void core::update_ex()
 {
     LOG("> UPDATE_EX");
+    LOG("    Instruction in EX stage: " << FHEX(ex_intf.inst_ex));
     ex_intf.bc_in_a = cl::mux2(ex_intf.bc_a_sel_ex, ex_intf.rf_data_a_ex, wb_intf.data_d);
     ex_intf.bcs_in_b = cl::mux2(ex_intf.bcs_b_sel_ex, ex_intf.rf_data_b_ex, wb_intf.data_d);
 
@@ -123,11 +129,12 @@ void core::update_ex()
 void core::update_mem()
 {
     LOG("> UPDATE_MEM");
+    LOG("    Instruction in MEM stage: " << FHEX(mem_intf.inst_mem));
     LOG("    DMEM out: " << mem_intf.dmem_dout << ", " << FHEX(mem_intf.dmem_dout));
     if(mem_intf.load_sm_en_mem)
         load_shift_mask.update();
     LOG("    Load SM output: " << mem_intf.load_sm_out << ", " << FHEX(mem_intf.load_sm_out));
-    uint32_t pc_mem_inc4 = mem_intf.alu_mem + 1;
+    uint32_t pc_mem_inc4 = mem_intf.alu_mem + 4;
     uint32_t csr_placeholder = 0;
 
     wb_intf.data_d = cl::mux4(mem_intf.wb_sel_mem, 
@@ -145,6 +152,7 @@ void core::update_mem()
 void core::update_wb()
 {
     LOG("> UPDATE_WB");
+    LOG("    Instruction in WB stage: " << FHEX(wb_intf.inst_wb));
 }
 
 void core::status_log()

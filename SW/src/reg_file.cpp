@@ -25,11 +25,6 @@ void reg_file::write()
     LOG("    Reg File write - Addres D: " << mem_intf->rd_addr_mem << "; Data D : " << wb_intf->data_d);
     }
 
-#if FORCE_RF
-    reg_file_intf->in[5] = 17u;
-    reg_file_intf->in[6] = 4u;
-#endif
-
     status_updated_register();
 }
 

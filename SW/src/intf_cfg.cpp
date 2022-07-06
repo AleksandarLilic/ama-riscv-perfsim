@@ -17,13 +17,12 @@ void intf_cfg::init(seq_queue *q, logic_init_cfg_t *logic_init_cfg, uint32_t loo
 
 void intf_cfg::init_regs(seq_queue *q, sys_intf_t *sys_intf, reg_file_intf_t *reg_file_intf, 
     if_intf_t *if_intf, id_intf_t *id_intf, ex_intf_t *ex_intf, mem_intf_t *mem_intf, 
-    uint32_t *imem_dout, uint32_t *dmem_dout)
+    wb_intf_t *wb_intf, uint32_t *imem_dout, uint32_t *dmem_dout)
 {
     logic_init_cfg_t regs_cfg[CFG_REGS] = {
      //      {"ID", <reset_sig>, <clear_sig>, <enable_sig>},
      /* 0 */ {"SYS", &sys_intf->rst, &unused_false, &unused_true},
-     /* 1 */ {"PC", &sys_intf->rst, &unused_false, &id_intf->dec_pc_we_if},   // FIXME: use pc_we_if
-     /* 1 */ //{"PC", &sys_intf->rst, &unused_false, &unused_true},
+     /* 1 */ {"PC", &sys_intf->rst, &unused_false, &id_intf->dec_pc_we_if},
      /* 2 */ {"stall_if_d", &sys_intf->rst, &unused_false, &unused_true},
      /* 3 */ {"IMEM", &unused_false, &unused_false, &unused_true},
      /* 4 */ {"ID_EX", &sys_intf->rst, &id_intf->clear_id_ex, &unused_true},
@@ -40,6 +39,7 @@ void intf_cfg::init_regs(seq_queue *q, sys_intf_t *sys_intf, reg_file_intf_t *re
     init_if_id(logic_ptr[1], logic_ptr[2], logic_ptr[3], if_intf, id_intf, imem_dout);
     init_id_ex(logic_ptr[4], id_intf, ex_intf);
     init_ex_mem(logic_ptr[5], logic_ptr[6], id_intf, ex_intf, mem_intf, dmem_dout);
+    init_mem_wb(logic_ptr[7], mem_intf, wb_intf);
     init_reg_file(logic_ptr[8], reg_file_intf);
 }
 
@@ -55,6 +55,7 @@ void intf_cfg::init_if_id(logic_t *logic_ptr_pc, logic_t *logic_ptr_stall, logic
     if_intf_t *if_intf, id_intf_t *id_intf, uint32_t *imem_dout)
 {
     logic_ptr_pc->connect_port("nx_pc", RESET_VECTOR, &if_intf->pc_inc4, &id_intf->nx_pc);
+    logic_ptr_pc->connect_port("pc", RESET_VECTOR, &if_intf->imem_addr, &id_intf->pc);
     logic_ptr_stall->connect_port("stall_if_id_d", 1, &id_intf->stall_if_id, &id_intf->stall_if_id_d);
     logic_ptr_imem->connect_port("imem", 0, imem_dout, &id_intf->inst_id);
 }
@@ -62,7 +63,7 @@ void intf_cfg::init_if_id(logic_t *logic_ptr_pc, logic_t *logic_ptr_stall, logic
 void intf_cfg::init_id_ex(logic_t *logic_ptr, id_intf_t *id_intf, ex_intf_t *ex_intf)
 {
     logic_ptr->connect_port("inst_ex", NOP, &id_intf->inst_id, &ex_intf->inst_ex);
-    logic_ptr->connect_port("pc_ex", 0, &id_intf->nx_pc, &ex_intf->pc_ex);
+    logic_ptr->connect_port("pc_ex", 0, &id_intf->pc, &ex_intf->pc_ex);
     logic_ptr->connect_port("funct3_ex", 0, &id_intf->funct3_id, &ex_intf->funct3_ex);
     
     logic_ptr->connect_port("rs1_addr_ex", 0, &id_intf->rs1_addr_id, &ex_intf->rs1_addr_ex);
@@ -107,6 +108,11 @@ void intf_cfg::init_ex_mem(logic_t *logic_ptr, logic_t *logic_ptr_dmem, id_intf_
 
     logic_ptr->connect_port("load_sm_en_mem", 0, &ex_intf->load_sm_en_ex, &mem_intf->load_sm_en_mem );
     logic_ptr->connect_port("wb_sel_mem", 0, &ex_intf->wb_sel_ex, &mem_intf->wb_sel_mem);
+}
+
+void intf_cfg::init_mem_wb(logic_t *logic_ptr, mem_intf_t *mem_intf, wb_intf_t *wb_intf)
+{
+    logic_ptr->connect_port("inst_wb", NOP, &mem_intf->inst_mem, &wb_intf->inst_wb);
 }
 
 void intf_cfg::init_reg_file(logic_t *logic_ptr, reg_file_intf_t *reg_file_intf)

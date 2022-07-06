@@ -27,9 +27,10 @@ typedef struct if_intf_t
 
 typedef struct id_intf_t
 {
-    uint32_t inst_id = NOT_RESET & (0x0FFF);
+    uint32_t inst_id = NOT_RESET;
 
     uint32_t nx_pc = NOT_RESET & (0x0FFF);
+    uint32_t pc = NOT_RESET & (0x0FFF);
     uint32_t store_inst;
     uint32_t imm_gen_out;
     // reg file out
@@ -96,7 +97,7 @@ typedef struct id_intf_t
 
 typedef struct ex_intf_t
 {
-    uint32_t inst_ex;
+    uint32_t inst_ex = NOT_RESET;
     uint32_t pc_ex;
     uint32_t funct3_ex;
     uint32_t rs1_addr_ex;
@@ -128,7 +129,7 @@ typedef struct ex_intf_t
     uint32_t alu_out;
     uint32_t store_offset;
     uint32_t dmem_addr = NOT_RESET & (0x0FFF);
-    uint32_t dmem_din = NOT_RESET & (0x0FFF);
+    uint32_t dmem_din = NOT_RESET;
     uint32_t dmem_en_ex;
     uint32_t dmem_we_ex;
 
@@ -138,7 +139,7 @@ typedef struct ex_intf_t
 
 typedef struct mem_intf_t
 {
-    uint32_t inst_mem;
+    uint32_t inst_mem = NOT_RESET;
     uint32_t alu_mem;
     uint32_t pc_mem;
     uint32_t funct3_mem;
@@ -147,16 +148,17 @@ typedef struct mem_intf_t
     uint32_t rd_addr_mem;
     uint32_t rd_we_mem;
 
-    uint32_t dmem_dout = NOT_RESET & (0x0FFF);
+    uint32_t dmem_dout = NOT_RESET;
     uint32_t load_sm_en_mem;
     uint32_t wb_sel_mem;
 
-    uint32_t load_sm_out = NOT_RESET & (0x0FFF);
+    uint32_t load_sm_out = NOT_RESET;
 } mem_intf_t;
 
 typedef struct wb_intf_t
 {
-    uint32_t data_d;
+    uint32_t inst_wb = NOT_RESET;
+    uint32_t data_d = NOT_RESET;
 
 } wb_intf_t;
 
