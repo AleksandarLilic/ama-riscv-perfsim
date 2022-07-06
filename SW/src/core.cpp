@@ -48,15 +48,15 @@ void core::update_if()
 {
     LOG("> UPDATE_IF");
 
-    if_intf.imem_addr = cl::mux2(uint32_t(id_intf.dec_pc_sel_if), id_intf.nx_pc, (ex_intf.alu_out));
-    if_intf.pc_inc4 = if_intf.imem_addr + 4;
+    if_intf.pc_prepared = cl::mux2(sys_intf.rst_seq_d2, id_intf.pc + 4, id_intf.pc);
+    if_intf.imem_addr = cl::mux2(uint32_t(id_intf.dec_pc_sel_if), if_intf.pc_prepared, ex_intf.alu_out);
+
     LOG("    PC write enable: " << id_intf.dec_pc_we_if);
     LOG("    PC sel: " << id_intf.dec_pc_sel_if);
     LOG("    IF/ID stall: " << id_intf.stall_if_id);
 
-    LOG("    Current PC: " << id_intf.nx_pc << 
-        "; Current IMEM Addr (mux out): " << if_intf.imem_addr << 
-        "; NX PC: " << if_intf.pc_inc4);
+    LOG("    Current PC: " << if_intf.pc_prepared <<
+        "; Current IMEM Addr (mux out): " << if_intf.imem_addr);
 }
 
 void core::update_id()

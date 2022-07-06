@@ -54,7 +54,6 @@ void intf_cfg::init_sys(logic_t *logic_ptr, sys_intf_t *sys_intf)
 void intf_cfg::init_if_id(logic_t *logic_ptr_pc, logic_t *logic_ptr_stall, logic_t *logic_ptr_imem, 
     if_intf_t *if_intf, id_intf_t *id_intf, uint32_t *imem_dout)
 {
-    logic_ptr_pc->connect_port("nx_pc", RESET_VECTOR, &if_intf->pc_inc4, &id_intf->nx_pc);
     logic_ptr_pc->connect_port("pc", RESET_VECTOR, &if_intf->imem_addr, &id_intf->pc);
     logic_ptr_stall->connect_port("stall_if_id_d", 1, &id_intf->stall_if_id, &id_intf->stall_if_id_d);
     logic_ptr_imem->connect_port("imem", 0, imem_dout, &id_intf->inst_id);
