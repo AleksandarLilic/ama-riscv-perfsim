@@ -3,6 +3,8 @@
 #include "defines.h"
 
 #include <array>
+#include <fstream>
+#include <string>
 
 class imem
 {

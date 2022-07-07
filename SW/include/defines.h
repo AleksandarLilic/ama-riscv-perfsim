@@ -4,6 +4,9 @@
 #include <iomanip>
 #include <bitset>
 
+// Paths
+#define ASM_TEST_PATH "../../../../../riscv-tests/sanity/asm_test/asm_test.hex"
+
 // Debug verbosity
 #define LOG_DBG 1
 #define LOG_LOGIC_T 0
