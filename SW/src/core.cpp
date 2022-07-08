@@ -158,4 +158,9 @@ void core::update_wb()
 void core::status_log()
 {
     reg_file.status_log();
+
+#if RISCV_SANITY_TESTS
+    if(!sys_intf.rst)
+        reg_file.check_reg_25();
+#endif
 }

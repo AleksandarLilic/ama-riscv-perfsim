@@ -12,8 +12,8 @@ cpu::cpu(seq_queue *q) :
 
 void cpu::update()
 {
-    core.status_log();
     core.reset(reset_status);
+    core.status_log();
     core.update_system();
     // WB
     core.update_wb();

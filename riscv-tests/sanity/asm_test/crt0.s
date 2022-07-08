@@ -17,9 +17,17 @@ op_add:
 li x11, 35 # load rs1
 li x12, 65 # load rs2
 add x10, x11, x12 # execute tested op
-li x20, 100 # load expected result
+li x30, 100 # load expected result
 li x3, 1 # load test_id
-bne x20, x10, fail # test op
+bne x30, x10, fail # test op
+
+op_sub:
+li x11, 257 # load rs1
+li x12, 56 # load rs2
+sub x10, x11, x12 # execute tested op
+li x30, 201 # load expected result
+li x3, 2 # load test_id
+bne x30, x10, fail # test op
 
 j done # if no error
 

@@ -192,7 +192,7 @@ void decoder::branch(id_intf_t *id_intf)
 
     id_intf->dec_bc_uns_id = (id_intf->funct3_id & 0b010) >> 1;
 
-    id_intf->dec_alu_a_sel_id = uint32_t(alu_op_a_sel_t::rs1);
+    id_intf->dec_alu_a_sel_id = uint32_t(alu_op_a_sel_t::pc);
     id_intf->dec_alu_b_sel_id = uint32_t(alu_op_b_sel_t::imm);
     id_intf->dec_alu_op_sel_id = uint32_t(alu_op_t::op_add);
 

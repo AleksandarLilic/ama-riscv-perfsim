@@ -6,6 +6,9 @@
 #ifndef TEST
 
 uint32_t global_inst_to_ctrl = 0;
+#if RISCV_SANITY_TESTS
+bool global_test_failed = 0;
+#endif;
 
 void queue_update_all(seq_queue *q)
 {
@@ -22,8 +25,8 @@ int main()
     uint32_t clk_count = (rst_count+1) + 10 + 9 + 5 + 3 + 6 + 2 + 2 + 1;
     //                      dd  dummy  NOP
     clk_count = clk_count + 3  + 3    + 5 ;
-    clk_count = 16;
-    //clk_count = 32;
+    //clk_count = 16;
+    clk_count = 32;
     //clk_count = 40;
 
     seq_queue q;
@@ -41,11 +44,14 @@ int main()
     cpu0->reset(reset_t::clear);
 
     // Run
-    while (clk_count) {
+    while (clk_count && !global_test_failed) {
         cpu0->update();
         queue_update_all(&q);
         clk_count--;
     }
+
+    if (global_test_failed)
+        LOG("\n ----- Simulation ending due to failiure ----- \n");
 
     LOG(" ----- Simulation End -----");
     delete cpu0;

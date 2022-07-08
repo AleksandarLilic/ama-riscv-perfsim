@@ -74,7 +74,7 @@ void alu::update()
 #if LOG_DBG
     LOG("    ALU Select: " << ex_intf->alu_op_sel_ex);
 #endif
-    LOG("    ALU Output: " << int32_t(ex_intf->alu_out));
+    LOG("    ALU Output: " << int32_t(ex_intf->alu_out) << ", " << FHEX(ex_intf->alu_out));
 }
 
 store_shift::store_shift(ex_intf_t *ex_intf)
