@@ -20,7 +20,7 @@ typedef struct if_intf_t
     uint32_t imem_addr = NOT_RESET & (0x0FFF);
     uint32_t pc_prepared = NOT_RESET & (0x0FFF);
     uint32_t pc_sel_if;
-    uint32_t pc_we_if = 1u;
+    uint32_t pc_we_if;
     uint32_t alu_out_ex;
 
 } if_intf_t;
@@ -173,9 +173,7 @@ typedef struct sys_intf_t
 {
     uint32_t rst;
     uint32_t rst_seq;
-    uint32_t rst_seq_d1;
-    uint32_t rst_seq_d2;
-    uint32_t rst_seq_d3;
+    uint32_t rst_seq_d;
 
     uint32_t rst_seq_id_ex;
     uint32_t rst_seq_ex_mem;

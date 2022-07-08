@@ -35,12 +35,12 @@ void core::update_system()
     else
         sys_intf.rst_seq = sys_intf.rst_seq >> 1;
 
-    sys_intf.rst_seq_d1 = (sys_intf.rst_seq & 0b100) >> 2;
-    sys_intf.rst_seq_d2 = (sys_intf.rst_seq & 0b10) >> 1;
-    sys_intf.rst_seq_d3 = sys_intf.rst_seq & 0b1;
+    sys_intf.rst_seq_id_ex = (sys_intf.rst_seq_d & 0b100) >> 2;
+    sys_intf.rst_seq_ex_mem = (sys_intf.rst_seq_d & 0b10) >> 1;
+    sys_intf.rst_seq_mem_wb = sys_intf.rst_seq_d & 0b1;
 
 #if LOG_DBG
-    LOG("    RST Seq: " << sys_intf.rst_seq << ", bin:" << FBIN(sys_intf.rst_seq, 3));
+    LOG("    RST Seq: " << sys_intf.rst_seq_d << ", bin:" << FBIN(sys_intf.rst_seq_d, 3));
 #endif
 }
 
@@ -48,7 +48,7 @@ void core::update_if()
 {
     LOG("> UPDATE_IF");
 
-    if_intf.pc_prepared = cl::mux2(sys_intf.rst_seq_d2, id_intf.pc + 4, id_intf.pc);
+    if_intf.pc_prepared = cl::mux2(sys_intf.rst_seq_id_ex, id_intf.pc + 4, id_intf.pc);
     if_intf.imem_addr = cl::mux2(uint32_t(id_intf.dec_pc_sel_if), if_intf.pc_prepared, ex_intf.alu_out);
 
     LOG("    PC write enable: " << id_intf.dec_pc_we_if);

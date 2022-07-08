@@ -46,9 +46,7 @@ void intf_cfg::init_regs(seq_queue *q, sys_intf_t *sys_intf, reg_file_intf_t *re
 void intf_cfg::init_sys(logic_t *logic_ptr, sys_intf_t *sys_intf)
 {
     //                     ("ID", <reset_val>, <input>, <output>)
-    logic_ptr->connect_port("rst_seq_id_ex", 1, &sys_intf->rst_seq_d1, &sys_intf->rst_seq_id_ex);
-    logic_ptr->connect_port("rst_seq_ex_mem", 1, &sys_intf->rst_seq_d2, &sys_intf->rst_seq_ex_mem);
-    logic_ptr->connect_port("rst_seq_mem_wb", 1, &sys_intf->rst_seq_d3, &sys_intf->rst_seq_mem_wb);
+    logic_ptr->connect_port("rst_seq_d", 7, &sys_intf->rst_seq, &sys_intf->rst_seq_d);
 }
 
 void intf_cfg::init_if_id(logic_t *logic_ptr_pc, logic_t *logic_ptr_stall, logic_t *logic_ptr_imem, 
