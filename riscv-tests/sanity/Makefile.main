@@ -21,6 +21,9 @@ $(TARGET).elf: $(SRCS)
 	$(RV_GNU)-objcopy $(basename $@).elf -O binary $(basename $@).bin
 	$(RV_GNU)-bin2hex -w 32 $(basename $@).bin $(basename $@).hex
 #	sed -i '1i @0' $(basename $@).hex
+#	cp $(basename $@).hex $(basename $@)_dmem.hex
+#	sed -n '/00000000/d' $(basename $@).hex
+#	sed -n '1,1000d' $(basename $@)_dmem.hex
 
 clean:
 	rm -f *.elf *.dump *.sdump *.hex *.bin

@@ -18,4 +18,8 @@ SECTIONS
         * (.start);
         * (.text);
     }
+    . = ALIGN(0x00000400);
+    .data : {
+        * (.data);
+    }
 }

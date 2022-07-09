@@ -163,12 +163,34 @@ li x30, 0xFFFF8000 # load expected result
 li x3, 19 # load test_id
 bne x30, x10, fail # test op
 
+load_t:
+j op_lb
+
+op_lb:
+lla x11, dat1 # load dmem offset
+lb x10, 0(x11) # execute tested op
+li x30, 0x12 # load expected result
+li x3, 20 # load test_id
+bne x30, x10, fail # test op
+
+op_lb2:
+lla x11, dat2 # load dmem offset
+lb x10, 1(x11)
+li x30, 0x03 # load expected result
+li x3, 21 # load test_id
+bne x30, x10, fail # test op
+
 done: j done # loop
 
 fail: 
 add x25, x0, x3 # store failed test id in x25
 
 failed: j failed
+
+.data
+
+dat1: .word 0x5555ff12
+dat2: .word 0xfff10357
 
 # add x10, x11, x12
 # sub x10, x11, x12

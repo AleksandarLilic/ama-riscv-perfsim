@@ -8,7 +8,6 @@
 
 #if RISCV_SANITY_TESTS
 extern uint32_t global_inst_count;
-extern std::vector<uint32_t> global_burned_instructions;
 #endif;
 
 class imem
@@ -43,4 +42,5 @@ public:
 private:
     uint32_t read();
     void write();
+    void burn_mem();
 };

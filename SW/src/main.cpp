@@ -9,7 +9,6 @@ uint32_t global_inst_to_ctrl = 0;
 #if RISCV_SANITY_TESTS
 bool global_test_failed = 0;
 uint32_t global_inst_count = 0;
-std::vector<uint32_t> global_burned_instructions;
 std::vector<uint32_t> global_issued_instructions;
 std::vector<uint32_t> global_committed_instructions;
 #endif;
@@ -23,32 +22,13 @@ void queue_update_all(seq_queue *q)
 }
 
 #if RISCV_SANITY_TESTS
-void check_issued_instructions()
-{
-    uint32_t i = 0;
-    for (uint32_t inst : global_issued_instructions) {
-        if (inst != global_burned_instructions[i]) {
-            LOGE("Burned instruction different from Issued instruction at line: " << i);
-            LOGE("Burned instruction: " << FHEX(global_burned_instructions[i]));
-            LOGE("Issued instruction: " << FHEX(inst));
-            return;
-        }
-        // keep incrementing burned instructions until last one
-        // but stay on last one (jump in loop)
-        // only one such jump is burned but many can be issued
-        // last burned inst is always zero, don't use it
-        // ignore last two instructions that should not execute if test has passed
-        if(global_burned_instructions.size() - 4 > i)
-            i++;
-    }
-    LOG("All Burned instruction matched with Issued instruction");
-}
-
 void check_committed_instructions()
 {
+    LOG("\n ----- Instruction match ----- ");
     uint32_t i = 0;
     for (uint32_t inst : global_committed_instructions) {
         if (inst != global_issued_instructions[i]) {
+            LOGE(" FAIL ");
             LOGE("Issued instruction different from committed instruction at count: " << i);
             LOGE("Issued instruction:   " << FHEX(global_issued_instructions[i]));
             LOGE("Committed instruction: " << FHEX(inst));
@@ -56,7 +36,7 @@ void check_committed_instructions()
         }
         i++;
     }
-    LOG("All Issued instruction matched with Committed instruction");
+    LOG(" PASS ");
 }
 #endif
 
@@ -66,7 +46,7 @@ int main()
     cpu *cpu0 = new cpu(&q);
 
     // needs at least 5 for pipeline, +1 clk for each stall (jump and branch); can be more
-    const uint32_t clk_cycles_to_empty_pipeline = 5 + 12 + 5 + 3;
+    const uint32_t clk_cycles_to_empty_pipeline = 5 + 20 + 5 + 3;
     uint32_t rst_cycles = 1;
     uint32_t rst_counter = 0;
 #if RISCV_SANITY_TESTS
@@ -95,10 +75,12 @@ int main()
         clk_counter++;
     }
 
+    LOG("\n ----- Simulation Status -----");
     if (global_test_failed)
-        LOG("\n ----- Simulation ending due to failiure ----- \n");
+        LOGE(" FAIL ");
+    else
+        LOG(" PASS ");
     
-    check_issued_instructions();
     check_committed_instructions();
 
 #else
@@ -109,7 +91,7 @@ int main()
     }
 #endif
 
-    LOG("\n ----- Simulation Results -----\n");
+    LOG("\n ----- Simulation Stats -----\n");
     LOG("Clock cycles to execute: " << clk_cycles);
     LOG("Clock cycles executed: " << clk_counter);
     LOG("\n ----- Simulation End -----");

@@ -29,51 +29,41 @@ void imem::burn_mem()
     uint32_t i = 0;
     while (hex_file) {
         hex_file >> std::hex >> memory[i];
+#if LOG_DBG
         LOG("    IMEM[" << i << "]: " << FHEX(memory[i]));
-#if RISCV_SANITY_TESTS
-        global_burned_instructions.push_back(memory[i]);
 #endif
+#if RISCV_SANITY_TESTS
+        if ((memory[i]) == 0 && (global_inst_count == 0))
+        global_inst_count = i;
+#endif;
         i++;
     }
     LOG("IMEM burn done \n");
-
-#if RISCV_SANITY_TESTS
-    global_inst_count = i;
-#endif;
 }
 
 dmem::dmem()
 {
-    memory[0] = 0xF0;
-    memory[1] = 0xF1;
-    memory[2] = 0xF2;
-    memory[3] = 0xF3F3'F3F3;
-    memory[4] = 0xF4;
-    memory[5] = 0xF5;
-    memory[6] = 0xF6;
-    memory[7] = 0xF7;
-    memory[8] = 0xF8;
-    memory[9] = 0xF9;
-    memory[10] = 0xF10;
-    memory[11] = 0xF11;
-    memory[12] = 0xF12;
-    memory[13] = 0xF13;
-    memory[14] = 0xF14;
-    memory[15] = 0xF15;
-    memory[16] = 0xF16;
-    memory[17] = 0xF17;
-    memory[18] = 0xF18;
-    memory[19] = 0xF19;
-    memory[20] = 0xF20;
-    memory[21] = 0xF21;
-    memory[22] = 0xF22;
-    memory[23] = 0xF23;
-    memory[24] = 0xF24;
-    memory[25] = 0xF25;
-    memory[26] = 0xF26;
-    memory[27] = 0xF27;
-    memory[28] = 0xF28;
-    memory[29] = 0xF29;
+    burn_mem();
+}
+
+void dmem::burn_mem()
+{
+    LOG("\nDMEM burn");
+    std::ifstream hex_file;
+    hex_file.open(ASM_TEST_PATH, std::ios::in);
+    if (hex_file.is_open()) {
+        LOG("HEX opened");
+    }
+
+    uint32_t i = 0;
+    while (hex_file) {
+        hex_file >> std::hex >> memory[i];
+#if LOG_DBG
+        LOG("    DMEM[" << i << "]: " << FHEX(memory[i]));
+#endif
+        i++;
+    }
+    LOG("DMEM burn done \n");
 }
 
 uint32_t dmem::access(uint32_t en, uint32_t we, uint32_t addr, uint32_t din) {
