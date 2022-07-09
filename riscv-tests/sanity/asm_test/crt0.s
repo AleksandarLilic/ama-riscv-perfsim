@@ -29,6 +29,30 @@ li x30, 201 # load expected result
 li x3, 2 # load test_id
 bne x30, x10, fail # test op
 
+op_sll:
+li x11, 0xF0 # load rs1
+li x12, 3 # load rs2
+sll x10, x11, x12 # execute tested op
+li x30, 0x780 # load expected result
+li x3, 3 # load test_id
+bne x30, x10, fail # test op
+
+op_srl:
+li x11, 0x1F # load rs1
+li x12, 2 # load rs2
+srl x10, x11, x12 # execute tested op
+li x30, 0x7 # load expected result
+li x3, 4 # load test_id
+bne x30, x10, fail # test op
+
+op_sra:
+li x11, 0x83330000 # load rs1
+li x12, 5 # load rs2
+sra x10, x11, x12 # execute tested op
+li x30, 0xFC199800 # load expected result
+li x3, 5 # load test_id
+bne x30, x10, fail # test op
+
 j done # if no error
 
 fail: 

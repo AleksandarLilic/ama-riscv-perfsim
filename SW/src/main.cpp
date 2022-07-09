@@ -8,6 +8,7 @@
 uint32_t global_inst_to_ctrl = 0;
 #if RISCV_SANITY_TESTS
 bool global_test_failed = 0;
+uint32_t global_inst_count = 0;
 #endif;
 
 void queue_update_all(seq_queue *q)
@@ -20,40 +21,52 @@ void queue_update_all(seq_queue *q)
 
 int main()
 {
-    uint32_t rst_count = 1;
-    //                       rst       + r + i + l + s + b + j + u + inv;
-    uint32_t clk_count = (rst_count+1) + 10 + 9 + 5 + 3 + 6 + 2 + 2 + 1;
-    //                      dd  dummy  NOP
-    clk_count = clk_count + 3  + 3    + 5 ;
-    //clk_count = 16;
-    clk_count = 32;
-    //clk_count = 40;
-
     seq_queue q;
     cpu *cpu0 = new cpu(&q);
+
+    const uint32_t clk_cycles_to_empty_pipeline = 10;   // needs at least 5, can be more
+    uint32_t rst_cycles = 1;
+    uint32_t rst_counter = 0;
+#if RISCV_SANITY_TESTS
+    uint32_t clk_cycles = global_inst_count + clk_cycles_to_empty_pipeline;
+#else
+    uint32_t clk_cycles = 40 + clk_cycles_to_empty_pipeline;
+#endif
+    uint32_t clk_counter = 0;
 
     LOG(" ----- Simulation Start -----");
 
     // Reset
     cpu0->reset(reset_t::set);
-    while (rst_count) {
+    while (rst_cycles > rst_counter) {
         cpu0->update();
         queue_update_all(&q);
-        rst_count--;
+        rst_counter++;
     }
     cpu0->reset(reset_t::clear);
 
     // Run
-    while (clk_count && !global_test_failed) {
+#if RISCV_SANITY_TESTS
+    while ((clk_cycles > clk_counter) && !global_test_failed) {
         cpu0->update();
         queue_update_all(&q);
-        clk_count--;
+        clk_counter++;
     }
 
     if (global_test_failed)
         LOG("\n ----- Simulation ending due to failiure ----- \n");
+#else
+    while (clk_cycles > clk_counter) {
+        cpu0->update();
+        queue_update_all(&q);
+        clk_counter++;
+    }
+#endif
 
-    LOG(" ----- Simulation End -----");
+    LOG(" ----- Simulation Results -----\n");
+    LOG("Clock cycles to execute: " << clk_cycles);
+    LOG("Clock cycles executed: " << clk_counter);
+    LOG("\n ----- Simulation End -----");
     delete cpu0;
     std::cin.get();
 }

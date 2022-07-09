@@ -33,6 +33,9 @@ void imem::burn_mem()
         i++;
     }
     LOG("IMEM burn done \n");
+#if RISCV_SANITY_TESTS
+    global_inst_count = i;
+#endif;
 
     // memory[0]  = 0x02300593;  memory_asm[0]  = "addi x11,x0,35";
     // memory[1]  = 0x04100613;  memory_asm[1]  = "addi x12,x0,65";

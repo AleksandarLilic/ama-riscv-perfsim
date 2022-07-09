@@ -55,8 +55,8 @@ void core::update_if()
     LOG("    PC sel: " << id_intf.dec_pc_sel_if);
     LOG("    IF/ID stall: " << id_intf.stall_if_id);
 
-    LOG("    Current PC: " << if_intf.pc_prepared <<
-        "; Current IMEM Addr (mux out): " << if_intf.imem_addr);
+    LOG("    Current PC: " << if_intf.pc_prepared << ", " << FHEX(if_intf.pc_prepared) <<
+        "; Current IMEM Addr (mux out): " << if_intf.imem_addr << ", " << FHEX(if_intf.imem_addr));
 }
 
 void core::update_id()
