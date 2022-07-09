@@ -3,6 +3,7 @@
 #include <iostream>
 #include <iomanip>
 #include <bitset>
+#include <vector>
 
 // Paths
 #define ASM_TEST_PATH "../../../../../riscv-tests/sanity/asm_test/asm_test.hex"

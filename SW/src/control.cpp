@@ -20,6 +20,10 @@ void control::update()
     
     update(sys_intf, id_intf, ex_intf, mem_intf);
     global_inst_to_ctrl = id_intf->inst_id;
+#if RISCV_SANITY_TESTS
+    if (id_intf->inst_id != 0x13 && (!sys_intf->rst)) // if instruction is not NOP, record as issued
+        global_issued_instructions.push_back(id_intf->inst_id);
+#endif
 }
 
 void control::update(sys_intf_t *sys_intf, id_intf_t *id_intf, ex_intf_t *ex_intf,

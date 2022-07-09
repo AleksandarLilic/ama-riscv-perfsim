@@ -5,6 +5,10 @@
 #include "intf_cfg.h"
 #include "modules.h"
 
+#if RISCV_SANITY_TESTS
+extern std::vector<uint32_t> global_committed_instructions;
+#endif;
+
 class core
 {
 public:
