@@ -99,7 +99,7 @@ void load_shift_mask::update()
 {
     uint32_t load_width = mem_intf->funct3_mem & 0b11;
     uint32_t offset = mem_intf->alu_mem & 0b11;
-    uint32_t load_sign_bit = (load_width & 0b100) >> 2;
+    uint32_t load_sign_bit = (~(mem_intf->funct3_mem) & 0b100) >> 2; // flip because unsigned is encoded with 1
 #ifdef LOG_DBG
     LOG("    Load SM input: " << mem_intf->dmem_dout);
     LOG("    Width: " << load_width);
@@ -129,6 +129,9 @@ void load_shift_mask::update()
     mask = mask << offset_bytes;
 
     mem_intf->load_sm_out = (mem_intf->dmem_dout & mask) >> offset_bytes;
+
+    if (load_width == 0b10) // if word, can't adjust sign bit
+        return;
 
     uint32_t data_neg = mem_intf->load_sm_out & get_data_sign;
 

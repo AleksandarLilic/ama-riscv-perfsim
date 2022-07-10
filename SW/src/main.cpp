@@ -15,10 +15,10 @@ std::vector<uint32_t> global_committed_instructions;
 
 void queue_update_all(seq_queue *q)
 {
-    LOG("\n\n------ Running queue update:\n");
+    LOG("\n ----- Running queue update:\n");
     q->update_hold();
     q->update();
-    LOG("\n------ Queue update finished \n\n");
+    LOG("\n ----- Queue update finished \n");
 }
 
 #if RISCV_SANITY_TESTS
@@ -62,6 +62,7 @@ int main()
     cpu0->reset(reset_t::set);
     while (rst_cycles > rst_counter) {
         cpu0->update();
+        LOG("\n\n ---------- Cycle count: " << (clk_counter + rst_counter) << " ---------- ");
         queue_update_all(&q);
         rst_counter++;
     }
@@ -71,6 +72,7 @@ int main()
 #if RISCV_SANITY_TESTS
     while ((clk_cycles > clk_counter) && !global_test_failed) {
         cpu0->update();
+        LOG("\n\n ---------- Cycle count: " << (clk_counter + rst_counter) << " ---------- ");
         queue_update_all(&q);
         clk_counter++;
     }

@@ -175,9 +175,44 @@ bne x30, x10, fail # test op
 
 op_lb2:
 lla x11, dat2 # load dmem offset
-lb x10, 1(x11)
-li x30, 0x03 # load expected result
+lb x10, 2(x11)
+li x30, 0xfffffff1 # load expected result
 li x3, 21 # load test_id
+bne x30, x10, fail # test op
+
+op_lh:
+lla x11, dat1 # load dmem offset
+lh x10, 0(x11) # execute tested op
+li x30, 0x1f12 # load expected result
+li x3, 22 # load test_id
+bne x30, x10, fail # test op
+
+op_lh2:
+lla x11, dat3 # load dmem offset
+lh x10, 2(x11)
+li x30, 0xffffe0e1 # load expected result
+li x3, 23 # load test_id
+bne x30, x10, fail # test op
+
+op_lw:
+lla x11, dat3 # load dmem offset
+lw x10, 0(x11)
+li x30, 0xe0e142e2 # load expected result
+li x3, 24 # load test_id
+bne x30, x10, fail # test op
+
+op_lbu:
+lla x11, dat2 # load dmem offset
+lbu x10, 3(x11)
+li x30, 0xff # load expected result
+li x3, 25 # load test_id
+bne x30, x10, fail # test op
+
+op_lhu:
+lla x11, dat3 # load dmem offset
+lhu x10, 1(x11) # execute tested op
+li x30, 0xe142 # load expected result
+li x3, 26 # load test_id
 bne x30, x10, fail # test op
 
 done: j done # loop
@@ -189,8 +224,9 @@ failed: j failed
 
 .data
 
-dat1: .word 0x5555ff12
+dat1: .word 0x55551f12
 dat2: .word 0xfff10357
+dat3: .word 0xe0e142e2
 
 # add x10, x11, x12
 # sub x10, x11, x12
