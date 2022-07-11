@@ -163,7 +163,7 @@ li x30, 0xFFFF8000 # load expected result
 li x3, 19 # load test_id
 bne x30, x10, fail # test op
 
-load_t:
+load_type:
 j op_lb
 
 op_lb:
@@ -215,6 +215,36 @@ li x30, 0xe142 # load expected result
 li x3, 26 # load test_id
 bne x30, x10, fail # test op
 
+store_type:
+j op_sb
+
+op_sb:
+li x9, 0x33 # prepare value to store
+lla x11, dat4 # load dmem offset
+sb x9, 3(x11) # execute tested op
+li x30, 0x33 # load expected result
+li x3, 27 # load test_id
+lbu x10, 3(x11) # fetch stored data
+bne x30, x10, fail # test op
+
+op_sh:
+li x9, 0xa1a2 # prepare value to store
+lla x11, dat4 # load dmem offset
+sh x9, 1(x11) # execute tested op
+li x30, 0xa1a2 # load expected result
+li x3, 28 # load test_id
+lhu x10, 1(x11) # fetch stored data
+bne x30, x10, fail # test op
+
+op_sw:
+li x9, 0x00c0ffee # prepare value to store
+lla x11, dat4 # load dmem offset
+sw x9, 0(x11) # execute tested op
+li x30, 0x00c0ffee # load expected result
+li x3, 29 # load test_id
+lw x10, 0(x11) # fetch stored data
+bne x30, x10, fail # test op
+
 done: j done # loop
 
 fail: 
@@ -227,6 +257,7 @@ failed: j failed
 dat1: .word 0x55551f12
 dat2: .word 0xfff10357
 dat3: .word 0xe0e142e2
+dat4: .word 0x00000000
 
 # add x10, x11, x12
 # sub x10, x11, x12

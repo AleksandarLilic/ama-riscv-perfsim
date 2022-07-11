@@ -46,11 +46,12 @@ int main()
     cpu *cpu0 = new cpu(&q);
 
     // needs at least 5 for pipeline, +1 clk for each stall (jump and branch); can be more
-    const uint32_t clk_cycles_to_empty_pipeline = 5 + 20 + 5 + 3;
+    const uint32_t clk_cycles_to_empty_pipeline = 5 + 30 + 5 + 3;
     uint32_t rst_cycles = 1;
     uint32_t rst_counter = 0;
 #if RISCV_SANITY_TESTS
     uint32_t clk_cycles = global_inst_count + clk_cycles_to_empty_pipeline;
+    //uint32_t clk_cycles = 100;
 #else
     uint32_t clk_cycles = 40 + clk_cycles_to_empty_pipeline;
 #endif

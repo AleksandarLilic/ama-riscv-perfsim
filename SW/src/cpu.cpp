@@ -21,10 +21,13 @@ void cpu::update()
     core.update_mem();
     // EX
     core.update_ex();
-    core_intf.dmem_dout = dmem.access(*core_intf.dmem_en, *core_intf.dmem_we, 
-        *core_intf.dmem_addr, *core_intf.dmem_din);
+//    core_intf.dmem_dout = dmem.access(*core_intf.dmem_en, *core_intf.dmem_we, 
+//        *core_intf.dmem_addr, *core_intf.dmem_din);
     // ID
     core.update_id();
+    // FIXME:
+    core_intf.dmem_dout = dmem.access(*core_intf.dmem_en, *core_intf.dmem_we,
+        *core_intf.dmem_addr, *core_intf.dmem_din);
     // IF
     core.update_if();
     core_intf.imem_dout = imem.read((*core_intf.imem_addr) >> 2);

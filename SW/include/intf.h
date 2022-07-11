@@ -130,7 +130,6 @@ typedef struct ex_intf_t
     uint32_t dmem_addr = NOT_RESET & (0x0FFF);
     uint32_t dmem_din = NOT_RESET;
     uint32_t dmem_en_ex;
-    uint32_t dmem_we_ex;
 
     uint32_t load_sm_en_ex;
     uint32_t wb_sel_ex;

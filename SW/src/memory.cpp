@@ -67,13 +67,22 @@ void dmem::burn_mem()
 }
 
 uint32_t dmem::access(uint32_t en, uint32_t we, uint32_t addr, uint32_t din) {
+#if LOG_DBG
+    LOG("    DMEM access parameters: ");
+    LOG("        en: " << en << "; we: " << FHEX(we) << "; address: " << FHEX(addr) << 
+        "; din: " << FHEX(din) << ", (" << din << ")" );
+#endif
     static uint32_t last_read;
     if (en) {
-        // Byte Enable Write
-        uint32_t in = din & mask[0][we & 0x1] |
-            din & mask[1][(we & 0x2) >> 1] |
-            din & mask[2][(we & 0x4) >> 2] |
-            din & mask[3][(we & 0x8) >> 3];
+        if (we) {
+            // Byte Enable Write
+            uint32_t in = din & mask[0][we & 0x1] |
+                din & mask[1][(we & 0x2) >> 1] |
+                din & mask[2][(we & 0x4) >> 2] |
+                din & mask[3][(we & 0x8) >> 3];
+            memory[addr] = in;
+            LOG("    DMEM stored: " << FHEX(in) << " at address: " << FHEX(addr));
+        }
         last_read = memory[addr];
     }
     LOG("    DMEM access return: " << last_read << ", " << FHEX(last_read));

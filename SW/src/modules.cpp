@@ -85,8 +85,8 @@ store_shift::store_shift(ex_intf_t *ex_intf)
 void store_shift::update()
 {
     ex_intf->store_offset = ex_intf->alu_out & 0x3;
-    ex_intf->dmem_din = ex_intf->bcs_in_b << ex_intf->store_offset;
-    LOG("    Store Offset: " << ex_intf->store_offset);
+    ex_intf->dmem_din = ex_intf->bcs_in_b << (ex_intf->store_offset << 3); // First convert to byte shift
+    LOG("    Store Bit Offset: " << ex_intf->store_offset << 3);
     LOG("    DMEM Store Input: " << ex_intf->dmem_din);
 }
 

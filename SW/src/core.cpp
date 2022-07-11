@@ -15,7 +15,7 @@ core::core(seq_queue *q, core_intf_t *core_intf):
     core_intf->dmem_addr = &ex_intf.dmem_addr;
     core_intf->dmem_din = &ex_intf.dmem_din;
     core_intf->dmem_en = &ex_intf.dmem_en_ex;
-    core_intf->dmem_we = &ex_intf.dmem_we_ex;
+    core_intf->dmem_we = &id_intf.dec_store_mask_ex;
     dmem_dout_ptr = &core_intf->dmem_dout;
 
     intf_cfg.init_regs(q, &sys_intf, &reg_file_intf, &if_intf, &id_intf, &ex_intf, &mem_intf, &wb_intf,
@@ -122,7 +122,7 @@ void core::update_ex()
 
 #if LOG_DBG
     LOG("    DMEM en: " << ex_intf.dmem_en_ex);
-    LOG("    DMEM we: " << ex_intf.dmem_we_ex);
+    LOG("    DMEM we: " << id_intf.dec_store_mask_ex);
     LOG("    DMEM addr: " << ex_intf.dmem_addr);
     LOG("    DMEM din: " << ex_intf.dmem_din);
 #endif
