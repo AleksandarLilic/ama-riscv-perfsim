@@ -65,7 +65,8 @@ void core::update_id()
 {
     LOG("> UPDATE_ID");
     LOG("    Instruction in ID stage: " << FHEX(id_intf.inst_id));
-    
+    LOG("    PC ID: " << FHEX(id_intf.pc));
+
     id_intf.stall_if_id = sys_intf.rst;
     if (id_intf.stall_if_id_d)     // Convert to NOP on stall
         id_intf.inst_id = NOP;
@@ -90,6 +91,7 @@ void core::update_ex()
 {
     LOG("> UPDATE_EX");
     LOG("    Instruction in EX stage: " << FHEX(ex_intf.inst_ex));
+    LOG("    PC EX: " << FHEX(ex_intf.pc_ex));
     ex_intf.bc_in_a = cl::mux2(ex_intf.bc_a_sel_ex, ex_intf.rf_data_a_ex, wb_intf.data_d);
     ex_intf.bcs_in_b = cl::mux2(ex_intf.bcs_b_sel_ex, ex_intf.rf_data_b_ex, wb_intf.data_d);
 
@@ -132,11 +134,12 @@ void core::update_mem()
 {
     LOG("> UPDATE_MEM");
     LOG("    Instruction in MEM stage: " << FHEX(mem_intf.inst_mem));
+    LOG("    PC MEM: " << FHEX(mem_intf.pc_mem));
     LOG("    DMEM out: " << mem_intf.dmem_dout << ", " << FHEX(mem_intf.dmem_dout));
     if(mem_intf.load_sm_en_mem)
         load_shift_mask.update();
     LOG("    Load SM output: " << mem_intf.load_sm_out << ", " << FHEX(mem_intf.load_sm_out));
-    uint32_t pc_mem_inc4 = mem_intf.alu_mem + 4;
+    uint32_t pc_mem_inc4 = mem_intf.pc_mem + 4;
     uint32_t csr_placeholder = 0;
 
     wb_intf.data_d = cl::mux4(mem_intf.wb_sel_mem, 
@@ -146,7 +149,7 @@ void core::update_mem()
         csr_placeholder);
 
     LOG("    WB mux select: " << mem_intf.wb_sel_mem);
-    LOG("    WB mux output: " << wb_intf.data_d);
+    LOG("    WB mux output: " << wb_intf.data_d << ", " << FHEX(wb_intf.data_d));
 
     reg_file.write();
 }

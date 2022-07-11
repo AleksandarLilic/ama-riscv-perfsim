@@ -243,7 +243,69 @@ sw x9, 0(x11) # execute tested op
 li x30, 0x00c0ffee # load expected result
 li x3, 29 # load test_id
 lw x10, 0(x11) # fetch stored data
-bne x30, x10, fail # test op
+bne x30, x10, fail #
+
+branch_type:
+
+op_beq:
+li x10, -55 # load rs1 
+li x11, -55 # load rs2
+li x3, 30 # load test_id
+beq x10, x11, op_bne # execute tested op
+j fail # should jump over this line if successful
+
+op_bne:
+li x10, -47 # load rs1 
+li x11, 47 # load rs2
+li x3, 31 # load test_id
+bne x10, x11, op_blt # execute tested op
+j fail # should jump over this line if successful
+
+op_blt:
+li x10, -999 # load rs1 
+li x11, 999 # load rs2
+li x3, 32 # load test_id
+blt x10, x11, op_bge # execute tested op
+j fail # should jump over this line if successful
+
+op_bge:
+li x10, -37 # load rs1 
+li x11, -38 # load rs2
+li x3, 33 # load test_id
+bge x10, x11, op_bltu # execute tested op
+j fail # should jump over this line if successful
+
+op_bltu:
+li x10, 10565 # load rs1 
+li x11, 10566 # load rs2
+li x3, 34 # load test_id
+bltu x10, x11, op_bgeu # execute tested op
+j fail # should jump over this line if successful
+
+op_bgeu:
+li x10, 1 # load rs1 
+li x11, 1 # load rs2
+li x3, 35 # load test_id
+bgeu x10, x11, op_b_done # execute tested op
+j fail # should jump over this line if successful
+
+op_b_done:
+nop
+
+jump_type:
+
+op_jal:
+li x3, 36 # load test_id
+jal op_jalr # execute tested op, will store PC+4 in x1
+j fail # should jump over this line if successful
+
+op_jalr:
+li x3, 37 # load test_id
+jalr x1, x1, 16 # execute tested op, should jump to nop at jalr_done label, 16 from x1 from above
+j fail # should jump over this line if successful
+
+jalr_done:
+nop
 
 done: j done # loop
 
