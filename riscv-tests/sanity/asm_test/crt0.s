@@ -307,6 +307,25 @@ j fail # should jump over this line if successful
 jalr_done:
 nop
 
+upper_type:
+
+op_lui:
+li x30, 0xf # load expected result, part1
+slli x30, x30, 12 # load expected result, part2
+lui x10, 0xf # execute tested op
+li x3, 38 # load test_id
+bne x30, x10, fail # test op
+
+op_auipc:
+lla x31, op_auipc # load expected result, part1
+addi x31, x31, 20 # load expected result, part2
+li x30, 0x1 # load expected result, part3
+slli x30, x30, 12 # load expected result, part4
+add x30, x30, x31 # load expected result, part5
+auipc x10, 0x1 # execute tested op
+li x3, 39 # load test_id
+bne x30, x10, fail # test op
+
 done: j done # loop
 
 fail: 
