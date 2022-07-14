@@ -8,7 +8,8 @@ core::core(seq_queue *q, core_intf_t *core_intf):
     branch_compare(&ex_intf),
     alu(&ex_intf),
     store_shift(&ex_intf),
-    load_shift_mask(&mem_intf)
+    load_shift_mask(&mem_intf),
+    csr_file(&csr_file_intf, &id_intf, &mem_intf, &wb_intf)
 {
     core_intf->imem_addr = &if_intf.imem_addr;
     imem_dout_ptr = &core_intf->imem_dout;
@@ -19,7 +20,7 @@ core::core(seq_queue *q, core_intf_t *core_intf):
     dmem_dout_ptr = &core_intf->dmem_dout;
 
     intf_cfg.init_regs(q, &sys_intf, &reg_file_intf, &if_intf, &id_intf, &ex_intf, &mem_intf, &wb_intf,
-        imem_dout_ptr, dmem_dout_ptr);
+        imem_dout_ptr, dmem_dout_ptr, &csr_file_intf);
 }
 
 void core::reset(bool rst_in)
@@ -78,9 +79,11 @@ void core::update_id()
     id_intf.rs1_addr_id = inst_field::rs1_addr(id_intf.inst_id);
     id_intf.rs2_addr_id = inst_field::rs2_addr(id_intf.inst_id);
     id_intf.rd_addr_id = inst_field::rd_addr(id_intf.inst_id);
+    id_intf.csr_uimm = inst_field::uimm_zero_ext(id_intf.inst_id);
 
     control.update();
     reg_file.read();
+    csr_file.read();
     imm_gen.update();
     
     id_intf.rf_data_a_fwd = cl::mux2(id_intf.of_rf_a_sel_fwd_id, id_intf.rf_data_a, wb_intf.data_d);
@@ -140,18 +143,18 @@ void core::update_mem()
         load_shift_mask.update();
     LOG("    Load SM output: " << mem_intf.load_sm_out << ", " << FHEX(mem_intf.load_sm_out));
     uint32_t pc_mem_inc4 = mem_intf.pc_mem + 4;
-    uint32_t csr_placeholder = 0;
 
     wb_intf.data_d = cl::mux4(mem_intf.wb_sel_mem, 
         mem_intf.load_sm_out, 
         mem_intf.alu_mem, 
         pc_mem_inc4, 
-        csr_placeholder);
+        mem_intf.csr_data_mem);
 
     LOG("    WB mux select: " << mem_intf.wb_sel_mem);
     LOG("    WB mux output: " << wb_intf.data_d << ", " << FHEX(wb_intf.data_d));
 
     reg_file.write();
+    csr_file.write();
 }
 
 void core::update_wb()
@@ -167,6 +170,7 @@ void core::update_wb()
 void core::status_log()
 {
     reg_file.status_log();
+    csr_file.status_log();
 
 #if RISCV_SANITY_TESTS
     if(!sys_intf.rst)

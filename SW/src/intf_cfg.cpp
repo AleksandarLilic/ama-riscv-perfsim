@@ -17,7 +17,7 @@ void intf_cfg::init(seq_queue *q, logic_init_cfg_t *logic_init_cfg, uint32_t loo
 
 void intf_cfg::init_regs(seq_queue *q, sys_intf_t *sys_intf, reg_file_intf_t *reg_file_intf, 
     if_intf_t *if_intf, id_intf_t *id_intf, ex_intf_t *ex_intf, mem_intf_t *mem_intf, 
-    wb_intf_t *wb_intf, uint32_t *imem_dout, uint32_t *dmem_dout)
+    wb_intf_t *wb_intf, uint32_t *imem_dout, uint32_t *dmem_dout, csr_file_intf_t *csr_file_intf)
 {
     logic_init_cfg_t regs_cfg[CFG_REGS] = {
      //      {"ID", <reset_sig>, <clear_sig>, <enable_sig>},
@@ -29,7 +29,8 @@ void intf_cfg::init_regs(seq_queue *q, sys_intf_t *sys_intf, reg_file_intf_t *re
      /* 5 */ {"EX_MEM", &sys_intf->rst, &id_intf->clear_ex_mem, &unused_true},
      /* 6 */ {"DMEM", &unused_false, &unused_false, &unused_true},
      /* 7 */ {"MEM_WB", &sys_intf->rst, &id_intf->clear_mem_wb, &unused_true},
-     /* 8 */ {"reg_file", &sys_intf->rst, &unused_false, &unused_true}
+     /* 8 */ {"reg_file", &sys_intf->rst, &unused_false, &unused_true},
+     /* 9 */ {"csr_file", &sys_intf->rst, &unused_false, &unused_true}
     };
 
     init(q, regs_cfg, CFG_REGS);
@@ -41,6 +42,7 @@ void intf_cfg::init_regs(seq_queue *q, sys_intf_t *sys_intf, reg_file_intf_t *re
     init_ex_mem(logic_ptr[5], logic_ptr[6], id_intf, ex_intf, mem_intf, dmem_dout);
     init_mem_wb(logic_ptr[7], mem_intf, wb_intf);
     init_reg_file(logic_ptr[8], reg_file_intf);
+    init_csr_file(logic_ptr[9], csr_file_intf);
 }
 
 void intf_cfg::init_sys(logic_t *logic_ptr, sys_intf_t *sys_intf)
@@ -71,6 +73,11 @@ void intf_cfg::init_id_ex(logic_t *logic_ptr, id_intf_t *id_intf, ex_intf_t *ex_
     logic_ptr->connect_port("rd_addr_ex", 0, &id_intf->rd_addr_id, &ex_intf->rd_addr_ex);
     logic_ptr->connect_port("imm_gen_out_ex", 0, &id_intf->imm_gen_out, &ex_intf->imm_gen_out_ex);
     
+    logic_ptr->connect_port("csr_we_ex", 0, &id_intf->dec_csr_we_id, &ex_intf->csr_we_ex);
+    logic_ptr->connect_port("csr_ui_ex", 0, &id_intf->dec_csr_ui_id, &ex_intf->csr_ui_ex);
+    logic_ptr->connect_port("csr_uimm_ex", 0, &id_intf->csr_uimm, &ex_intf->csr_uimm_ex);
+    logic_ptr->connect_port("csr_dout_ex", 0, &id_intf->csr_data, &ex_intf->csr_data_ex);
+    
     logic_ptr->connect_port("alu_a_sel_ex", 0, &id_intf->of_alu_a_sel_fwd_id, &ex_intf->alu_a_sel_ex);
     logic_ptr->connect_port("alu_b_sel_ex", 0, &id_intf->of_alu_b_sel_fwd_id, &ex_intf->alu_b_sel_ex);
     logic_ptr->connect_port("alu_op_sel_ex", 0, &id_intf->dec_alu_op_sel_id, &ex_intf->alu_op_sel_ex);
@@ -100,6 +107,11 @@ void intf_cfg::init_ex_mem(logic_t *logic_ptr, logic_t *logic_ptr_dmem, id_intf_
     logic_ptr->connect_port("rd_addr_mem", 0, &ex_intf->rd_addr_ex, &mem_intf->rd_addr_mem);
     logic_ptr->connect_port("rd_we_mem", 0, &ex_intf->rd_we_ex, &mem_intf->rd_we_mem);
     
+    logic_ptr->connect_port("csr_we_mem", 0, &ex_intf->csr_we_ex, &mem_intf->csr_we_mem);
+    logic_ptr->connect_port("csr_ui_mem", 0, &ex_intf->csr_ui_ex, &mem_intf->csr_ui_mem);
+    logic_ptr->connect_port("csr_uimm_mem", 0, &ex_intf->csr_uimm_ex, &mem_intf->csr_uimm_mem);
+    logic_ptr->connect_port("csr_dout_mem", 0, &ex_intf->csr_data_ex, &mem_intf->csr_data_mem);
+
     logic_ptr_dmem->connect_port("dmem_dout", 0, dmem_dout, &mem_intf->dmem_dout);
 
     logic_ptr->connect_port("load_sm_en_mem", 0, &ex_intf->load_sm_en_ex, &mem_intf->load_sm_en_mem );
@@ -117,4 +129,9 @@ void intf_cfg::init_reg_file(logic_t *logic_ptr, reg_file_intf_t *reg_file_intf)
         std::string s = "x" + std::to_string(i);
         logic_ptr->connect_port(s, 0, &reg_file_intf->in[i], &reg_file_intf->out[i]);
     }
+}
+
+void intf_cfg::init_csr_file(logic_t *logic_ptr, csr_file_intf_t *csr_file_intf)
+{
+    logic_ptr->connect_port("tohost", 0, &csr_file_intf->tohost_in, &csr_file_intf->tohost_out);
 }
