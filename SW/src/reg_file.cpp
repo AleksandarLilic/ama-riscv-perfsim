@@ -24,6 +24,12 @@ void reg_file::write()
 
     LOG("    Reg File write - Addres D: " << mem_intf->rd_addr_mem << "; Data D : " << wb_intf->data_d);
     }
+
+#if FORCE_RF
+    reg_file_intf->in[5] = 17u;
+    reg_file_intf->in[6] = 4u;
+#endif
+
     status_updated_register();
 }
 
@@ -48,8 +54,8 @@ void reg_file::read()
         else
             LOGE("Invalid Reg File address for B port");
     }
-    LOG("    Reg File write - Addres A: " << id_intf->rs1_addr_id << "; Data A : " << id_intf->rf_data_a);
-    LOG("    Reg File write - Addres B: " << id_intf->rs2_addr_id << "; Data B : " << id_intf->rf_data_b);
+    LOG("    Reg File read - Addres A: " << id_intf->rs1_addr_id << "; Data A : " << id_intf->rf_data_a);
+    LOG("    Reg File read - Addres B: " << id_intf->rs2_addr_id << "; Data B : " << id_intf->rf_data_b);
 }
 
 void reg_file::status_log()

@@ -49,11 +49,11 @@ void control::pipeline_ctrl(sys_intf_t *sys_intf, id_intf_t *id_intf)
     id_intf->clear_ex_mem = sys_intf->rst_seq_ex_mem;
     id_intf->clear_mem_wb = sys_intf->rst_seq_mem_wb;
 
-    // debug:
-    //LOG("id_intf->clear_id: " << id_intf->clear_id);
-    //LOG("id_intf->clear_ex: " << id_intf->clear_ex);
-    //LOG("id_intf->clear_mem: " << id_intf->clear_mem);
-    
+#if LOG_DBG
+    LOG("    Clear IF_ID: " << id_intf->clear_if_id);
+    LOG("    Clear ID_EX: " << id_intf->clear_id_ex);
+    LOG("    Clear EX_MEM: " << id_intf->clear_ex_mem);
+#endif    
     id_intf->dec_pc_we_if = id_intf->dec_pc_we_if & (~id_intf->stall_if_id);
 }
 
@@ -74,9 +74,9 @@ void control::branch_resolution(sys_intf_t *sys_intf, id_intf_t *id_intf, ex_int
     branch_taken &= ~sys_intf->rst; // if in reset, override branch taken
     branch_taken &= ex_intf->branch_inst_ex;  // only taken if it actually is a branch
     if (branch_taken || ex_intf->jump_inst_ex) id_intf->dec_pc_sel_if = uint32_t(pc_sel_t::alu);
+    LOG("    Branch Taken: " << branch_taken);
 #if LOG_DBG
-    LOG("    branch taken: " << branch_taken);
-    LOG("    dec_sel: " << static_cast<int>(id_intf->dec_pc_sel_if));
+    LOG("    Decoder PC Select: " << static_cast<uint32_t>(id_intf->dec_pc_sel_if));
 #endif
 }
 
@@ -107,7 +107,7 @@ void control::store_mask(id_intf_t *id_intf, ex_intf_t *ex_intf)
 
     id_intf->dec_store_mask_ex = inst_en & (mask >> (4 - mask_offset));
     if (ex_intf->store_inst_ex) {
-        LOG("    id_intf->dec_store_mask_id: " << id_intf->dec_store_mask_ex);
+        LOG("    Store Mask: " << id_intf->dec_store_mask_ex);
         //LOG("b3: " << b3 << "; b2: " << b2 << "; b1: " << b1 << "; b0: " << b0);
     }
 }

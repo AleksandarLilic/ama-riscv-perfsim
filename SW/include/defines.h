@@ -5,8 +5,10 @@
 #include <bitset>
 
 // Debug verbosity
-#define LOG_DBG 0
+#define LOG_DBG 1
+#define LOG_LOGIC_T 0
 #define ASM_IMEM 1
+#define FORCE_RF 1
 // LOG features
 #define LOG(x) std::cout << x << std::endl
 #define LOG_L(x) std::cout << x
@@ -16,7 +18,7 @@
 #define FHEX(x) std::hex << "0x" << x << std::dec
 #define FBIN(x,num) "0b" << std::bitset<num>(x)
 // Format Reg File
-#define FRF_DEF(x,y) std::left << std::setw(2) << x << ": " << std::left << std::setw(12) << int(y)
+#define FRF_DEF(x,y) std::left << std::setw(2) << x << ": " << std::left << std::setw(12) << int32_t(y)
 #define FRF(x,y) "  x" << FRF_DEF(x,y) << "  "
 #define FRF_M(x,y) "> x" << FRF_DEF(x,y) << "< "
 // Combinational logic
@@ -28,7 +30,7 @@
 #define NOT_RESET 0xAAAA'AAAA
 #define NO_REG_UPDATE 32
 // CFG
-#define CFG_REGS 8
+#define CFG_REGS 9
 
 // Instruction field masks
 #define OPC7_M uint32_t(0b0111'1111)
@@ -118,6 +120,8 @@ enum class imm_gen_t {
     j_type = 4,
     u_type = 5
 };
+
+#define ALU_OPERATIONS uint32_t(16)
 
 enum class alu_op_t {
     op_add = (0b0000),

@@ -11,13 +11,12 @@ op_fwd::op_fwd(sys_intf_t *sys_intf, id_intf_t *id_intf, ex_intf_t *ex_intf, mem
 void op_fwd::update()
 {
     dependency_detection(id_intf, ex_intf, mem_intf);
-#if LOG_DBG 
-    LOG("    Dependency detection: ");
-    LOG("        dd_rs1_ex: " << dd_rs1_ex);
-    LOG("        dd_rs2_ex: " << dd_rs2_ex);
-    LOG("        dd_rs1_mem: " << dd_rs1_mem);
-    LOG("        dd_rs2_mem: " << dd_rs2_mem);
-#endif
+//#if LOG_DBG 
+    if (dd_rs1_ex) LOG("    dd_rs1_ex: " << dd_rs1_ex);
+    if (dd_rs2_ex) LOG("    dd_rs2_ex: " << dd_rs2_ex);
+    if (dd_rs1_mem) LOG("    dd_rs1_mem: " << dd_rs1_mem);
+    if (dd_rs2_mem) LOG("    dd_rs2_mem: " << dd_rs2_mem);
+//#endif
     op_fwd_rf(id_intf);
     op_fwd_bcs(id_intf);
     op_fwd_alu(id_intf);

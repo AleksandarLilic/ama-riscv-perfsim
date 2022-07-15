@@ -12,14 +12,18 @@
 class cpu
 {
 private:
-    uint32_t imem_dout;
-    uint32_t dmem_dout;
+    // uint32_t imem_dout;
+    // uint32_t *imem_address;
+    // uint32_t dmem_dout;
+    // uint32_t *dmem_address;
     seq_queue *q;
     bool reset_status;
+    core_intf_t core_intf{};
 
 private:
     core core;
     imem imem;
+    dmem dmem;
 
 public:
     cpu() = delete;

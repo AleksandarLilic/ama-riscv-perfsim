@@ -8,6 +8,8 @@
 #include "control.h"
 #include "reg_file.h"
 
+#include <array>
+
 class imm_gen
 {
 private:
@@ -32,6 +34,24 @@ public:
 
 class alu
 {
+private:
+    uint32_t alu_add(uint32_t a, uint32_t b) { return a + b; };
+    uint32_t alu_sub(uint32_t a, uint32_t b) { return a - b; };
+    uint32_t alu_sll(uint32_t a, uint32_t b) { return a << b; };
+    uint32_t alu_srl(uint32_t a, uint32_t b) { return a >> b; };
+    uint32_t alu_sra(uint32_t a, uint32_t b) { return int32_t(a) >> b; };
+    uint32_t alu_slt(uint32_t a, uint32_t b) { return int32_t(a) < int32_t(b); };
+    uint32_t alu_sltu(uint32_t a, uint32_t b) { return a < b; };
+    uint32_t alu_xor(uint32_t a, uint32_t b) { return a ^ b; };
+    uint32_t alu_or(uint32_t a, uint32_t b) { return a | b; };
+    uint32_t alu_and(uint32_t a, uint32_t b) { return a & b; };
+    uint32_t alu_pass_b(uint32_t a, uint32_t b) { return b; };
+    uint32_t alu_unsued(uint32_t a, uint32_t b) { LOGE("ALU unused function");  return 1u; };
+
+private:
+    using alu_func = uint32_t(alu::*)(uint32_t, uint32_t);
+    std::array<alu_func, ALU_OPERATIONS> alu_func_array{};
+
 private:
     ex_intf_t *ex_intf;
 

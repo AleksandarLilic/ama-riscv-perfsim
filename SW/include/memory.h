@@ -24,11 +24,15 @@ class dmem
 {
 private:
     std::array<uint32_t, IMEM_SIZE> memory{};
-    uint32_t dmem_dout;
-
+    //uint32_t dmem_dout;
+    const uint32_t mask[4][2] = {
+            {0x0, 0x0000'00FF},
+            {0x0, 0x0000'FF00},
+            {0x0, 0x00FF'0000},
+            {0x0, 0xFF00'0000} };
 public:
     dmem();
-    void access();
+    uint32_t access(uint32_t en, uint32_t we, uint32_t addr, uint32_t din);
 private:
     uint32_t read();
     void write();
