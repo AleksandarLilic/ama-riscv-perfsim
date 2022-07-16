@@ -21,10 +21,18 @@ void imem::burn_mem()
 {
     LOG("\nIMEM burn");
     std::ifstream hex_file;
-    hex_file.open(ASM_TEST_PATH, std::ios::in);
-    if (hex_file.is_open()) {
+#if RISCV_SANITY_TESTS
+    hex_file.open(ASM_RISCV_SANITY_TEST, std::ios::in);
+#elif RISCV_ISA_TESTS
+    hex_file.open(ASM_RISCV_ISA_TESTS"/add.hex", std::ios::in);
+    LOG("Path to search for the test: " << ASM_RISCV_ISA_TESTS"/add.hex");
+#else
+    LOGE("No test defined. Nothing to be loaded to the memory")
+#endif
+    if (hex_file.is_open())
         LOG("HEX opened");
-    }
+    else
+        LOGE("HEX file cannot be found");
 
     uint32_t i = 0;
     while (hex_file) {
@@ -50,10 +58,18 @@ void dmem::burn_mem()
 {
     LOG("\nDMEM burn");
     std::ifstream hex_file;
-    hex_file.open(ASM_TEST_PATH, std::ios::in);
-    if (hex_file.is_open()) {
+#if RISCV_SANITY_TESTS
+    hex_file.open(ASM_RISCV_SANITY_TEST, std::ios::in);
+#elif RISCV_ISA_TESTS
+    hex_file.open(ASM_RISCV_ISA_TESTS"/add.hex", std::ios::in);
+    LOG("Path to search for the test: " << ASM_RISCV_ISA_TESTS"/add.hex");
+#else
+    LOGE("No test defined. Nothing to be loaded to the memory")
+#endif
+    if (hex_file.is_open())
         LOG("HEX opened");
-    }
+    else
+        LOGE("HEX file cannot be found");
 
     uint32_t i = 0;
     while (hex_file) {

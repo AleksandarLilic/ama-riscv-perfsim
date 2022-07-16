@@ -6,14 +6,16 @@
 #include <vector>
 
 // Paths
-#define ASM_TEST_PATH "../../../../../riscv-tests/sanity/asm_test/asm_test.hex"
+#define ASM_RISCV_SANITY_TEST "../../../../../riscv-tests/sanity/asm_test/asm_test.hex"
+#define ASM_RISCV_ISA_TESTS "../../../../../riscv-tests/riscv-isa-tests"
 
 // Debug verbosity
 #define LOG_DBG 0
 #define LOG_LOGIC_T 0
 #define ASM_IMEM 1
 #define FORCE_RF 0
-#define RISCV_SANITY_TESTS 1
+#define RISCV_SANITY_TESTS 0
+#define RISCV_ISA_TESTS 1
 // LOG features
 #define LOG(x) std::cout << x << std::endl
 #define LOG_L(x) std::cout << x

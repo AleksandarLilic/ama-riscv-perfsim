@@ -6,12 +6,19 @@
 #ifndef TEST
 
 uint32_t global_inst_to_ctrl = 0;
+
 #if RISCV_SANITY_TESTS
 bool global_test_failed = 0;
 uint32_t global_inst_count = 0;
 std::vector<uint32_t> global_issued_instructions;
 std::vector<uint32_t> global_committed_instructions;
 #endif;
+
+#if RISCV_ISA_TESTS
+uint32_t global_tohost = 0;
+#define CLK_TIMEOUT 550
+#endif
+
 
 void queue_update_all(seq_queue *q)
 {
@@ -42,6 +49,15 @@ void check_committed_instructions()
 
 int main()
 {
+    bool open_test_log = 0;
+    open_test_log = freopen("test.txt", "w", stdout);
+    
+    if (!open_test_log) {
+        LOGE("Failed to open test.txt log. Exiting...");
+        std::cin.get();
+        return 1;
+    }
+
     seq_queue q;
     cpu *cpu0 = new cpu(&q);
 
@@ -86,6 +102,25 @@ int main()
     
     check_committed_instructions();
 
+#elif RISCV_ISA_TESTS
+    while (global_tohost != 1u && (clk_counter < CLK_TIMEOUT)) {
+        cpu0->update();
+        LOG("\n\n ---------- Cycle count: " << (clk_counter + rst_counter) << " ---------- ");
+        queue_update_all(&q);
+        clk_counter++;
+    }
+
+    bool test_status = 0;
+    uint32_t failed_test_id = 0;
+    
+    if (global_tohost == 1) {
+        test_status = true;
+    }
+    else {
+        test_status = false;
+        failed_test_id = global_tohost >> 1;
+    }
+
 #else
     while (clk_cycles > clk_counter) {
         cpu0->update();
@@ -95,11 +130,23 @@ int main()
 #endif
 
     LOG("\n ----- Simulation Stats -----\n");
+#if RISCV_SANITY_TESTS
     LOG("Clock cycles to execute: " << clk_cycles);
+#endif
+#if RISCV_ISA_TESTS
+    if (test_status)
+        LOG("Test passed");
+    else
+        LOG("Test failed. Test ID: " << failed_test_id);
+
+#endif
+
     LOG("Clock cycles executed: " << clk_counter);
     LOG("\n ----- Simulation End -----");
     delete cpu0;
-    std::cin.get();
+
+    fclose(stdout);
+    //std::cin.get();
 }
 #else
 int main()

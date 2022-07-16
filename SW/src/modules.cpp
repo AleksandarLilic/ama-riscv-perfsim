@@ -167,6 +167,9 @@ void csr_file::read()
         id_intf->csr_data = csr_file_intf->tohost_out;
         LOG("    CSR tohost data read: " << id_intf->csr_data);
     }
+#if RISCV_ISA_TESTS
+    global_tohost = csr_file_intf->tohost_out;
+#endif
 }
 
 void csr_file::status_log()
