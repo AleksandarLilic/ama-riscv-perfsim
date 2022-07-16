@@ -7,35 +7,51 @@
 
 // Paths
 #define ASM_RISCV_SANITY_TEST "../../../../../riscv-tests/sanity/asm_test/asm_test.hex"
-#define ASM_RISCV_ISA_TESTS "../../../../../riscv-tests/riscv-isa-tests"
+#define ASM_RISCV_ISA_TESTS "../../../../../riscv-tests/riscv-isa-tests/"
 
-// Debug verbosity
+// Tests
+#define RISCV_SANITY_TESTS 0
+#define RISCV_ISA_REGR 1
+#define RISCV_ISA_REGR_NUM 38
+const std::string riscv_regr_tests[39] = {
+    "add","addi","and","andi","auipc","beq","bge","bgeu","blt","bltu",
+    "bne"/*,"fence_i"*/,"jal","jalr","lb","lbu","lh","lhu","lui","lw",
+    "or","ori","sb","sh","simple","sll","slli","slt","slti","sltiu",
+    "sltu","sra","srai","srl","srli","sub","sw","xor","xori" };
+
+// Debug, verbosity
 #define LOG_DBG 0
 #define LOG_LOGIC_T 0
 #define ASM_IMEM 1
 #define FORCE_RF 0
-#define RISCV_SANITY_TESTS 0
-#define RISCV_ISA_TESTS 1
+
 // LOG features
 #define LOG(x) std::cout << x << std::endl
 #define LOG_L(x) std::cout << x
 #define LOGW(x) std::cout << " >>> WARNING: "<< x << std::endl
 #define LOGE(x) std::cout << " >>> ERROR: "<< x << std::endl
 // Format
-#define FHEX(x) std::hex << "0x" << x << std::dec
+#define FHEX_PAD std::right << std::setw(8) << std::setfill('0')
+#define FHEX(x) "0x" << std::hex << FHEX_PAD << x << std::dec
+#define FHEXI(x) std::hex << FHEX_PAD << x << std::dec
 #define FBIN(x,num) "0b" << std::bitset<num>(x)
 // Format Reg File
-#define FRF_DEF(x,y) std::left << std::setw(2) << x << ": " << std::left << std::setw(12) << int32_t(y)
+#define FRF_DEF(x,y) std::left << std::setw(2) << std::setfill(' ')<< x << ": " << std::left << std::setw(12) << int32_t(y)
 #define FRF(x,y) "  x" << FRF_DEF(x,y) << "  "
 #define FRF_M(x,y) "> x" << FRF_DEF(x,y) << "< "
+
 // Combinational logic
 #define CL_UNUSED uint32_t(0xFFFF'FFFF)
+
 // Memory sizes
 #define IMEM_SIZE 16'384
 #define DMEM_SIZE 16'384
+#define MEM_M 0x3FFF
+
 // Patterns
 #define NOT_RESET 0xAAAA'AAAA
 #define NO_REG_UPDATE 32
+
 // CFG
 #define CFG_REGS 10
 

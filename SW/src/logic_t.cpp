@@ -98,7 +98,7 @@ void logic_t::update()
     }
 
     if (*connected_enable) {
-        LOG("Updating: " << id);
+        //LOG("Updating: " << id);
         for (logic_port_t *i : connected_ports) {
             i->update(i->get_input_value());
         }

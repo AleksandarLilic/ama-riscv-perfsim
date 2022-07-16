@@ -8,7 +8,11 @@
 
 #if RISCV_SANITY_TESTS
 extern uint32_t global_inst_count;
-#endif;
+#endif
+
+#if RISCV_ISA_REGR
+extern std::string global_test_name;
+#endif
 
 class imem
 {

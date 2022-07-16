@@ -8,12 +8,12 @@ imem::imem()
 uint32_t imem::read(uint32_t address)
 {
     // TODO: bounds check? Or just wrap around like in RTL?
-    return memory[address];
+    return memory[address & MEM_M];
 }
 #if ASM_IMEM
 std::string imem::read_asm(uint32_t address)
 {
-    return memory_asm[address];
+    return memory_asm[address & MEM_M];
 }
 #endif
 
@@ -23,9 +23,10 @@ void imem::burn_mem()
     std::ifstream hex_file;
 #if RISCV_SANITY_TESTS
     hex_file.open(ASM_RISCV_SANITY_TEST, std::ios::in);
-#elif RISCV_ISA_TESTS
-    hex_file.open(ASM_RISCV_ISA_TESTS"/add.hex", std::ios::in);
-    LOG("Path to search for the test: " << ASM_RISCV_ISA_TESTS"/add.hex");
+#elif RISCV_ISA_REGR
+    std::string test_hex = ASM_RISCV_ISA_TESTS + global_test_name + ".hex";
+    hex_file.open(test_hex, std::ios::in);
+    LOG("Path to search for the test: " << test_hex);
 #else
     LOGE("No test defined. Nothing to be loaded to the memory")
 #endif
@@ -60,9 +61,10 @@ void dmem::burn_mem()
     std::ifstream hex_file;
 #if RISCV_SANITY_TESTS
     hex_file.open(ASM_RISCV_SANITY_TEST, std::ios::in);
-#elif RISCV_ISA_TESTS
-    hex_file.open(ASM_RISCV_ISA_TESTS"/add.hex", std::ios::in);
-    LOG("Path to search for the test: " << ASM_RISCV_ISA_TESTS"/add.hex");
+#elif RISCV_ISA_REGR
+    std::string test_hex = ASM_RISCV_ISA_TESTS + global_test_name + ".hex";
+    hex_file.open(test_hex, std::ios::in);
+    LOG("Path to search for the test: " << test_hex);
 #else
     LOGE("No test defined. Nothing to be loaded to the memory")
 #endif
@@ -89,17 +91,18 @@ uint32_t dmem::access(uint32_t en, uint32_t we, uint32_t addr, uint32_t din) {
         "; din: " << FHEX(din) << ", (" << din << ")" );
 #endif
     static uint32_t last_read;
+    uint32_t enm = 0; // enable mask
     if (en) {
+        LOG("    DMEM address: " << FHEX(addr));
         if (we) {
             // Byte Enable Write
-            uint32_t in = din & mask[0][we & 0x1] |
-                din & mask[1][(we & 0x2) >> 1] |
-                din & mask[2][(we & 0x4) >> 2] |
-                din & mask[3][(we & 0x8) >> 3];
-            memory[addr] = in;
+            enm = mask[0][we & 0x1] | mask[1][(we & 0x2) >> 1] |
+                mask[2][(we & 0x4) >> 2] | mask[3][(we & 0x8) >> 3];
+            uint32_t in = din & enm;
+            memory[addr & MEM_M] = (memory[addr & MEM_M] & ~enm) | in;
             LOG("    DMEM stored: " << FHEX(in) << " at address: " << FHEX(addr));
         }
-        last_read = memory[addr];
+        last_read = memory[addr & MEM_M];
     }
     LOG("    DMEM access return: " << last_read << ", " << FHEX(last_read));
     return last_read;

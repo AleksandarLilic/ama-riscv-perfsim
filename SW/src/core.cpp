@@ -57,21 +57,21 @@ void core::update_if()
     LOG("    IF/ID stall: " << id_intf.stall_if_id);
 
     LOG("    Current PC: " << if_intf.pc_prepared <<
-        ", (" << (if_intf.pc_prepared >> 2) << ") , " << FHEX(if_intf.pc_prepared) <<
+        ", (" << (if_intf.pc_prepared >> 2) << "), " << FHEXI(if_intf.pc_prepared) <<
         "; Current IMEM Addr (mux out): " << if_intf.imem_addr << 
-        ", (" << (if_intf.imem_addr >> 2) << ") , " << FHEX(if_intf.imem_addr));
+        ", (" << (if_intf.imem_addr >> 2) << "), " << FHEXI(if_intf.imem_addr));
 }
 
 void core::update_id()
 {
     LOG("> UPDATE_ID");
-    LOG("    Instruction in ID stage: " << FHEX(id_intf.inst_id));
-    LOG("    PC ID: " << FHEX(id_intf.pc));
+    LOG("    Instruction in ID stage: " << FHEXI(id_intf.inst_id));
+    LOG("    PC ID: " << FHEXI(id_intf.pc));
 
     id_intf.stall_if_id = sys_intf.rst;
     if (id_intf.stall_if_id_d)     // Convert to NOP on stall
         id_intf.inst_id = NOP;
-    LOG("    Instruction going to control: " << FHEX(id_intf.inst_id));
+    LOG("    Instruction going to control: " << FHEXI(id_intf.inst_id));
 
     id_intf.opc7_id = inst_field::opc7(id_intf.inst_id);
     id_intf.funct3_id = inst_field::funct3(id_intf.inst_id);
@@ -93,7 +93,7 @@ void core::update_id()
 void core::update_ex()
 {
     LOG("> UPDATE_EX");
-    LOG("    Instruction in EX stage: " << FHEX(ex_intf.inst_ex));
+    LOG("    Instruction in EX stage: " << FHEXI(ex_intf.inst_ex));
     LOG("    PC EX: " << FHEX(ex_intf.pc_ex));
     ex_intf.bc_in_a = cl::mux2(ex_intf.bc_a_sel_ex, ex_intf.rf_data_a_ex, wb_intf.data_d);
     ex_intf.bcs_in_b = cl::mux2(ex_intf.bcs_b_sel_ex, ex_intf.rf_data_b_ex, wb_intf.data_d);
@@ -136,7 +136,7 @@ void core::update_ex()
 void core::update_mem()
 {
     LOG("> UPDATE_MEM");
-    LOG("    Instruction in MEM stage: " << FHEX(mem_intf.inst_mem));
+    LOG("    Instruction in MEM stage: " << FHEXI(mem_intf.inst_mem));
     LOG("    PC MEM: " << FHEX(mem_intf.pc_mem));
     LOG("    DMEM out: " << mem_intf.dmem_dout << ", " << FHEX(mem_intf.dmem_dout));
     if(mem_intf.load_sm_en_mem)
@@ -160,7 +160,7 @@ void core::update_mem()
 void core::update_wb()
 {
     LOG("> UPDATE_WB");
-    LOG("    Instruction in WB stage: " << FHEX(wb_intf.inst_wb));
+    LOG("    Instruction in WB stage: " << FHEXI(wb_intf.inst_wb));
 #if RISCV_SANITY_TESTS
     if(wb_intf.inst_wb != 0x13 && (!sys_intf.rst)) // if instruction is not NOP, record as committed
         global_committed_instructions.push_back(wb_intf.inst_wb);
