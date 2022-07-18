@@ -17,7 +17,7 @@ std::vector<uint32_t> global_committed_instructions;
 #if RISCV_ISA_REGR
 uint32_t global_tohost = 0;
 std::string global_test_name;
-#define CLK_TIMEOUT 1000
+#define CLK_TIMEOUT 1000 // per test
 #endif
 
 

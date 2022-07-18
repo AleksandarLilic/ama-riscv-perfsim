@@ -24,16 +24,18 @@ const std::string riscv_regr_tests[39] = {
 #define LOG_LOGIC_T 0
 #define ASM_IMEM 1
 #define FORCE_RF 0
+#define HEX_READ 0
 
 // LOG features
 #define LOG(x) std::cout << x << std::endl
 #define LOG_L(x) std::cout << x
 #define LOGW(x) std::cout << " >>> WARNING: "<< x << std::endl
 #define LOGE(x) std::cout << " >>> ERROR: "<< x << std::endl
-// Format
+// Format HEX, Format BIN
 #define FHEX_PAD std::right << std::setw(8) << std::setfill('0')
 #define FHEX(x) "0x" << std::hex << FHEX_PAD << x << std::dec
-#define FHEXI(x) std::hex << FHEX_PAD << x << std::dec
+#define FHEXI(x) std::hex << FHEX_PAD << x << std::dec // Instruction print, exact match with .dump
+#define FHEXC(x) std::hex << x << std::dec // Clean print - no padding, no prefix
 #define FBIN(x,num) "0b" << std::bitset<num>(x)
 // Format Reg File
 #define FRF_DEF(x,y) std::left << std::setw(2) << std::setfill(' ')<< x << ": " << std::left << std::setw(12) << int32_t(y)
