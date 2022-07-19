@@ -4,6 +4,7 @@
 #include "intf.h"
 #include "intf_cfg.h"
 #include "modules.h"
+#include "perf_cpu.h"
 
 #if RISCV_SANITY_TESTS
 extern std::vector<uint32_t> global_committed_instructions;

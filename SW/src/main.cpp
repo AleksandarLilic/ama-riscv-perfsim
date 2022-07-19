@@ -1,6 +1,8 @@
 #include "defines.h"
 #include "seq_queue.h"
 
+#include "perf_cpu.h"
+
 #include "cpu.h"
 //#define TEST
 #ifndef TEST
@@ -61,7 +63,7 @@ int main()
     uint32_t regr_cnt = 0;
     while(regr_cnt < RISCV_ISA_REGR_NUM){
 
-    global_test_name = riscv_regr_tests[regr_cnt];
+    global_test_name = riscv_regr_tests[0];
     LOG("\n\n\n ----- Test name: " << global_test_name << " ----- " << "\n");
     regr_cnt++;
 
@@ -147,6 +149,8 @@ int main()
         LOGE("Test failed. Test ID: " << failed_test_id << "; Test suite: " << global_test_name);
 
 #endif
+
+    perf_cpu::status_log();
 
     LOG("Clock cycles executed: " << clk_counter);
     LOG("\n ----- Simulation End -----");
