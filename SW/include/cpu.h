@@ -32,4 +32,5 @@ public:
     cpu(seq_queue *q);
     void update();
     void reset(reset_t status) { reset_status = bool(status); };
+    void burn_mem();
 };

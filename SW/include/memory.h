@@ -27,6 +27,7 @@ public:
     std::string read_asm(uint32_t address);
 #endif
 private:
+public:
     void burn_mem();
 };
 
@@ -46,5 +47,6 @@ public:
 private:
     uint32_t read();
     void write();
+public:
     void burn_mem();
 };

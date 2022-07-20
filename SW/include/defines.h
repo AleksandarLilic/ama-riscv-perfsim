@@ -12,7 +12,7 @@
 // Tests
 #define RISCV_SANITY_TESTS 0
 #define RISCV_ISA_REGR 1
-#define RISCV_ISA_REGR_NUM 1
+#define RISCV_ISA_REGR_NUM 38
 const std::string riscv_regr_tests[39] = {
     "add","addi","and","andi","auipc","beq","bge","bgeu","blt","bltu",
     "bne"/*,"fence_i"*/,"jal","jalr","lb","lbu","lh","lhu","lui","lw",

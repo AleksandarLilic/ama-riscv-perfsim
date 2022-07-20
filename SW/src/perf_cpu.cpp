@@ -12,10 +12,12 @@ void perf_cpu::update(sys_intf_t *sys_intf, if_intf_t *if_intf, wb_intf_t *wb_in
     inst_cnt = (sys_intf->rst) ? 0 : inst_cnt + uint32_t(!inst_wb_nop_or_clear);
 }
 
-void perf_cpu::status_log() 
+void perf_cpu::status_log(uint32_t *c_cnt, uint32_t *i_cnt) 
 {
     float cpi = float(cycle_cnt) / float(inst_cnt);
     LOG("    Cycle_cnt: " << cycle_cnt);
     LOG("    Instruction_cnt: " << inst_cnt);
     LOG("    CPI: " << cpi);
+    *c_cnt = cycle_cnt;
+    *i_cnt = inst_cnt;
 }
