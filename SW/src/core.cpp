@@ -165,7 +165,7 @@ void core::update_wb()
     if(wb_intf.inst_wb != 0x13 && (!sys_intf.rst)) // if instruction is not NOP, record as committed
         global_committed_instructions.push_back(wb_intf.inst_wb);
 #endif
-    perf_cpu::update(&sys_intf, &if_intf, &wb_intf);
+    perf_cpu::update(&sys_intf, &if_intf, &id_intf, &wb_intf);
 }
 
 void core::status_log()

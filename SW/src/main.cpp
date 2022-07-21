@@ -4,6 +4,10 @@
 #include "perf_cpu.h"
 
 #include "cpu.h"
+
+//#include <algorithm>
+//#include <iterator>
+
 //#define TEST
 #ifndef TEST
 
@@ -52,9 +56,10 @@ void check_committed_instructions()
 
 int main()
 {
-    // perf counters
-    uint32_t cpi_regr_cycle_cnt = 0;
-    uint32_t cpi_regr_inst_cnt = 0;
+    // perf counters    
+    uint32_t regr_perf_array[PERF_ARRAY_SIZE]{};
+
+    uint32_t regr_test_status = 0;
     std::cout.precision(3);
 
     // log to file
@@ -161,16 +166,23 @@ int main()
         LOG("Test passed; Test suite: " << global_test_name);
     else
         LOGE("Test failed. Test ID: " << failed_test_id << "; Test suite: " << global_test_name);
-
+    
+    LOG("");
 #endif
-    uint32_t test_cycle_cnt = 0;
-    uint32_t test_inst_cnt = 0;
-    perf_cpu::status_log(&test_cycle_cnt, &test_inst_cnt);
 
-    cpi_regr_cycle_cnt += test_cycle_cnt;
-    cpi_regr_inst_cnt += test_inst_cnt;
+    regr_test_status += (!test_status);
 
-    LOG("Clock cycles executed: " << clk_counter);
+    uint32_t perf_array[PERF_ARRAY_SIZE];
+    perf_cpu::collect_data(perf_array);
+    perf_cpu::status_log(perf_array);
+
+    //std::add(std::begin(perf_array), std::end(perf_array), std::begin(regr_perf_array));
+
+    for (uint32_t i = 0; i < std::size(perf_array); i++)
+        regr_perf_array[i] += perf_array[i];
+
+
+    LOG("\nClock cycles executed: " << clk_counter);
     LOG("\n ----- Simulation End -----\n");
 
     delete cpu0;
@@ -179,10 +191,11 @@ int main()
     
     LOG("\n ----- Regression results -----\n");
 
-    float cpi = float(cpi_regr_cycle_cnt) / float(cpi_regr_inst_cnt);
-    LOG("    Cycle_cnt: " << cpi_regr_cycle_cnt);
-    LOG("    Instruction_cnt: " << cpi_regr_inst_cnt);
-    LOG("    CPI: " << cpi);
+    if (regr_test_status != 0)
+        LOGE("Regression Failed. Number of failed tests: " << regr_test_status << 
+            ". Check log for details about failed tests\n");
+
+    perf_cpu::status_log(regr_perf_array);
 
     LOG("\n ----- Regression End -----");
 

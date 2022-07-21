@@ -2,6 +2,7 @@
 
 #include "defines.h"
 #include "intf.h"
+#include "perf_cpu.h"
 
 class op_fwd
 {
