@@ -3,12 +3,17 @@
 #include <iostream>
 #include <iomanip>
 #include <bitset>
+#include <vector>
+
+// Paths
+#define ASM_TEST_PATH "../../../../../riscv-tests/sanity/asm_test/asm_test.hex"
 
 // Debug verbosity
-#define LOG_DBG 1
+#define LOG_DBG 0
 #define LOG_LOGIC_T 0
 #define ASM_IMEM 1
-#define FORCE_RF 1
+#define FORCE_RF 0
+#define RISCV_SANITY_TESTS 1
 // LOG features
 #define LOG(x) std::cout << x << std::endl
 #define LOG_L(x) std::cout << x
@@ -40,7 +45,6 @@
 #define RD_M uint32_t((0b1'1111)<<7)
 #define RS1_M uint32_t((0b1'1111)<<15)
 #define RS2_M uint32_t((0b1'1111)<<20)
-#define IMM_I_M uint32_t((0b111'1111'1111)<<20)
 #define IMM_SHAMT uint32_t(0b1'1111)
 #define IMM_31_M int32_t((0b1)<<31)
 #define IMM_31_20_M int32_t((0b1111'1111'1111)<<20)

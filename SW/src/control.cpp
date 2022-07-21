@@ -17,11 +17,13 @@ control::control(sys_intf_t *sys_intf, if_intf_t *if_intf, id_intf_t *id_intf,
 // methods
 void control::update()
 {
-    id_intf->stall_if_id = sys_intf->rst;
-   // if (id_intf->stall_if_id_d)
-   //     id_intf->inst_id = NOP;
-    LOG("    Instruction going to control: " << FHEX(id_intf->inst_id));
+    
     update(sys_intf, id_intf, ex_intf, mem_intf);
+    global_inst_to_ctrl = id_intf->inst_id;
+#if RISCV_SANITY_TESTS
+    if (id_intf->inst_id != 0x13 && (!sys_intf->rst)) // if instruction is not NOP, record as issued
+        global_issued_instructions.push_back(id_intf->inst_id);
+#endif
 }
 
 void control::update(sys_intf_t *sys_intf, id_intf_t *id_intf, ex_intf_t *ex_intf,
@@ -32,7 +34,7 @@ void control::update(sys_intf_t *sys_intf, id_intf_t *id_intf, ex_intf_t *ex_int
     branch_resolution(sys_intf, id_intf, ex_intf);
     store_mask(id_intf, ex_intf);
 
-    //id_intf->dec_pc_we_if = id_intf->dec_pc_we_if && !id_intf->stall_if;
+    id_intf->dec_pc_we_if = id_intf->dec_pc_we_if && !id_intf->stall_if_id;
     pipeline_ctrl(sys_intf, id_intf);
 }
 
@@ -82,32 +84,37 @@ void control::branch_resolution(sys_intf_t *sys_intf, id_intf_t *id_intf, ex_int
 
 void control::store_mask(id_intf_t *id_intf, ex_intf_t *ex_intf)
 {
-    // dummy, will cause unaligned value issue 
-    // id_intf->alu_out = 3;
-
-    uint32_t mask_width = ex_intf->funct3_ex & 0b11;
-    uint32_t mask_offset = ex_intf->alu_out & 0b11;
-    
-    // v1 implementation
-    // uint32_t b0 = 1;
-    // uint32_t b1 = ((mask_width & 0b1) << 1) | (mask_width & 0b10);
-    // uint32_t b2 = (mask_width & 0b10) << 1;
-    // uint32_t b3 = (mask_width & 0b10) << 2;
-    // uint32_t mask = (b3 | b2 | b1 | b0) << 4;
-
-    // v2 implementation
-    uint32_t mask = 1;
-    mask = ~(~mask << mask_width);  // fill with 1s from right
-    mask = mask | ((mask << 1) & 0x8);  // add bit[3] if word
-    mask = mask << 4;   // prepare for potential offset
-    // byte 0001'0000
-    // half 0011'0000
-    // word 1111'0000
-    uint32_t inst_en = ~(~ex_intf->store_inst_ex << 3); // fill with 1s from right
-
-    id_intf->dec_store_mask_ex = inst_en & (mask >> (4 - mask_offset));
     if (ex_intf->store_inst_ex) {
-        LOG("    Store Mask: " << id_intf->dec_store_mask_ex);
-        //LOG("b3: " << b3 << "; b2: " << b2 << "; b1: " << b1 << "; b0: " << b0);
+        // dummy, will cause unaligned value issue 
+        // id_intf->alu_out = 3;
+
+        uint32_t mask_width = ex_intf->funct3_ex & 0b11;
+        uint32_t mask_offset = ex_intf->alu_out & 0b11;
+
+        // v1 implementation
+        // uint32_t b0 = 1;
+        // uint32_t b1 = ((mask_width & 0b1) << 1) | (mask_width & 0b10);
+        // uint32_t b2 = (mask_width & 0b10) << 1;
+        // uint32_t b3 = (mask_width & 0b10) << 2;
+        // uint32_t mask = (b3 | b2 | b1 | b0) << 4;
+
+        // v2 implementation
+        uint32_t mask = 1;
+        mask = ~(~mask << mask_width);  // fill with 1s from right
+        mask = mask | ((mask << 1) & 0x8);  // add bit[3] if word
+        mask = mask << 4;   // prepare for potential offset
+        // byte 0001'0000
+        // half 0011'0000
+        // word 1111'0000
+
+        id_intf->dec_store_mask_ex = mask >> (4 - mask_offset);
     }
+    else {
+        id_intf->dec_store_mask_ex = 0x0;
+    }
+#if LOG_DBG
+    LOG("    Store inst EX: " << ex_intf->store_inst_ex);
+    LOG("    Store Mask: " << FHEX(id_intf->dec_store_mask_ex));
+    //LOG("b3: " << b3 << "; b2: " << b2 << "; b1: " << b1 << "; b0: " << b0);
+#endif
 }

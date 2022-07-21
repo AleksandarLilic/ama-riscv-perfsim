@@ -3,6 +3,12 @@
 #include "defines.h"
 
 #include <array>
+#include <fstream>
+#include <string>
+
+#if RISCV_SANITY_TESTS
+extern uint32_t global_inst_count;
+#endif;
 
 class imem
 {
@@ -36,4 +42,5 @@ public:
 private:
     uint32_t read();
     void write();
+    void burn_mem();
 };

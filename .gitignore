@@ -3,3 +3,8 @@ local/
 SW/.vs/
 SW/out/
 
+# riscv toolchain outputs
+riscv-tests/**/*.bin
+riscv-tests/**/*.dump
+riscv-tests/**/*.elf
+riscv-tests/**/*.hex

@@ -12,8 +12,8 @@ cpu::cpu(seq_queue *q) :
 
 void cpu::update()
 {
-    core.status_log();
     core.reset(reset_status);
+    core.status_log();
     core.update_system();
     // WB
     core.update_wb();
@@ -21,21 +21,27 @@ void cpu::update()
     core.update_mem();
     // EX
     core.update_ex();
-    core_intf.dmem_dout = dmem.access(*core_intf.dmem_en, *core_intf.dmem_we, 
-        *core_intf.dmem_addr, *core_intf.dmem_din);
+//    core_intf.dmem_dout = dmem.access(*core_intf.dmem_en, *core_intf.dmem_we, 
+//        *core_intf.dmem_addr, *core_intf.dmem_din);
     // ID
     core.update_id();
+    // FIXME:
+    core_intf.dmem_dout = dmem.access(*core_intf.dmem_en, *core_intf.dmem_we,
+        *core_intf.dmem_addr, *core_intf.dmem_din);
     // IF
     core.update_if();
-    core_intf.imem_dout = imem.read(*core_intf.imem_addr);
+    core_intf.imem_dout = imem.read((*core_intf.imem_addr) >> 2);
 
 #if ASM_IMEM
     static std::string imemc_s[5]{};
     imemc_s[4] = imemc_s[3];    // wb
     imemc_s[3] = imemc_s[2];    // mem
     imemc_s[2] = imemc_s[1];    // ex
-    imemc_s[1] = imemc_s[0];    // id
-    imemc_s[0] = imem.read_asm(*core_intf.imem_addr); // if
+    if (global_inst_to_ctrl == 0x13) // id
+        imemc_s[1] = "NOP";
+    else
+        imemc_s[1] = imemc_s[0];
+    imemc_s[0] = imem.read_asm((*core_intf.imem_addr) >> 2); // if
     LOG("    Instruction in IF stage: " << FHEX(core_intf.imem_dout));
     
     LOG("\nInstruction pipeline:");

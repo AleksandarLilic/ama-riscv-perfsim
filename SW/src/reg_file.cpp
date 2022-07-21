@@ -25,11 +25,6 @@ void reg_file::write()
     LOG("    Reg File write - Addres D: " << mem_intf->rd_addr_mem << "; Data D : " << wb_intf->data_d);
     }
 
-#if FORCE_RF
-    reg_file_intf->in[5] = 17u;
-    reg_file_intf->in[6] = 4u;
-#endif
-
     status_updated_register();
 }
 
@@ -73,6 +68,7 @@ void reg_file::status_log()
     }
     std::cout << std::endl;
     updated_register = NO_REG_UPDATE; // reset register address
+
 }
 
 void reg_file::status_updated_register()
@@ -82,3 +78,13 @@ void reg_file::status_updated_register()
         (mem_intf->rd_addr_mem < 32))
             updated_register = mem_intf->rd_addr_mem;
 }
+
+#if RISCV_SANITY_TESTS
+void reg_file::check_reg_25()
+{
+    if (reg_file_intf->out[25] != 0) {
+        LOGE("Test failed. Test ID = " << reg_file_intf->out[25]);
+        global_test_failed = 1;
+    }
+}
+#endif;

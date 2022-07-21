@@ -74,7 +74,7 @@ void alu::update()
 #if LOG_DBG
     LOG("    ALU Select: " << ex_intf->alu_op_sel_ex);
 #endif
-    LOG("    ALU Output: " << int32_t(ex_intf->alu_out));
+    LOG("    ALU Output: " << int32_t(ex_intf->alu_out) << ", " << FHEX(ex_intf->alu_out));
 }
 
 store_shift::store_shift(ex_intf_t *ex_intf)
@@ -85,8 +85,8 @@ store_shift::store_shift(ex_intf_t *ex_intf)
 void store_shift::update()
 {
     ex_intf->store_offset = ex_intf->alu_out & 0x3;
-    ex_intf->dmem_din = ex_intf->bcs_in_b << ex_intf->store_offset;
-    LOG("    Store Offset: " << ex_intf->store_offset);
+    ex_intf->dmem_din = ex_intf->bcs_in_b << (ex_intf->store_offset << 3); // First convert to byte shift
+    LOG("    Store Bit Offset: " << ex_intf->store_offset << 3);
     LOG("    DMEM Store Input: " << ex_intf->dmem_din);
 }
 
@@ -99,7 +99,7 @@ void load_shift_mask::update()
 {
     uint32_t load_width = mem_intf->funct3_mem & 0b11;
     uint32_t offset = mem_intf->alu_mem & 0b11;
-    uint32_t load_sign_bit = (load_width & 0b100) >> 2;
+    uint32_t load_sign_bit = (~(mem_intf->funct3_mem) & 0b100) >> 2; // flip because unsigned is encoded with 1
 #ifdef LOG_DBG
     LOG("    Load SM input: " << mem_intf->dmem_dout);
     LOG("    Width: " << load_width);
@@ -129,6 +129,9 @@ void load_shift_mask::update()
     mask = mask << offset_bytes;
 
     mem_intf->load_sm_out = (mem_intf->dmem_dout & mask) >> offset_bytes;
+
+    if (load_width == 0b10) // if word, can't adjust sign bit
+        return;
 
     uint32_t data_neg = mem_intf->load_sm_out & get_data_sign;
 

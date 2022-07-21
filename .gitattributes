@@ -1,0 +1,5 @@
+# set core.autocrlf
+* text=auto
+
+# riscv toolchain is on linux (wsl), keep eol to LF
+riscv-tests/** text eol=lf

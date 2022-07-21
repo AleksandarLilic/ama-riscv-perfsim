@@ -3,6 +3,10 @@
 #include "defines.h"
 #include "intf.h"
 
+#if RISCV_SANITY_TESTS
+extern bool global_test_failed;
+#endif;
+
 class reg_file
 {
 private:
@@ -21,4 +25,8 @@ public:
     void status_log();
 private:
     void status_updated_register();
+#if RISCV_SANITY_TESTS
+public:
+    void check_reg_25();
+#endif;
 };

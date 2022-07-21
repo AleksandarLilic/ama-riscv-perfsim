@@ -6,6 +6,11 @@
 #include "decoder.h"
 #include "op_fwd.h"
 
+extern uint32_t global_inst_to_ctrl;
+#if RISCV_SANITY_TESTS
+extern std::vector<uint32_t> global_issued_instructions;
+#endif;
+
 class control
 {
 private:
