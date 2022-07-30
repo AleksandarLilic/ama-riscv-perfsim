@@ -82,3 +82,21 @@ public:
     load_shift_mask() = delete;
     load_shift_mask(mem_intf_t *mem_intf);
 };
+
+class csr_file
+{
+private:
+    id_intf_t *id_intf;
+    mem_intf_t *mem_intf;
+    wb_intf_t *wb_intf;
+    csr_file_intf_t *csr_file_intf;
+    bool updated_register;
+
+public:
+    csr_file() = delete;
+    csr_file(csr_file_intf_t *csr_file_intf, id_intf_t *id_intf, mem_intf_t *mem_intf, wb_intf_t *wb_intf);
+    void write();
+    void read();
+    void status_log();
+
+};

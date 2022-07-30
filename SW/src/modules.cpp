@@ -138,3 +138,45 @@ void load_shift_mask::update()
     if (load_sign_bit && data_neg)
         mem_intf->load_sm_out |= sign_mask;
 }
+
+csr_file::csr_file(csr_file_intf_t *csr_file_intf, id_intf_t *id_intf, mem_intf_t *mem_intf, wb_intf_t *wb_intf)
+{
+    this->csr_file_intf = csr_file_intf;
+    this->id_intf = id_intf;
+    this->mem_intf = mem_intf;
+    this->wb_intf = wb_intf;
+}
+
+void csr_file::write()
+{
+    // Default write, keep previous output
+    csr_file_intf->tohost_in = csr_file_intf->tohost_out;
+
+    // Actual write, if asserted from control
+    if (mem_intf->csr_we_mem) {
+        uint32_t csr_din = cl::mux2(mem_intf->csr_ui_mem, mem_intf->alu_mem, mem_intf->csr_uimm_mem);
+        csr_file_intf->tohost_in = csr_din;
+        LOG("    CSR tohost data write: " << csr_din);
+        updated_register = true;
+    }
+}
+
+void csr_file::read()
+{
+    if (id_intf->dec_csr_en_id) {
+        id_intf->csr_data = csr_file_intf->tohost_out;
+        LOG("    CSR tohost data read: " << id_intf->csr_data);
+    }
+}
+
+void csr_file::status_log()
+{
+    LOG("> Arch State - CSR");
+    if(updated_register)
+        LOG("    > CSR tohost - 0x51e: " << csr_file_intf->tohost_out << " < ");
+    else
+        LOG("      CSR tohost - 0x51e: " << csr_file_intf->tohost_out);
+
+    std::cout << std::endl;
+    updated_register = false;
+}

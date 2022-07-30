@@ -7,6 +7,7 @@ uint32_t inst_field::funct3(uint32_t inst) { return (inst & FUNCT3_M) >> 12; }
 uint32_t inst_field::rd_addr(uint32_t inst) { return (inst & RD_M) >> 7; }
 uint32_t inst_field::rs1_addr(uint32_t inst) { return (inst & RS1_M) >> 15; }
 uint32_t inst_field::rs2_addr(uint32_t inst) { return (inst & RS2_M) >> 20; }
+uint32_t inst_field::uimm_zero_ext(uint32_t inst) { return rs1_addr(inst); }
 uint32_t inst_field::imm_i(uint32_t inst) { return int32_t(inst & IMM_31_20_M) >> 20; }
 uint32_t inst_field::imm_s(uint32_t inst) 
 { 

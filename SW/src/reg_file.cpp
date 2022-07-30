@@ -68,7 +68,6 @@ void reg_file::status_log()
     }
     std::cout << std::endl;
     updated_register = NO_REG_UPDATE; // reset register address
-
 }
 
 void reg_file::status_updated_register()

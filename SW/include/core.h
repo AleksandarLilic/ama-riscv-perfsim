@@ -28,6 +28,7 @@ private:
     wb_intf_t wb_intf{};
     
     reg_file_intf_t reg_file_intf{};
+    csr_file_intf_t csr_file_intf{};
 
 public:
     core() = delete;
@@ -55,4 +56,5 @@ private:
     store_shift store_shift;
     // mem
     load_shift_mask load_shift_mask;
+    csr_file csr_file;
 };

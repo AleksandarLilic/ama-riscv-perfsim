@@ -61,6 +61,7 @@ typedef struct id_intf_t
     uint32_t dec_pc_sel_if;
     uint32_t dec_pc_we_if;
     uint32_t dec_ig_sel_id;
+    // csr control
     uint32_t dec_csr_en_id;
     uint32_t dec_csr_we_id;
     uint32_t dec_csr_ui_id;
@@ -83,6 +84,10 @@ typedef struct id_intf_t
     uint32_t rs2_addr_id;
     uint32_t rd_addr_id;
     // uint32_t rd_we_id; // as decoder output
+
+    // csr
+    uint32_t csr_data;
+    uint32_t csr_uimm;
     
     // forwarding
     uint32_t of_rf_a_sel_fwd_id;
@@ -106,6 +111,11 @@ typedef struct ex_intf_t
     uint32_t rf_data_a_ex;
     uint32_t rf_data_b_ex;
     uint32_t imm_gen_out_ex;
+
+    uint32_t csr_we_ex;
+    uint32_t csr_ui_ex;
+    uint32_t csr_uimm_ex;
+    uint32_t csr_data_ex;
 
     uint32_t alu_a_sel_ex;
     uint32_t alu_b_sel_ex;
@@ -146,6 +156,11 @@ typedef struct mem_intf_t
     uint32_t rd_addr_mem;
     uint32_t rd_we_mem;
 
+    uint32_t csr_we_mem;
+    uint32_t csr_ui_mem;
+    uint32_t csr_uimm_mem;
+    uint32_t csr_data_mem;
+
     uint32_t dmem_dout = NOT_RESET;
     uint32_t load_sm_en_mem;
     uint32_t wb_sel_mem;
@@ -166,6 +181,12 @@ typedef struct reg_file_intf_t
     std::vector<uint32_t> out;
     reg_file_intf_t() : in(32, NOT_RESET), out(32, NOT_RESET) { out[0] = 0u; } // Hardwired zero
 } reg_file_t;
+
+typedef struct csr_file_intf_t
+{
+    uint32_t tohost_in = NOT_RESET;
+    uint32_t tohost_out = NOT_RESET;
+} csr_file_intf_t;
 
 // System interfaces
 typedef struct sys_intf_t
