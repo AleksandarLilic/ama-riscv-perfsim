@@ -83,6 +83,10 @@ public:
     load_shift_mask(mem_intf_t *mem_intf);
 };
 
+#if RISCV_ISA_REGR
+extern uint32_t global_tohost;
+#endif
+
 class csr_file
 {
 private:

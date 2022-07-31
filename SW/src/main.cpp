@@ -6,12 +6,20 @@
 #ifndef TEST
 
 uint32_t global_inst_to_ctrl = 0;
+
 #if RISCV_SANITY_TESTS
 bool global_test_failed = 0;
 uint32_t global_inst_count = 0;
 std::vector<uint32_t> global_issued_instructions;
 std::vector<uint32_t> global_committed_instructions;
 #endif;
+
+#if RISCV_ISA_REGR
+uint32_t global_tohost = 0;
+std::string global_test_name;
+#define CLK_TIMEOUT 1000
+#endif
+
 
 void queue_update_all(seq_queue *q)
 {
@@ -42,6 +50,21 @@ void check_committed_instructions()
 
 int main()
 {
+    bool open_test_log = 0;
+    open_test_log = freopen("test_log.txt", "w", stdout);    
+    if (!open_test_log) {
+        LOGE("Failed to open test.txt log. Exiting...");
+        std::cin.get();
+        return 1;
+    }
+    
+    uint32_t regr_cnt = 0;
+    while(regr_cnt < RISCV_ISA_REGR_NUM){
+
+    global_test_name = riscv_regr_tests[regr_cnt];
+    LOG("\n\n\n ----- Test name: " << global_test_name << " ----- " << "\n");
+    regr_cnt++;
+
     seq_queue q;
     cpu *cpu0 = new cpu(&q);
 
@@ -86,6 +109,25 @@ int main()
     
     check_committed_instructions();
 
+#elif RISCV_ISA_REGR
+    while ((global_tohost & 0x1) != 1u && (clk_counter < CLK_TIMEOUT)) {
+        cpu0->update();
+        LOG("\n\n ---------- Cycle count: " << (clk_counter + rst_counter) << " ---------- ");
+        queue_update_all(&q);
+        clk_counter++;
+    }
+
+    bool test_status = 0;
+    uint32_t failed_test_id = 0;
+    
+    if (global_tohost == 1) {
+        test_status = true;
+    }
+    else {
+        test_status = false;
+        failed_test_id = global_tohost >> 1;
+    }
+
 #else
     while (clk_cycles > clk_counter) {
         cpu0->update();
@@ -95,11 +137,25 @@ int main()
 #endif
 
     LOG("\n ----- Simulation Stats -----\n");
+#if RISCV_SANITY_TESTS
     LOG("Clock cycles to execute: " << clk_cycles);
+#endif
+#if RISCV_ISA_REGR
+    if (test_status)
+        LOG("Test passed");
+    else
+        LOGE("Test failed. Test ID: " << failed_test_id << "; Test suite: " << global_test_name);
+
+#endif
+
     LOG("Clock cycles executed: " << clk_counter);
     LOG("\n ----- Simulation End -----");
     delete cpu0;
-    std::cin.get();
+    
+    } // while (regr_cnt < RISCV_ISA_REGR_NUM)
+
+    fclose(stdout);
+    //std::cin.get();
 }
 #else
 int main()

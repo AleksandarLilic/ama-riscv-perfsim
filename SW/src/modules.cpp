@@ -17,7 +17,8 @@ void imm_gen::update()
     default: LOGE("Immediate Generate invalid type");
     }
     // fix srai
-    if (id_intf->dec_ig_sel_id == uint32_t(imm_gen_t::i_type) && (id_intf->funct3_id == 0b101))
+    if ((id_intf->funct3_id == 0b101) && 
+        (id_intf->funct7_id == uint32_t(opc7_t::i_type)))
         id_intf->imm_gen_out &= IMM_SHAMT;
 #if LOG_DBG
     LOG("    Imm Gen Select: " << id_intf->dec_ig_sel_id);
@@ -167,6 +168,9 @@ void csr_file::read()
         id_intf->csr_data = csr_file_intf->tohost_out;
         LOG("    CSR tohost data read: " << id_intf->csr_data);
     }
+#if RISCV_ISA_REGR
+    global_tohost = csr_file_intf->tohost_out;
+#endif
 }
 
 void csr_file::status_log()

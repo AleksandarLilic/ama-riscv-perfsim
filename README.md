@@ -12,7 +12,7 @@ Based on [ama-riscv Verilog simulator](https://github.com/AleksandarLilic/ama-ri
  - Golden Model for RTL implementation through DPI or other
 
 **Status:**   
-In development - Phase I: Base structures
+In development - Passing all [RISC-V ISA tests](https://github.com/riscv-software-src/riscv-tests)
 
 **Further development:**  
 TBD    
