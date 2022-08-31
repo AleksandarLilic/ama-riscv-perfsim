@@ -20,6 +20,8 @@ std::string imem::read_asm(uint32_t address)
 void imem::burn_mem()
 {
     LOG("\nIMEM burn");
+#if HEX_READ
+    LOG("Burning with HEX file");
     std::ifstream hex_file;
 #if RISCV_SANITY_TESTS
     hex_file.open(ASM_RISCV_SANITY_TEST, std::ios::in);
@@ -47,7 +49,48 @@ void imem::burn_mem()
 #endif;
         i++;
     }
+#else // !HEX_READ
+    LOG("Burning with BIN file");
+    std::ifstream bin_file;
+    std::string test_bin = ASM_RISCV_ISA_TESTS + global_test_name + ".bin";
+
+    bin_file.open(test_bin, std::ios::in | std::ios::binary);
+    LOG("Path to search for the test: " << test_bin);
+    
+    bin_file.seekg(0, std::ios::end);
+    uint32_t size = bin_file.tellg();
+    bin_file.seekg(0, std::ios::beg);
+
+    if (bin_file.is_open())
+        LOG("BIN opened");
+    else
+        LOGE("BIN file cannot be found");
+
+    const uint32_t stride = 4;
+    char bin_line[stride];    
+    uint32_t mem_addr = 0;
+
+    while (mem_addr < (size/stride)) {
+        bin_file.read(bin_line, stride);
+        uint32_t one_word = 0;
+
+        // flip endianess
+        for (uint32_t j = 0; j < stride; j++)
+            one_word |= (bin_line[j] & 0xFF) << (j * 8);
+        
+        memory[mem_addr] = one_word;
+#if LOG_DBG
+        LOG("    IMEM[" << mem_addr << "]: " << FHEX(memory[mem_addr]));
+#endif // LOG_DBG
+#if RISCV_SANITY_TESTS
+        if ((memory[mem_addr]) == 0 && (global_inst_count == 0))
+            global_inst_count = i;
+#endif // RISCV_SANITY_TESTS
+        mem_addr++;
+    }
+#endif // !HEX_READ
     LOG("IMEM burn done \n");
+
 }
 
 dmem::dmem()
@@ -58,6 +101,8 @@ dmem::dmem()
 void dmem::burn_mem()
 {
     LOG("\nDMEM burn");
+#if HEX_READ
+    LOG("Burning with HEX file");
     std::ifstream hex_file;
 #if RISCV_SANITY_TESTS
     hex_file.open(ASM_RISCV_SANITY_TEST, std::ios::in);
@@ -68,10 +113,10 @@ void dmem::burn_mem()
 #else
     LOGE("No test defined. Nothing to be loaded to the memory")
 #endif
-    if (hex_file.is_open())
-        LOG("HEX opened");
-    else
-        LOGE("HEX file cannot be found");
+        if (hex_file.is_open())
+            LOG("HEX opened");
+        else
+            LOGE("HEX file cannot be found");
 
     uint32_t i = 0;
     while (hex_file) {
@@ -79,8 +124,52 @@ void dmem::burn_mem()
 #if LOG_DBG
         LOG("    DMEM[" << i << "]: " << FHEX(memory[i]));
 #endif
+#if RISCV_SANITY_TESTS
+        if ((memory[i]) == 0 && (global_inst_count == 0))
+            global_inst_count = i;
+#endif;
         i++;
     }
+#else // !HEX_READ
+    LOG("Burning with BIN file");
+    std::ifstream bin_file;
+    std::string test_bin = ASM_RISCV_ISA_TESTS + global_test_name + ".bin";
+
+    bin_file.open(test_bin, std::ios::in | std::ios::binary);
+    LOG("Path to search for the test: " << test_bin);
+
+    bin_file.seekg(0, std::ios::end);
+    uint32_t size = bin_file.tellg();
+    bin_file.seekg(0, std::ios::beg);
+
+    if (bin_file.is_open())
+        LOG("BIN opened");
+    else
+        LOGE("BIN file cannot be found");
+
+    const uint32_t stride = 4;
+    char bin_line[stride];
+    uint32_t mem_addr = 0;
+
+    while (mem_addr < (size / stride)) {
+        bin_file.read(bin_line, stride);
+        uint32_t one_word = 0;
+
+        // flip endianess
+        for (uint32_t j = 0; j < stride; j++)
+            one_word |= (bin_line[j] & 0xFF) << (j * 8);
+
+        memory[mem_addr] = one_word;
+#if LOG_DBG
+        LOG("    DMEM[" << mem_addr << "]: " << FHEX(memory[mem_addr]));
+#endif // LOG_DBG
+#if RISCV_SANITY_TESTS
+        if ((memory[mem_addr]) == 0 && (global_inst_count == 0))
+            global_inst_count = i;
+#endif // RISCV_SANITY_TESTS
+        mem_addr++;
+    }
+#endif // !HEX_READ
     LOG("DMEM burn done \n");
 }
 
