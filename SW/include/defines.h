@@ -14,22 +14,38 @@
 #define RISCV_ISA_REGR 1
 #define RISCV_ISA_REGR_NUM 38
 const std::string riscv_regr_tests[39] = {
-    "add","addi","and","andi","auipc","beq","bge","bgeu","blt","bltu",
-    "bne"/*,"fence_i"*/,"jal","jalr","lb","lbu","lh","lhu","lui","lw",
-    "or","ori","sb","sh","simple","sll","slli","slt","slti","sltiu",
-    "sltu","sra","srai","srl","srli","sub","sw","xor","xori" };
+    "simple", "add", "sub", "sll", "slt", "sltu", "xor", "srl", "sra", "or", "and", "addi",
+    "slti", "sltiu", "xori", "ori", "andi", "slli", "srli", "srai", "lb", "lh", "lw", "lbu", "lhu",
+    "sb", "sh", "sw", "beq", "bne", "blt", "bge", "bltu", "bgeu", "jalr", "jal", "lui", "auipc" };
+
+
+
+
+#define SINGLE_TEST 1
+#define SINGLE_TEST_NAME "xori"
 #define PERF_ARRAY_SIZE 8
 
 // Debug, verbosity
-#define LOG_DBG 0
+#define LOG_MINIMAL 1
+#define LOG_DBG (0 & !LOG_MINIMAL)
 #define LOG_LOGIC_T 0
 #define ASM_IMEM 1
 #define FORCE_RF 0
 #define HEX_READ 0
 
 // LOG features
-#define LOG(x) std::cout << x << std::endl
-#define LOG_L(x) std::cout << x
+#define LOG_M(x) std::cout << x << std::endl    // Minimal log, always used
+#define LOG_L_M(x) std::cout << x    // Minimal log, always used
+#if LOG_MINIMAL == 1
+    #define LOG(x) 
+#else
+    #define LOG(x) std::cout << x << std::endl
+#endif
+#if LOG_MINIMAL == 1
+    #define LOG_L(x) 
+#else
+    #define LOG_L(x) std::cout << x
+#endif
 #define LOGW(x) std::cout << " >>> WARNING: "<< x << std::endl
 #define LOGE(x) std::cout << " >>> ERROR: "<< x << std::endl
 // Format HEX, Format BIN

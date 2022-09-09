@@ -5,6 +5,9 @@
 #include "logic_t.h"
 #include <string>
 
+extern uint32_t *global_wb_inst_ptr;
+extern uint32_t *global_tohost_ptr;
+
 typedef struct logic_init_cfg_t {
     std::string id;
     uint32_t *reset;

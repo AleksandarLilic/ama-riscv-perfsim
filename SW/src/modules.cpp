@@ -168,18 +168,15 @@ void csr_file::read()
         id_intf->csr_data = csr_file_intf->tohost_out;
         LOG("    CSR tohost data read: " << id_intf->csr_data);
     }
-#if RISCV_ISA_REGR
-    global_tohost = csr_file_intf->tohost_out;
-#endif
 }
 
 void csr_file::status_log()
 {
-    LOG("> Arch State - CSR");
+    LOG_M("> Arch State - CSR");
     if(updated_register)
-        LOG("    > CSR tohost - 0x51e: " << csr_file_intf->tohost_out << " < ");
+        LOG_M("    > CSR tohost - 0x51e: " << csr_file_intf->tohost_out << " < ");
     else
-        LOG("      CSR tohost - 0x51e: " << csr_file_intf->tohost_out);
+        LOG_M("      CSR tohost - 0x51e: " << csr_file_intf->tohost_out);
 
     std::cout << std::endl;
     updated_register = false;

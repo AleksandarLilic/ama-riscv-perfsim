@@ -43,6 +43,8 @@ void intf_cfg::init_regs(seq_queue *q, sys_intf_t *sys_intf, reg_file_intf_t *re
     init_mem_wb(logic_ptr[7], mem_intf, wb_intf);
     init_reg_file(logic_ptr[8], reg_file_intf);
     init_csr_file(logic_ptr[9], csr_file_intf);
+    global_wb_inst_ptr = &(wb_intf->inst_wb);
+    global_tohost_ptr = &(csr_file_intf->tohost_out);
 }
 
 void intf_cfg::init_sys(logic_t *logic_ptr, sys_intf_t *sys_intf)
