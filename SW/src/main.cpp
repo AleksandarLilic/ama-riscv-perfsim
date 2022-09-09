@@ -1,7 +1,13 @@
 #include "defines.h"
 #include "seq_queue.h"
 
+#include "perf_cpu.h"
+
 #include "cpu.h"
+
+//#include <algorithm>
+//#include <iterator>
+
 //#define TEST
 #ifndef TEST
 
@@ -50,6 +56,13 @@ void check_committed_instructions()
 
 int main()
 {
+    // perf counters    
+    uint32_t regr_perf_array[PERF_ARRAY_SIZE]{};
+
+    uint32_t regr_test_status = 0;
+    std::cout.precision(3);
+
+    // log to file
     bool open_test_log = 0;
     open_test_log = freopen("test_log.txt", "w", stdout);    
     if (!open_test_log) {
@@ -57,40 +70,48 @@ int main()
         std::cin.get();
         return 1;
     }
-    
-    uint32_t regr_cnt = 0;
-    while(regr_cnt < RISCV_ISA_REGR_NUM){
 
-    global_test_name = riscv_regr_tests[regr_cnt];
-    LOG("\n\n\n ----- Test name: " << global_test_name << " ----- " << "\n");
-    regr_cnt++;
-
-    seq_queue q;
-    cpu *cpu0 = new cpu(&q);
+    // simulation parameters
+    uint32_t rst_cycles = 1;
 
     // needs at least 5 for pipeline, +1 clk for each stall (jump and branch); can be more
     const uint32_t clk_cycles_to_empty_pipeline = 5 + 39 + 10;
-    uint32_t rst_cycles = 1;
-    uint32_t rst_counter = 0;
-#if RISCV_SANITY_TESTS
-    uint32_t clk_cycles = global_inst_count + clk_cycles_to_empty_pipeline;
-    //uint32_t clk_cycles = 100;
-#else
     uint32_t clk_cycles = 40 + clk_cycles_to_empty_pipeline;
+#if RISCV_SANITY_TESTS
+    clk_cycles = global_inst_count + clk_cycles_to_empty_pipeline;
 #endif
+    
+    uint32_t regr_cnt = 0;
+    
+    LOG(" ----- Regression Start -----");
+    while(regr_cnt < RISCV_ISA_REGR_NUM){
+
+    
+    LOG("\n ----- Create CPU instance -----\n");
+    seq_queue q;
+    cpu *cpu0 = new cpu(&q);
+
+    global_test_name = riscv_regr_tests[regr_cnt];
+    LOG("\n\n ----- Test name: " << global_test_name << " ----- " << "\n");
+    regr_cnt++;
     uint32_t clk_counter = 0;
+    uint32_t rst_counter = 0;
+    cpu0->burn_mem();
 
     LOG(" ----- Simulation Start -----");
 
     // Reset
     cpu0->reset(reset_t::set);
-    while (rst_cycles > rst_counter) {
+    do {
+        LOG("CPU in reset");
         cpu0->update();
         LOG("\n\n ---------- Cycle count: " << (clk_counter + rst_counter) << " ---------- ");
         queue_update_all(&q);
         rst_counter++;
-    }
+    } while (rst_cycles > rst_counter);
+
     cpu0->reset(reset_t::clear);
+    LOG("CPU reset done");
 
     // Run
 #if RISCV_SANITY_TESTS
@@ -110,12 +131,12 @@ int main()
     check_committed_instructions();
 
 #elif RISCV_ISA_REGR
-    while ((global_tohost & 0x1) != 1u && (clk_counter < CLK_TIMEOUT)) {
+    do {
         cpu0->update();
         LOG("\n\n ---------- Cycle count: " << (clk_counter + rst_counter) << " ---------- ");
         queue_update_all(&q);
         clk_counter++;
-    }
+    } while ((global_tohost & 0x1) != 1u && (clk_counter < CLK_TIMEOUT));
 
     bool test_status = 0;
     uint32_t failed_test_id = 0;
@@ -142,17 +163,41 @@ int main()
 #endif
 #if RISCV_ISA_REGR
     if (test_status)
-        LOG("Test passed");
+        LOG("Test passed; Test suite: " << global_test_name);
     else
         LOGE("Test failed. Test ID: " << failed_test_id << "; Test suite: " << global_test_name);
-
+    
+    LOG("");
 #endif
 
-    LOG("Clock cycles executed: " << clk_counter);
-    LOG("\n ----- Simulation End -----");
+    regr_test_status += (!test_status);
+
+    uint32_t perf_array[PERF_ARRAY_SIZE];
+    perf_cpu::collect_data(perf_array);
+    perf_cpu::status_log(perf_array);
+
+    //std::add(std::begin(perf_array), std::end(perf_array), std::begin(regr_perf_array));
+
+    for (uint32_t i = 0; i < std::size(perf_array); i++)
+        regr_perf_array[i] += perf_array[i];
+
+
+    LOG("\nClock cycles executed: " << clk_counter);
+    LOG("\n ----- Simulation End -----\n");
+
     delete cpu0;
     
     } // while (regr_cnt < RISCV_ISA_REGR_NUM)
+    
+    LOG("\n ----- Regression results -----\n");
+
+    if (regr_test_status != 0)
+        LOGE("Regression Failed. Number of failed tests: " << regr_test_status << 
+            ". Check log for details about failed tests\n");
+
+    perf_cpu::status_log(regr_perf_array);
+
+    LOG("\n ----- Regression End -----");
 
     fclose(stdout);
     //std::cin.get();

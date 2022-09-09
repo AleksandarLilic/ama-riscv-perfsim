@@ -56,3 +56,9 @@ void cpu::update()
         FHEX(imem_dout));
 #endif
 }
+
+void cpu::burn_mem()
+{
+    imem.burn_mem();
+    dmem.burn_mem();
+}

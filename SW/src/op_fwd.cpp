@@ -17,6 +17,7 @@ void op_fwd::update()
     if (dd_rs1_mem) LOG("    dd_rs1_mem: " << dd_rs1_mem);
     if (dd_rs2_mem) LOG("    dd_rs2_mem: " << dd_rs2_mem);
 //#endif
+    perf_cpu::update_dd(sys_intf, dd_rs1_ex, dd_rs2_ex, dd_rs1_mem, dd_rs2_mem);
     op_fwd_rf(id_intf);
     op_fwd_bcs(id_intf);
     op_fwd_alu(id_intf);

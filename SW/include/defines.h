@@ -18,6 +18,7 @@ const std::string riscv_regr_tests[39] = {
     "bne"/*,"fence_i"*/,"jal","jalr","lb","lbu","lh","lhu","lui","lw",
     "or","ori","sb","sh","simple","sll","slli","slt","slti","sltiu",
     "sltu","sra","srai","srl","srli","sub","sw","xor","xori" };
+#define PERF_ARRAY_SIZE 8
 
 // Debug, verbosity
 #define LOG_DBG 0

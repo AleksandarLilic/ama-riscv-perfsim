@@ -2,7 +2,7 @@
 
 imem::imem()
 {
-    burn_mem();
+    //burn_mem();
 }
 
 uint32_t imem::read(uint32_t address)
@@ -95,7 +95,7 @@ void imem::burn_mem()
 
 dmem::dmem()
 {
-    burn_mem();
+    //burn_mem();
 }
 
 void dmem::burn_mem()
