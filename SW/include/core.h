@@ -10,9 +10,6 @@
 extern std::vector<uint32_t> global_committed_instructions;
 #endif;
 
-//extern uint32_t global_wb_inst;
-extern uint32_t *global_pc_id_ptr;
-
 class core
 {
 public:

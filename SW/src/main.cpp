@@ -7,6 +7,7 @@
 
 //#include <algorithm>
 //#include <iterator>
+#include <fstream>
 
 //#define TEST
 #ifndef TEST
@@ -24,7 +25,6 @@ std::vector<uint32_t> global_committed_instructions;
 uint32_t *global_tohost_ptr;
 std::string global_test_name;
 uint32_t *global_wb_inst_ptr;
-uint32_t *global_pc_id_ptr;
 #define CLK_TIMEOUT 1000 // per test
 #endif
 
@@ -93,10 +93,6 @@ int main()
     std::ofstream stim_rst;
     stim_rst.open("stim_rst.txt");
 
-    // checker
-    std::ofstream checker_pc_id;
-    checker_pc_id.open("checker_pc_id.txt");
-    
     // simulation parameters
     uint32_t rst_cycles = 4;
 
@@ -137,7 +133,6 @@ int main()
     LOG_M(" ----- Simulation Start -----");
 
     // initial toggle, i.e. the non functional one
-    checker_pc_id << *global_pc_id_ptr << std::endl;  // reg initial state
     stim_update(clk, 1, &stim_clk);
     stim_update(clk, 0, &stim_clk);
 
@@ -149,7 +144,6 @@ int main()
         cpu0->update();
         stim_update(clk, 1, &stim_clk);
         queue_update_all(&q);
-        checker_pc_id << *global_pc_id_ptr << std::endl;
         rst_counter++;
         clk_counter++;
         LOG_M("\n\n ---------- Cycle count in reset: " << (rst_counter) << " ---------- ");
@@ -184,7 +178,6 @@ int main()
         stim_update(clk, 1, &stim_clk);
         cpu0->update();
         queue_update_all(&q);
-        checker_pc_id << *global_pc_id_ptr << std::endl;
         clk_counter++;
         cycle_log << "clk: " << regr_clk_counter + clk_counter << "; Inst WB: " << FHEXI(*global_wb_inst_ptr) << std::endl;
         LOG_M("\n\n ---------- Cycle count: " << (clk_counter) << " ---------- ");
@@ -209,7 +202,6 @@ int main()
         LOG_M("passing_pipe");
         cpu0->update();
         queue_update_all(&q);
-        checker_pc_id << *global_pc_id_ptr << std::endl;
         clk_counter++;
         clk_pipe--;
         cycle_log << "clk: " << regr_clk_counter + clk_counter << "; Inst WB: " << FHEXI(*global_wb_inst_ptr) << std::endl;

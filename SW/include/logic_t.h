@@ -11,7 +11,9 @@
 #pragma once
 
 #include "defines.h"
+
 #include <vector>
+#include <fstream>
 
 // Forward declaration, seq_queue.h included in the logic_t.cpp
 class seq_queue;
@@ -21,15 +23,17 @@ private:
     uint32_t rst_value;
     uint32_t *connected_input;
     uint32_t *connected_output;
-    uint32_t hold;
-    uint32_t current;
+    uint32_t hold = NOT_RESET;
+    uint32_t current = NOT_RESET;
     std::string id;
+    std::ofstream vector_export;
 public:
     logic_port_t() = delete;
     logic_port_t(std::string init_id, uint32_t init_val, uint32_t *din, uint32_t *dout);
     ~logic_port_t();
     void update_hold();
     void update(uint32_t update_value);
+    void vector_log();
     void status_log(uint32_t prev);
     uint32_t get_rst_value() const { return rst_value; };
     uint32_t get_input_value() const { return hold; };

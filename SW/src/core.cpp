@@ -21,8 +21,6 @@ core::core(seq_queue *q, core_intf_t *core_intf):
 
     intf_cfg.init_regs(q, &sys_intf, &reg_file_intf, &if_intf, &id_intf, &ex_intf, &mem_intf, &wb_intf,
         imem_dout_ptr, dmem_dout_ptr, &csr_file_intf);
-
-    global_pc_id_ptr = &id_intf.pc;
 }
 
 void core::reset(bool rst_in)
