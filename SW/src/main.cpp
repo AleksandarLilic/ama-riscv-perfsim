@@ -93,6 +93,11 @@ int main()
     std::ofstream stim_rst;
     stim_rst.open("stim_rst.txt");
 
+    // reset vector table
+    std::ofstream vector_table;
+    vector_table.open("vector_table.txt");
+    vector_table << "";
+
     // simulation parameters
     uint32_t rst_cycles = 4;
 

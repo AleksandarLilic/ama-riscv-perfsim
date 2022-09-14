@@ -14,14 +14,20 @@
 logic_port_t::logic_port_t(std::string init_id, uint32_t init_val, uint32_t *din, uint32_t *dout)
 {
     id = init_id;
-    std::string vector_export_name = "chk_" + id + ".txt";
+    
+    std::string vector_export_name = "chk_" + id;
+    vector_table.open("vector_table.txt", std::ios_base::app);
+    vector_table << vector_export_name << std::endl;
+
+    vector_export_name = "chk_" + id + ".txt";
     vector_export.open(vector_export_name);
     vector_export << current << std::endl;  // initial value log
+
     rst_value = init_val;
     hold = init_val;
     current = init_val;
     connected_input = din;
-    connected_output = dout;
+    connected_output = dout;    
 }
 
 logic_port_t::~logic_port_t() {}
