@@ -9,7 +9,8 @@ core::core(seq_queue *q, core_intf_t *core_intf):
     alu(&ex_intf),
     store_shift(&ex_intf),
     load_shift_mask(&mem_intf),
-    csr_file(&csr_file_intf, &id_intf, &mem_intf, &wb_intf)
+    csr_file(&csr_file_intf, &id_intf, &mem_intf, &wb_intf),
+    v_exp("alu_out")
 {
     core_intf->imem_addr = &if_intf.imem_addr;
     imem_dout_ptr = &core_intf->imem_dout;
@@ -21,6 +22,9 @@ core::core(seq_queue *q, core_intf_t *core_intf):
 
     intf_cfg.init_regs(q, &sys_intf, &reg_file_intf, &if_intf, &id_intf, &ex_intf, &mem_intf, &wb_intf,
         imem_dout_ptr, dmem_dout_ptr, &csr_file_intf);
+
+    v_exp.log_table();
+    v_exp.log_vector_txt(ex_intf.alu_out);
 }
 
 void core::reset(bool rst_in)
@@ -34,15 +38,15 @@ void core::update_system()
     if (sys_intf.rst)
         sys_intf.rst_seq = 0b0111;
     else
-        sys_intf.rst_seq = sys_intf.rst_seq >> 1;
+        sys_intf.rst_seq = sys_intf.rst_seq_d >> 1;
 
     sys_intf.rst_seq_id_ex = (sys_intf.rst_seq_d & 0b100) >> 2;
     sys_intf.rst_seq_ex_mem = (sys_intf.rst_seq_d & 0b10) >> 1;
     sys_intf.rst_seq_mem_wb = sys_intf.rst_seq_d & 0b1;
 
-#if LOG_DBG
+//#if LOG_DBG
     LOG("    RST Seq: " << sys_intf.rst_seq_d << ", bin:" << FBIN(sys_intf.rst_seq_d, 3));
-#endif
+//#endif
 }
 
 void core::update_if()
@@ -92,6 +96,8 @@ void core::update_id()
 
 void core::update_ex()
 {
+    //v_exp.log_vector_txt(ex_intf.alu_out);
+
     LOG("> UPDATE_EX");
     LOG_M("    Instruction in EX stage: " << FHEXI(ex_intf.inst_ex));
     LOG("    PC EX: " << FHEX(ex_intf.pc_ex));
@@ -109,7 +115,7 @@ void core::update_ex()
         wb_intf.data_d,
         CL_UNUSED);
 
-#if LOG_DBG
+//#if LOG_DBG
     LOG("    BC A sel: " << ex_intf.bc_a_sel_ex);
     LOG("    BC in A: " << ex_intf.bc_in_a);
     LOG("    BCS B sel: " << ex_intf.bcs_b_sel_ex);
@@ -118,7 +124,7 @@ void core::update_ex()
     LOG("    ALU in A: " << ex_intf.alu_in_a);
     LOG("    ALU B sel: " << ex_intf.alu_b_sel_ex);
     LOG("    ALU in B: " << ex_intf.alu_in_b);
-#endif
+//#endif
 
     branch_compare.update();
     alu.update();
@@ -131,6 +137,9 @@ void core::update_ex()
     LOG("    DMEM addr: " << ex_intf.dmem_addr);
     LOG("    DMEM din: " << ex_intf.dmem_din);
 #endif
+//    v_exp.log_vector_txt(ex_intf.alu_in_a);
+    v_exp.log_vector_txt(ex_intf.alu_out);
+
 }
 
 void core::update_mem()

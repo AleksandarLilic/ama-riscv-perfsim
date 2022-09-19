@@ -11,18 +11,13 @@
 #include "../include/logic_t.h"
 #include "../include/seq_queue.h"
 
-logic_port_t::logic_port_t(std::string init_id, uint32_t init_val, uint32_t *din, uint32_t *dout)
+logic_port_t::logic_port_t(std::string init_id, uint32_t init_val, uint32_t *din, uint32_t *dout) :
+    v_exp(init_id)
 {
+    v_exp.log_table();
+    v_exp.log_vector_txt(current);
+
     id = init_id;
-    
-    std::string vector_export_name = "chk_" + id;
-    vector_table.open("vector_table.txt", std::ios_base::app);
-    vector_table << vector_export_name << std::endl;
-
-    vector_export_name = "chk_" + id + ".txt";
-    vector_export.open(vector_export_name);
-    vector_export << current << std::endl;  // initial value log
-
     rst_value = init_val;
     hold = init_val;
     current = init_val;
@@ -49,6 +44,8 @@ void logic_port_t::update(uint32_t update_value)
 {
     uint32_t prev = current;
     current = update_value;
+    if (id == "alu_mem")
+        LOG_M("alu_mem current value: " << current << "; update_value: " << update_value);
     *connected_output = update_value;
     vector_log();
 #if LOG_LOGIC_T
@@ -58,7 +55,7 @@ void logic_port_t::update(uint32_t update_value)
 
 void logic_port_t::vector_log()
 {
-    vector_export << current << std::endl;
+    v_exp.log_vector_txt(current);
 }
 
 logic_t::logic_t(seq_queue *q, std::string init_id)
@@ -113,7 +110,7 @@ void logic_t::update()
     }
 
     if (*connected_enable) {
-        //LOG("Updating: " << id);
+        LOG("Updating: " << id);
         for (logic_port_t *i : connected_ports) {
             i->update(i->get_input_value());
         }

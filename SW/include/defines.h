@@ -22,11 +22,11 @@ const std::string riscv_regr_tests[39] = {
 
 
 #define SINGLE_TEST 1
-#define SINGLE_TEST_NAME "xori"
+#define SINGLE_TEST_NAME "add"
 #define PERF_ARRAY_SIZE 8
 
 // Debug, verbosity
-#define LOG_MINIMAL 1
+#define LOG_MINIMAL 0
 #define LOG_DBG (0 & !LOG_MINIMAL)
 #define LOG_LOGIC_T 0
 #define ASM_IMEM 1

@@ -99,7 +99,7 @@ int main()
     vector_table << "";
 
     // simulation parameters
-    uint32_t rst_cycles = 4;
+    uint32_t rst_cycles = 1;
 
     // needs at least 5 for pipeline, +1 clk for each stall (jump and branch); can be more
     const uint32_t clk_cycles_to_empty_pipeline = 5 + 39 + 10;
@@ -146,9 +146,9 @@ int main()
     do {
         stim_rst << 1 << std::endl;
         LOG_M("CPU in reset");
-        cpu0->update();
         stim_update(clk, 1, &stim_clk);
         queue_update_all(&q);
+        cpu0->update();
         rst_counter++;
         clk_counter++;
         LOG_M("\n\n ---------- Cycle count in reset: " << (rst_counter) << " ---------- ");
@@ -181,8 +181,8 @@ int main()
     do {
         stim_rst << 0 << std::endl;
         stim_update(clk, 1, &stim_clk);
-        cpu0->update();
         queue_update_all(&q);
+        cpu0->update();
         clk_counter++;
         cycle_log << "clk: " << regr_clk_counter + clk_counter << "; Inst WB: " << FHEXI(*global_wb_inst_ptr) << std::endl;
         LOG_M("\n\n ---------- Cycle count: " << (clk_counter) << " ---------- ");

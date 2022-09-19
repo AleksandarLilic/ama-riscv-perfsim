@@ -5,6 +5,7 @@
 #include "intf_cfg.h"
 #include "modules.h"
 #include "perf_cpu.h"
+#include "vector_export.h"
 
 #if RISCV_SANITY_TESTS
 extern std::vector<uint32_t> global_committed_instructions;
@@ -12,6 +13,8 @@ extern std::vector<uint32_t> global_committed_instructions;
 
 class core
 {
+private:
+    vector_export v_exp;
 public:
 
 private:

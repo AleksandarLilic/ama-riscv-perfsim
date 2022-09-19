@@ -11,6 +11,7 @@
 #pragma once
 
 #include "defines.h"
+#include "vector_export.h"
 
 #include <vector>
 #include <fstream>
@@ -26,8 +27,7 @@ private:
     uint32_t hold = NOT_RESET;
     uint32_t current = NOT_RESET;
     std::string id;
-    std::ofstream vector_export;
-    std::ofstream vector_table;
+    vector_export v_exp;
 public:
     logic_port_t() = delete;
     logic_port_t(std::string init_id, uint32_t init_val, uint32_t *din, uint32_t *dout);
