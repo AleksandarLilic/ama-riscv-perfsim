@@ -14,11 +14,12 @@ class imm_gen
 {
 private:
     id_intf_t *id_intf;
+    ex_intf_t *ex_intf;
 
 public:
     void update();
     imm_gen() = delete;
-    imm_gen(id_intf_t *id_intf);
+    imm_gen(id_intf_t *id_intf, ex_intf_t *ex_intf);
 };
 
 class branch_compare

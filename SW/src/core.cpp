@@ -4,7 +4,7 @@
 core::core(seq_queue *q, core_intf_t *core_intf):
     control(&sys_intf, &if_intf, &id_intf, &ex_intf, &mem_intf, &wb_intf),
     reg_file(&reg_file_intf, &id_intf, &mem_intf, &wb_intf),
-    imm_gen(&id_intf),
+    imm_gen(&id_intf, &ex_intf),
     branch_compare(&ex_intf),
     alu(&ex_intf),
     store_shift(&ex_intf),
@@ -24,7 +24,7 @@ core::core(seq_queue *q, core_intf_t *core_intf):
         imem_dout_ptr, dmem_dout_ptr, &csr_file_intf);
 
     v_exp.log_table();
-    v_exp.log_vector_txt(ex_intf.alu_out);
+    v_exp.log_vector_txt(ex_intf.alu_out); // initial log
 }
 
 void core::reset(bool rst_in)
@@ -96,8 +96,6 @@ void core::update_id()
 
 void core::update_ex()
 {
-    //v_exp.log_vector_txt(ex_intf.alu_out);
-
     LOG("> UPDATE_EX");
     LOG_M("    Instruction in EX stage: " << FHEXI(ex_intf.inst_ex));
     LOG("    PC EX: " << FHEX(ex_intf.pc_ex));

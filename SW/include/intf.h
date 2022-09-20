@@ -156,6 +156,8 @@ typedef struct mem_intf_t
     uint32_t rd_addr_mem;
     uint32_t rd_we_mem;
 
+    uint32_t alu_in_a_mem = NOT_RESET;
+
     uint32_t csr_we_mem;
     uint32_t csr_ui_mem;
     uint32_t csr_uimm_mem;
