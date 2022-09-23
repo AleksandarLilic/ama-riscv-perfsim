@@ -22,7 +22,7 @@ const std::string riscv_regr_tests[39] = {
 
 
 #define SINGLE_TEST 1
-#define SINGLE_TEST_NAME "add"
+#define SINGLE_TEST_NAME "lh"
 #define PERF_ARRAY_SIZE 8
 
 // Debug, verbosity
