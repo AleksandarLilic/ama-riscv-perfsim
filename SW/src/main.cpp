@@ -83,9 +83,7 @@ int main()
 #endif
     
     uint32_t regr_cnt = 0;
-    uint32_t regr_tests = RISCV_ISA_REGR_NUM;
-
-    regr_tests = (SINGLE_TEST == 1);
+    uint32_t regr_tests = (SINGLE_TEST == 1) ? 1 : RISCV_ISA_REGR_NUM;
 
     uint32_t regr_clk_counter = 0;
     
@@ -112,16 +110,12 @@ int main()
         }
 
         path_test = "test_" + global_test_name + "/";
-
         // wb inst write
         cycle_log.open(path_test + "cycle_log.txt");
-
         // stimuli
         stim_clk.open(path_test + "stim_clk.txt");
         uint64_t clk = 1;
-
         stim_rst.open(path_test + "stim_rst.txt");
-
 
         vector_export v_exp_init;
 
@@ -253,6 +247,9 @@ int main()
         LOG_M("\n ----- Simulation End -----\n");
 
         delete cpu0;
+        cycle_log.close();
+        stim_clk.close();
+        stim_rst.close();
 
         regr_clk_counter += clk_counter;
     
