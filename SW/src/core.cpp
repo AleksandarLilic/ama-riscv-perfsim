@@ -25,6 +25,26 @@ core::core(seq_queue *q, core_intf_t *core_intf):
 
     v_exp.log_table();
     v_exp.log_vector_txt(ex_intf.alu_out); // initial log
+
+    for (auto const &[key, val] : internal_signals) {
+        vector_export *exp;
+        exp = new vector_export(key, val);
+        exp->log_table();
+        v_exp_array.push_back(exp);
+    }
+    update_vectors(); // initial log
+}
+
+void core::update_vectors()
+{
+    for (vector_export *v : v_exp_array)
+        v->log_vector_txt();
+}
+
+core::~core()
+{
+    for (vector_export *v : v_exp_array)
+        delete v;
 }
 
 void core::reset(bool rst_in)

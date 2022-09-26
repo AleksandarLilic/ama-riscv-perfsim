@@ -40,6 +40,9 @@ void cpu::update()
     core.update_if();
     core_intf.imem_dout = imem.read((*core_intf.imem_addr) >> 2);
 
+    // vectors
+    core.update_vectors();
+
 #if ASM_IMEM
     static std::string imemc_s[5]{};
     imemc_s[4] = imemc_s[3];    // wb

@@ -17,6 +17,14 @@ vector_export::vector_export(std::string signal_id)
     vector_txt.open(vector_export_name);
 }
 
+vector_export::vector_export(std::string signal_id, uint32_t *signal_val)
+{
+    chk_signal_id = "chk_" + signal_id;
+    std::string vector_export_name = path_test + "/" + chk_signal_id + ".txt";
+    vector_txt.open(vector_export_name);
+    chk_signal_val = signal_val;
+}
+
 void vector_export::log_table()
 {
     table.open(name_table, std::ios_base::app);
@@ -30,4 +38,9 @@ void vector_export::log_table()
 void vector_export::log_vector_txt(uint32_t value)
 {
     vector_txt << value << std::endl;
+}
+
+void vector_export::log_vector_txt()
+{
+    vector_txt << *chk_signal_val << std::endl;
 }

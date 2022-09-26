@@ -1,5 +1,7 @@
 #pragma once
 
+#include <unordered_map>
+
 #include "defines.h"
 #include "intf.h"
 #include "intf_cfg.h"
@@ -15,7 +17,13 @@ class core
 {
 private:
     vector_export v_exp;
+    std::vector<vector_export *> v_exp_array;
+    std::unordered_map<std::string, uint32_t*> internal_signals = {
+        {"imem_addr", &if_intf.imem_addr}, {"inst_id", &id_intf.inst_id}
+    };
+
 public:
+    void update_vectors();
 
 private:
     intf_cfg intf_cfg;
@@ -38,6 +46,8 @@ public:
     core() = delete;
     //core(seq_queue *q, uint32_t *imem_ptr, uint32_t *dmem_ptr);
     core(seq_queue *q, core_intf_t *core_intf);
+    ~core();
+
     void reset(bool rst_in);
     
     void update_system();
