@@ -12,18 +12,20 @@ Based on [ama-riscv Verilog simulator](https://github.com/AleksandarLilic/ama-ri
  - Golden Model for RTL implementation through DPI or other
 
 **Status:**   
-In development - Passing all [RISC-V ISA tests](https://github.com/riscv-software-src/riscv-tests)
+In development  
+
+**Milestones:**  
+Passing all [RISC-V ISA tests](https://github.com/riscv-software-src/riscv-tests)  
+Vector Export for [ama-riscv](https://github.com/AleksandarLilic/ama-riscv) core and [SystemVerilog testbench](https://github.com/AleksandarLilic/ama-riscv/blob/dev/verif/direct_tb/ama_riscv_core_top_tb.sv)
 
 **Further development:**  
-TBD    
+Performance, ease of use and architecture exploration capabilities comparison with Verilog simulator    
   
 ## **Project Structure**  
 Header files: /SW/include/  
-Source files: /SW/src/  
-Google unit tests: /SW/tests/  
+Source files: /SW/src/   
 Documentation: /docs/  
 
 ## **Branches**  
 **Main - stable release:** *main*  
-**Ongoing development:** *dev*  
 **Documentation:** *doc*
