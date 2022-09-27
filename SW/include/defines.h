@@ -18,7 +18,7 @@ const std::string riscv_regr_tests[] = {
     "slti", "sltiu", "xori", "ori", "andi", "slli", "srli", "srai", "lb", "lh", "lw", "lbu", "lhu",
     "sb", "sh", "sw", "beq", "bne", "blt", "bge", "bltu", "bgeu", "jalr", "jal", "lui", "auipc" };
 
-#define SINGLE_TEST 1
+#define SINGLE_TEST 0
 #define SINGLE_TEST_NAME "simple"
 #define PERF_ARRAY_SIZE 8
 

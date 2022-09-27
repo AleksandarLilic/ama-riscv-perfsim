@@ -91,25 +91,33 @@ int main()
     std::ofstream stim_clk;
     std::ofstream stim_rst;
     std::string path_test;
+    std::string test_log_path_s;
+    const char *test_log_path_c;
 
     LOG_M(" ----- Regression Start -----");
+
     while(regr_cnt < regr_tests){
     
         if (SINGLE_TEST == 1)
             global_test_name = SINGLE_TEST_NAME;
         else
             global_test_name = riscv_regr_tests[regr_cnt];
+        
+        vector_export v_exp_init;
 
-        // log to file
-        bool open_test_log = 0;
-        open_test_log = freopen("test_log.txt", "w", stdout);
+        path_test = "test_" + global_test_name + "/";
+        test_log_path_s = path_test + "test_log.txt";
+        test_log_path_c = test_log_path_s.c_str();
+        
+        // log to file general test info
+        FILE *open_test_log;
+        open_test_log = freopen(test_log_path_c, "w", stdout); //close it
         if (!open_test_log) {
             LOGE("Failed to open test.txt log. Exiting...");
             std::cin.get();
             return 1;
         }
 
-        path_test = "test_" + global_test_name + "/";
         // wb inst write
         cycle_log.open(path_test + "cycle_log.txt");
         // stimuli
@@ -117,13 +125,10 @@ int main()
         uint64_t clk = 1;
         stim_rst.open(path_test + "stim_rst.txt");
 
-        vector_export v_exp_init;
-
         perf_cpu::reset_clk();
         LOG_M("\n ----- Create CPU instance -----\n");
         seq_queue q;
         cpu *cpu0 = new cpu(&q);
-
 
         LOG_M("\n\n ----- Test name: " << global_test_name << " ----- " << "\n");
         regr_cnt++;
@@ -206,7 +211,7 @@ int main()
             clk_counter++;
             clk_pipe--;
             cycle_log << "clk: " << regr_clk_counter + clk_counter << "; Inst WB: " << FHEXI(*global_wb_inst_ptr) << std::endl;
-            LOG_M("\n\n ---------- Cycle countP: " << (clk_counter) << " ---------- ");
+            LOG_M("\n\n ---------- Cycle count: " << (clk_counter) << " ---------- ");
             stim_update(clk, 0, &stim_clk);
         }
 
@@ -236,25 +241,31 @@ int main()
         uint32_t perf_array[PERF_ARRAY_SIZE];
         perf_cpu::collect_data(perf_array);
         perf_cpu::status_log(perf_array);
-
         //std::add(std::begin(perf_array), std::end(perf_array), std::begin(regr_perf_array));
 
         for (uint32_t i = 0; i < std::size(perf_array); i++)
             regr_perf_array[i] += perf_array[i];
 
-
         LOG_M("\nClock cycles executed: " << clk_counter);
         LOG_M("\n ----- Simulation End -----\n");
 
-        delete cpu0;
         cycle_log.close();
         stim_clk.close();
         stim_rst.close();
+        fclose(open_test_log);
+        delete cpu0;
 
         regr_clk_counter += clk_counter;
-    
     } // while (regr_cnt < RISCV_ISA_REGR_NUM)
     
+    FILE *open_regression_log;
+    open_regression_log = freopen("regression_log.txt", "w", stdout); //close it
+    if (!open_regression_log) {
+        LOGE("Failed to open regression_log.txt log. Exiting...");
+        std::cin.get();
+        return 1;
+    }
+
     LOG_M("\n ----- Regression results -----\n");
 
     if (regr_test_status != 0)
@@ -262,12 +273,8 @@ int main()
             ". Check log for details about failed tests\n");
 
     perf_cpu::status_log(regr_perf_array);
-
     LOG_M("\n ----- Regression End -----");
-    
-    cycle_log.close();
-    fclose(stdout);
-    //std::cin.get();
+    fclose(open_regression_log);
 }
 #else
 int main()

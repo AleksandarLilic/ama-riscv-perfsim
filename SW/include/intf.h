@@ -18,6 +18,7 @@ typedef struct core_intf_t
 typedef struct if_intf_t
 {
     uint32_t imem_addr = NOT_RESET & (0x0FFF);
+    uint32_t imem_addr_word_aligned = NOT_RESET & (0x0FFF);
     uint32_t pc_prepared = NOT_RESET & (0x0FFF);
     uint32_t pc_sel_if;
     uint32_t pc_we_if;

@@ -19,7 +19,9 @@ private:
     vector_export v_exp;
     std::vector<vector_export *> v_exp_array;
     std::unordered_map<std::string, uint32_t*> internal_signals = {
-        {"imem_addr", &if_intf.imem_addr}, {"inst_id", &id_intf.inst_id}
+        {"imem_addr", &if_intf.imem_addr_word_aligned}, 
+        {"inst_id", &id_intf.inst_id},
+        {"alu_out", &ex_intf.alu_out}
     };
 
 public:

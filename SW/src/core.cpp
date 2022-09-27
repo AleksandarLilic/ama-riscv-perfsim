@@ -9,10 +9,9 @@ core::core(seq_queue *q, core_intf_t *core_intf):
     alu(&ex_intf),
     store_shift(&ex_intf),
     load_shift_mask(&mem_intf),
-    csr_file(&csr_file_intf, &id_intf, &mem_intf, &wb_intf),
-    v_exp("alu_out")
+    csr_file(&csr_file_intf, &id_intf, &mem_intf, &wb_intf)
 {
-    core_intf->imem_addr = &if_intf.imem_addr;
+    core_intf->imem_addr = &if_intf.imem_addr_word_aligned;
     imem_dout_ptr = &core_intf->imem_dout;
     core_intf->dmem_addr = &ex_intf.dmem_addr;
     core_intf->dmem_din = &ex_intf.dmem_din;
@@ -22,9 +21,6 @@ core::core(seq_queue *q, core_intf_t *core_intf):
 
     intf_cfg.init_regs(q, &sys_intf, &reg_file_intf, &if_intf, &id_intf, &ex_intf, &mem_intf, &wb_intf,
         imem_dout_ptr, dmem_dout_ptr, &csr_file_intf);
-
-    v_exp.log_table();
-    v_exp.log_vector_txt(ex_intf.alu_out); // initial log
 
     for (auto const &[key, val] : internal_signals) {
         vector_export *exp;
@@ -75,6 +71,7 @@ void core::update_if()
 
     if_intf.pc_prepared = cl::mux2(sys_intf.rst_seq_id_ex, id_intf.pc + 4, id_intf.pc);
     if_intf.imem_addr = cl::mux2(uint32_t(id_intf.dec_pc_sel_if), if_intf.pc_prepared, ex_intf.alu_out);
+    if_intf.imem_addr_word_aligned = if_intf.imem_addr >> 2;
 
     LOG("    PC write enable: " << id_intf.dec_pc_we_if);
     LOG("    PC sel: " << id_intf.dec_pc_sel_if);
@@ -155,9 +152,6 @@ void core::update_ex()
     LOG("    DMEM addr: " << ex_intf.dmem_addr);
     LOG("    DMEM din: " << ex_intf.dmem_din);
 #endif
-//    v_exp.log_vector_txt(ex_intf.alu_in_a);
-    v_exp.log_vector_txt(ex_intf.alu_out);
-
 }
 
 void core::update_mem()

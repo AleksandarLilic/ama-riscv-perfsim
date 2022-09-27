@@ -38,7 +38,7 @@ void cpu::update()
         *core_intf.dmem_addr, *core_intf.dmem_din);
     // IF
     core.update_if();
-    core_intf.imem_dout = imem.read((*core_intf.imem_addr) >> 2);
+    core_intf.imem_dout = imem.read(*core_intf.imem_addr);
 
     // vectors
     core.update_vectors();
