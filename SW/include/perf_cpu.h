@@ -11,6 +11,9 @@ public:
     static void status_log(uint32_t *perf_array);
     static void update_dd(sys_intf_t *sys_intf, uint32_t dd_rs1_ex, uint32_t dd_rs2_ex,
         uint32_t dd_rs1_mem, uint32_t dd_rs2_mem);
+    static void update_clk();
+    static void reset_clk();
+
 private:
     static uint32_t cycle_cnt;
     static uint32_t inst_cnt;

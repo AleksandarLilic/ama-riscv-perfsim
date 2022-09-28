@@ -1,14 +1,16 @@
 #include "../include/modules.h"
 
-imm_gen::imm_gen(id_intf_t *id_intf)
+imm_gen::imm_gen(id_intf_t *id_intf, ex_intf_t *ex_intf)
 {
     this->id_intf = id_intf;
+    this->ex_intf = ex_intf;
 }
 
 void imm_gen::update()
 {
     switch (imm_gen_t(id_intf->dec_ig_sel_id)) {
-    case imm_gen_t::disabled: id_intf->imm_gen_out = 0u; break;
+    //case imm_gen_t::disabled: id_intf->imm_gen_out = 0u; break;
+    case imm_gen_t::disabled: id_intf->imm_gen_out = id_intf->imm_gen_out; break; // keep previous value
     case imm_gen_t::i_type: id_intf->imm_gen_out = inst_field::imm_i(id_intf->inst_id); break;
     case imm_gen_t::s_type: id_intf->imm_gen_out = inst_field::imm_s(id_intf->inst_id); break;
     case imm_gen_t::b_type: id_intf->imm_gen_out = inst_field::imm_b(id_intf->inst_id); break;
@@ -155,7 +157,7 @@ void csr_file::write()
 
     // Actual write, if asserted from control
     if (mem_intf->csr_we_mem) {
-        uint32_t csr_din = cl::mux2(mem_intf->csr_ui_mem, mem_intf->alu_mem, mem_intf->csr_uimm_mem);
+        uint32_t csr_din = cl::mux2(mem_intf->csr_ui_mem, mem_intf->alu_in_a_mem, mem_intf->csr_uimm_mem);
         csr_file_intf->tohost_in = csr_din;
         LOG("    CSR tohost data write: " << csr_din);
         updated_register = true;
@@ -168,18 +170,15 @@ void csr_file::read()
         id_intf->csr_data = csr_file_intf->tohost_out;
         LOG("    CSR tohost data read: " << id_intf->csr_data);
     }
-#if RISCV_ISA_REGR
-    global_tohost = csr_file_intf->tohost_out;
-#endif
 }
 
 void csr_file::status_log()
 {
-    LOG("> Arch State - CSR");
+    LOG_M("> Arch State - CSR");
     if(updated_register)
-        LOG("    > CSR tohost - 0x51e: " << csr_file_intf->tohost_out << " < ");
+        LOG_M("    > CSR tohost - 0x51e: " << csr_file_intf->tohost_out << " < ");
     else
-        LOG("      CSR tohost - 0x51e: " << csr_file_intf->tohost_out);
+        LOG_M("      CSR tohost - 0x51e: " << csr_file_intf->tohost_out);
 
     std::cout << std::endl;
     updated_register = false;

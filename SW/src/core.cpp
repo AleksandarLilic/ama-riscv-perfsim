@@ -4,14 +4,14 @@
 core::core(seq_queue *q, core_intf_t *core_intf):
     control(&sys_intf, &if_intf, &id_intf, &ex_intf, &mem_intf, &wb_intf),
     reg_file(&reg_file_intf, &id_intf, &mem_intf, &wb_intf),
-    imm_gen(&id_intf),
+    imm_gen(&id_intf, &ex_intf),
     branch_compare(&ex_intf),
     alu(&ex_intf),
     store_shift(&ex_intf),
     load_shift_mask(&mem_intf),
     csr_file(&csr_file_intf, &id_intf, &mem_intf, &wb_intf)
 {
-    core_intf->imem_addr = &if_intf.imem_addr;
+    core_intf->imem_addr = &if_intf.imem_addr_word_aligned;
     imem_dout_ptr = &core_intf->imem_dout;
     core_intf->dmem_addr = &ex_intf.dmem_addr;
     core_intf->dmem_din = &ex_intf.dmem_din;
@@ -21,6 +21,26 @@ core::core(seq_queue *q, core_intf_t *core_intf):
 
     intf_cfg.init_regs(q, &sys_intf, &reg_file_intf, &if_intf, &id_intf, &ex_intf, &mem_intf, &wb_intf,
         imem_dout_ptr, dmem_dout_ptr, &csr_file_intf);
+
+    for (auto const &[key, val] : internal_signals) {
+        vector_export *exp;
+        exp = new vector_export(key, val);
+        exp->log_table();
+        v_exp_array.push_back(exp);
+    }
+    update_vectors(); // initial log
+}
+
+void core::update_vectors()
+{
+    for (vector_export *v : v_exp_array)
+        v->log_vector_txt();
+}
+
+core::~core()
+{
+    for (vector_export *v : v_exp_array)
+        delete v;
 }
 
 void core::reset(bool rst_in)
@@ -34,15 +54,15 @@ void core::update_system()
     if (sys_intf.rst)
         sys_intf.rst_seq = 0b0111;
     else
-        sys_intf.rst_seq = sys_intf.rst_seq >> 1;
+        sys_intf.rst_seq = sys_intf.rst_seq_d >> 1;
 
     sys_intf.rst_seq_id_ex = (sys_intf.rst_seq_d & 0b100) >> 2;
     sys_intf.rst_seq_ex_mem = (sys_intf.rst_seq_d & 0b10) >> 1;
     sys_intf.rst_seq_mem_wb = sys_intf.rst_seq_d & 0b1;
 
-#if LOG_DBG
+//#if LOG_DBG
     LOG("    RST Seq: " << sys_intf.rst_seq_d << ", bin:" << FBIN(sys_intf.rst_seq_d, 3));
-#endif
+//#endif
 }
 
 void core::update_if()
@@ -51,6 +71,7 @@ void core::update_if()
 
     if_intf.pc_prepared = cl::mux2(sys_intf.rst_seq_id_ex, id_intf.pc + 4, id_intf.pc);
     if_intf.imem_addr = cl::mux2(uint32_t(id_intf.dec_pc_sel_if), if_intf.pc_prepared, ex_intf.alu_out);
+    if_intf.imem_addr_word_aligned = if_intf.imem_addr >> 2;
 
     LOG("    PC write enable: " << id_intf.dec_pc_we_if);
     LOG("    PC sel: " << id_intf.dec_pc_sel_if);
@@ -65,7 +86,7 @@ void core::update_if()
 void core::update_id()
 {
     LOG("> UPDATE_ID");
-    LOG("    Instruction in ID stage: " << FHEXI(id_intf.inst_id));
+    LOG_M("    Instruction in ID stage: " << FHEXI(id_intf.inst_id));
     LOG("    PC ID: " << FHEXI(id_intf.pc));
 
     id_intf.stall_if_id = sys_intf.rst;
@@ -93,7 +114,7 @@ void core::update_id()
 void core::update_ex()
 {
     LOG("> UPDATE_EX");
-    LOG("    Instruction in EX stage: " << FHEXI(ex_intf.inst_ex));
+    LOG_M("    Instruction in EX stage: " << FHEXI(ex_intf.inst_ex));
     LOG("    PC EX: " << FHEX(ex_intf.pc_ex));
     ex_intf.bc_in_a = cl::mux2(ex_intf.bc_a_sel_ex, ex_intf.rf_data_a_ex, wb_intf.data_d);
     ex_intf.bcs_in_b = cl::mux2(ex_intf.bcs_b_sel_ex, ex_intf.rf_data_b_ex, wb_intf.data_d);
@@ -109,7 +130,7 @@ void core::update_ex()
         wb_intf.data_d,
         CL_UNUSED);
 
-#if LOG_DBG
+//#if LOG_DBG
     LOG("    BC A sel: " << ex_intf.bc_a_sel_ex);
     LOG("    BC in A: " << ex_intf.bc_in_a);
     LOG("    BCS B sel: " << ex_intf.bcs_b_sel_ex);
@@ -118,7 +139,7 @@ void core::update_ex()
     LOG("    ALU in A: " << ex_intf.alu_in_a);
     LOG("    ALU B sel: " << ex_intf.alu_b_sel_ex);
     LOG("    ALU in B: " << ex_intf.alu_in_b);
-#endif
+//#endif
 
     branch_compare.update();
     alu.update();
@@ -136,7 +157,7 @@ void core::update_ex()
 void core::update_mem()
 {
     LOG("> UPDATE_MEM");
-    LOG("    Instruction in MEM stage: " << FHEXI(mem_intf.inst_mem));
+    LOG_M("    Instruction in MEM stage: " << FHEXI(mem_intf.inst_mem));
     LOG("    PC MEM: " << FHEX(mem_intf.pc_mem));
     LOG("    DMEM out: " << mem_intf.dmem_dout << ", " << FHEX(mem_intf.dmem_dout));
     if(mem_intf.load_sm_en_mem)
@@ -159,8 +180,9 @@ void core::update_mem()
 
 void core::update_wb()
 {
-    LOG("> UPDATE_WB");
-    LOG("    Instruction in WB stage: " << FHEXI(wb_intf.inst_wb));
+    LOG_M("> UPDATE_WB");
+    LOG_M("    Instruction in WB stage: " << FHEXI(wb_intf.inst_wb));
+    //global_wb_inst = wb_intf.inst_wb;
 #if RISCV_SANITY_TESTS
     if(wb_intf.inst_wb != 0x13 && (!sys_intf.rst)) // if instruction is not NOP, record as committed
         global_committed_instructions.push_back(wb_intf.inst_wb);

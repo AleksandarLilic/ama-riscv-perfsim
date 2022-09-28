@@ -10,9 +10,17 @@ cpu::cpu(seq_queue *q) :
 //    dmem_address = &core.ex_intf.alu_out;
 }
 
+void cpu::reset(reset_t status) {
+    reset_status = bool(status);
+    core.reset(reset_status);
+    core.update_system();
+    LOG("reset called; status in: " << bool(status) 
+        << " reset_status: " << reset_status);
+}
+
 void cpu::update()
 {
-    core.reset(reset_status);
+    //core.reset(reset_status);
     core.status_log();
     core.update_system();
     // WB
@@ -30,7 +38,10 @@ void cpu::update()
         *core_intf.dmem_addr, *core_intf.dmem_din);
     // IF
     core.update_if();
-    core_intf.imem_dout = imem.read((*core_intf.imem_addr) >> 2);
+    core_intf.imem_dout = imem.read(*core_intf.imem_addr);
+
+    // vectors
+    core.update_vectors();
 
 #if ASM_IMEM
     static std::string imemc_s[5]{};

@@ -7,6 +7,7 @@
 
 //#include <algorithm>
 //#include <iterator>
+#include <fstream>
 
 //#define TEST
 #ifndef TEST
@@ -21,24 +22,27 @@ std::vector<uint32_t> global_committed_instructions;
 #endif;
 
 #if RISCV_ISA_REGR
-uint32_t global_tohost = 0;
+uint32_t *global_tohost_ptr;
 std::string global_test_name;
+uint32_t *global_wb_inst_ptr;
 #define CLK_TIMEOUT 1000 // per test
 #endif
 
+bool rst_done = 0;
 
 void queue_update_all(seq_queue *q)
 {
     LOG("\n ----- Running queue update:\n");
     q->update_hold();
     q->update();
+    if (rst_done) perf_cpu::update_clk();
     LOG("\n ----- Queue update finished \n");
 }
 
 #if RISCV_SANITY_TESTS
 void check_committed_instructions()
 {
-    LOG("\n ----- Instruction match ----- ");
+    LOG_M("\n ----- Instruction match ----- ");
     uint32_t i = 0;
     for (uint32_t inst : global_committed_instructions) {
         if (inst != global_issued_instructions[i]) {
@@ -50,9 +54,15 @@ void check_committed_instructions()
         }
         i++;
     }
-    LOG(" PASS ");
+    LOG_M(" PASS ");
 }
 #endif
+
+void stim_update(uint64_t stim, uint64_t lvl, std::ofstream* log)
+{
+    stim = uint64_t(lvl);
+    *log << stim << std::endl;
+}
 
 int main()
 {
@@ -60,147 +70,211 @@ int main()
     uint32_t regr_perf_array[PERF_ARRAY_SIZE]{};
 
     uint32_t regr_test_status = 0;
-    std::cout.precision(3);
-
-    // log to file
-    bool open_test_log = 0;
-    open_test_log = freopen("test_log.txt", "w", stdout);    
-    if (!open_test_log) {
-        LOGE("Failed to open test.txt log. Exiting...");
-        std::cin.get();
-        return 1;
-    }
+    std::cout.precision(4);
 
     // simulation parameters
     uint32_t rst_cycles = 1;
 
+#if RISCV_SANITY_TESTS
     // needs at least 5 for pipeline, +1 clk for each stall (jump and branch); can be more
     const uint32_t clk_cycles_to_empty_pipeline = 5 + 39 + 10;
     uint32_t clk_cycles = 40 + clk_cycles_to_empty_pipeline;
-#if RISCV_SANITY_TESTS
     clk_cycles = global_inst_count + clk_cycles_to_empty_pipeline;
 #endif
     
     uint32_t regr_cnt = 0;
+    uint32_t regr_tests = (SINGLE_TEST == 1) ? 1 : RISCV_ISA_REGR_NUM;
+
+    uint32_t regr_clk_counter = 0;
     
-    LOG(" ----- Regression Start -----");
-    while(regr_cnt < RISCV_ISA_REGR_NUM){
+    std::ofstream cycle_log;
+    std::ofstream stim_clk;
+    std::ofstream stim_rst;
+    std::string path_test;
+    std::string test_log_path_s;
+    const char *test_log_path_c;
 
+    LOG_M(" ----- Regression Start -----");
+
+    while(regr_cnt < regr_tests){
     
-    LOG("\n ----- Create CPU instance -----\n");
-    seq_queue q;
-    cpu *cpu0 = new cpu(&q);
+        if (SINGLE_TEST == 1)
+            global_test_name = SINGLE_TEST_NAME;
+        else
+            global_test_name = riscv_regr_tests[regr_cnt];
+        
+        vector_export v_exp_init;
 
-    global_test_name = riscv_regr_tests[regr_cnt];
-    LOG("\n\n ----- Test name: " << global_test_name << " ----- " << "\n");
-    regr_cnt++;
-    uint32_t clk_counter = 0;
-    uint32_t rst_counter = 0;
-    cpu0->burn_mem();
+        path_test = "test_" + global_test_name + "/";
+        test_log_path_s = path_test + "test_log.txt";
+        test_log_path_c = test_log_path_s.c_str();
+        
+        // log to file general test info
+        FILE *open_test_log;
+        open_test_log = freopen(test_log_path_c, "w", stdout); //close it
+        if (!open_test_log) {
+            LOGE("Failed to open test.txt log. Exiting...");
+            std::cin.get();
+            return 1;
+        }
 
-    LOG(" ----- Simulation Start -----");
+        // wb inst write
+        cycle_log.open(path_test + "cycle_log.txt");
+        // stimuli
+        stim_clk.open(path_test + "stim_clk.txt");
+        uint64_t clk = 1;
+        stim_rst.open(path_test + "stim_rst.txt");
 
-    // Reset
-    cpu0->reset(reset_t::set);
-    do {
-        LOG("CPU in reset");
-        cpu0->update();
-        LOG("\n\n ---------- Cycle count: " << (clk_counter + rst_counter) << " ---------- ");
-        queue_update_all(&q);
-        rst_counter++;
-    } while (rst_cycles > rst_counter);
+        perf_cpu::reset_clk();
+        LOG_M("\n ----- Create CPU instance -----\n");
+        seq_queue q;
+        cpu *cpu0 = new cpu(&q);
 
-    cpu0->reset(reset_t::clear);
-    LOG("CPU reset done");
+        LOG_M("\n\n ----- Test name: " << global_test_name << " ----- " << "\n");
+        regr_cnt++;
+        uint32_t clk_counter = 0;
+        uint32_t rst_counter = 0;
+        cpu0->burn_mem();
 
-    // Run
-#if RISCV_SANITY_TESTS
-    while ((clk_cycles > clk_counter) && !global_test_failed) {
-        cpu0->update();
-        LOG("\n\n ---------- Cycle count: " << (clk_counter + rst_counter) << " ---------- ");
-        queue_update_all(&q);
-        clk_counter++;
-    }
+        LOG_M(" ----- Simulation Start -----");
 
-    LOG("\n ----- Simulation Status -----");
-    if (global_test_failed)
-        LOGE(" FAIL ");
-    else
-        LOG(" PASS ");
+        // initial toggle, i.e. the non functional one
+        stim_update(clk, 1, &stim_clk);
+        stim_update(clk, 0, &stim_clk);
+
+        // Reset
+        cpu0->reset(reset_t::set);
+        do {
+            stim_rst << 1 << std::endl;
+            LOG_M("CPU in reset");
+            stim_update(clk, 1, &stim_clk);
+            queue_update_all(&q);
+            cpu0->update();
+            rst_counter++;
+            clk_counter++;
+            LOG_M("\n\n ---------- Cycle count in reset: " << (rst_counter) << " ---------- ");
+            cycle_log << "clk: " << regr_clk_counter + clk_counter << "; Inst WB: " << FHEXI(*global_wb_inst_ptr) << std::endl;
+            stim_update(clk, 0, &stim_clk);
+        } while (rst_cycles > rst_counter);
+
+        cpu0->reset(reset_t::clear);
+        LOG_M("CPU reset done");
+        rst_done = 1;
+
+        // Run
+    #if RISCV_SANITY_TESTS
+        while ((clk_cycles > clk_counter) && !global_test_failed) {
+            cpu0->update();
+            LOG_M("\n\n ---------- Cycle count: " << (clk_counter + rst_counter) << " ---------- ");
+            queue_update_all(&q);
+            clk_counter++;
+        }
+
+        LOG_M("\n ----- Simulation Status -----");
+        if (global_test_failed)
+            LOGE(" FAIL ");
+        else
+            LOG_M(" PASS ");
     
-    check_committed_instructions();
+        check_committed_instructions();
 
-#elif RISCV_ISA_REGR
-    do {
-        cpu0->update();
-        LOG("\n\n ---------- Cycle count: " << (clk_counter + rst_counter) << " ---------- ");
-        queue_update_all(&q);
-        clk_counter++;
-    } while ((global_tohost & 0x1) != 1u && (clk_counter < CLK_TIMEOUT));
+    #elif RISCV_ISA_REGR
+        do {
+            stim_rst << 0 << std::endl;
+            stim_update(clk, 1, &stim_clk);
+            queue_update_all(&q);
+            cpu0->update();
+            clk_counter++;
+            cycle_log << "clk: " << regr_clk_counter + clk_counter << "; Inst WB: " << FHEXI(*global_wb_inst_ptr) << std::endl;
+            LOG_M("\n\n ---------- Cycle count: " << (clk_counter) << " ---------- ");
+            stim_update(clk, 0, &stim_clk);
+        } while ((*global_tohost_ptr & 0x1) != 1u && (clk_counter < CLK_TIMEOUT));
 
-    bool test_status = 0;
-    uint32_t failed_test_id = 0;
+        bool test_status = 0;
+        uint32_t failed_test_id = 0;
     
-    if (global_tohost == 1) {
-        test_status = true;
-    }
-    else {
-        test_status = false;
-        failed_test_id = global_tohost >> 1;
-    }
+        if (*global_tohost_ptr == 1) {
+            test_status = true;
+        }
+        else {
+            test_status = false;
+            failed_test_id = *global_tohost_ptr >> 1;
+        }
 
-#else
-    while (clk_cycles > clk_counter) {
-        cpu0->update();
-        queue_update_all(&q);
-        clk_counter++;
-    }
-#endif
+        uint32_t clk_pipe = 6;
+        while (clk_pipe) {
+            stim_rst << 0 << std::endl;
+            stim_update(clk, 1, &stim_clk);
+            LOG_M("passing_pipe");
+            cpu0->update();
+            queue_update_all(&q);
+            clk_counter++;
+            clk_pipe--;
+            cycle_log << "clk: " << regr_clk_counter + clk_counter << "; Inst WB: " << FHEXI(*global_wb_inst_ptr) << std::endl;
+            LOG_M("\n\n ---------- Cycle count: " << (clk_counter) << " ---------- ");
+            stim_update(clk, 0, &stim_clk);
+        }
 
-    LOG("\n ----- Simulation Stats -----\n");
-#if RISCV_SANITY_TESTS
-    LOG("Clock cycles to execute: " << clk_cycles);
-#endif
-#if RISCV_ISA_REGR
-    if (test_status)
-        LOG("Test passed; Test suite: " << global_test_name);
-    else
-        LOGE("Test failed. Test ID: " << failed_test_id << "; Test suite: " << global_test_name);
+    #else
+        while (clk_cycles > clk_counter) {
+            cpu0->update();
+            queue_update_all(&q);
+            clk_counter++;
+        }
+    #endif
+
+        LOG_M("\n ----- Simulation Stats -----\n");
+    #if RISCV_SANITY_TESTS
+        LOG_M("Clock cycles to execute: " << clk_cycles);
+    #endif
+    #if RISCV_ISA_REGR
+        if (test_status)
+            LOG_M("Test passed; Test suite: " << global_test_name);
+        else
+            LOGE("Test failed. Test ID: " << failed_test_id << "; Test suite: " << global_test_name);
     
-    LOG("");
-#endif
+        LOG_M("");
+    #endif
 
-    regr_test_status += (!test_status);
+        regr_test_status += (!test_status);
 
-    uint32_t perf_array[PERF_ARRAY_SIZE];
-    perf_cpu::collect_data(perf_array);
-    perf_cpu::status_log(perf_array);
+        uint32_t perf_array[PERF_ARRAY_SIZE];
+        perf_cpu::collect_data(perf_array);
+        perf_cpu::status_log(perf_array);
+        //std::add(std::begin(perf_array), std::end(perf_array), std::begin(regr_perf_array));
 
-    //std::add(std::begin(perf_array), std::end(perf_array), std::begin(regr_perf_array));
+        for (uint32_t i = 0; i < std::size(perf_array); i++)
+            regr_perf_array[i] += perf_array[i];
 
-    for (uint32_t i = 0; i < std::size(perf_array); i++)
-        regr_perf_array[i] += perf_array[i];
+        LOG_M("\nClock cycles executed: " << clk_counter);
+        LOG_M("\n ----- Simulation End -----\n");
 
+        cycle_log.close();
+        stim_clk.close();
+        stim_rst.close();
+        fclose(open_test_log);
+        delete cpu0;
 
-    LOG("\nClock cycles executed: " << clk_counter);
-    LOG("\n ----- Simulation End -----\n");
-
-    delete cpu0;
-    
+        regr_clk_counter += clk_counter;
     } // while (regr_cnt < RISCV_ISA_REGR_NUM)
     
-    LOG("\n ----- Regression results -----\n");
+    FILE *open_regression_log;
+    open_regression_log = freopen("regression_log.txt", "w", stdout); //close it
+    if (!open_regression_log) {
+        LOGE("Failed to open regression_log.txt log. Exiting...");
+        std::cin.get();
+        return 1;
+    }
+
+    LOG_M("\n ----- Regression results -----\n");
 
     if (regr_test_status != 0)
         LOGE("Regression Failed. Number of failed tests: " << regr_test_status << 
             ". Check log for details about failed tests\n");
 
     perf_cpu::status_log(regr_perf_array);
-
-    LOG("\n ----- Regression End -----");
-
-    fclose(stdout);
-    //std::cin.get();
+    LOG_M("\n ----- Regression End -----");
+    fclose(open_regression_log);
 }
 #else
 int main()

@@ -55,19 +55,21 @@ void reg_file::read()
 
 void reg_file::status_log()
 {
+#if LOG_MINIMAL == 0
     std::cout << std::endl;
-    LOG("> Arch State - Register File");
+    LOG_M("> Arch State - Register File");
     for (uint32_t i = 0; i < reg_file_intf->out.size(); i+=4) {
         for (uint32_t j = i; j < i + 4; j++) {
             if (j == updated_register) // mark changed register
-                LOG_L(FRF_M(j, reg_file_intf->out[j]));
+                LOG_L_M(FRF_M(j, reg_file_intf->out[j]));
             else
-                LOG_L(FRF(j, reg_file_intf->out[j]));
+                LOG_L_M(FRF(j, reg_file_intf->out[j]));
         }
         std::cout << std::endl;
     }
     std::cout << std::endl;
     updated_register = NO_REG_UPDATE; // reset register address
+#endif
 }
 
 void reg_file::status_updated_register()

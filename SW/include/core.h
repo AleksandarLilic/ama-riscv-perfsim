@@ -1,10 +1,13 @@
 #pragma once
 
+#include <unordered_map>
+
 #include "defines.h"
 #include "intf.h"
 #include "intf_cfg.h"
 #include "modules.h"
 #include "perf_cpu.h"
+#include "vector_export.h"
 
 #if RISCV_SANITY_TESTS
 extern std::vector<uint32_t> global_committed_instructions;
@@ -12,7 +15,17 @@ extern std::vector<uint32_t> global_committed_instructions;
 
 class core
 {
+private:
+    vector_export v_exp;
+    std::vector<vector_export *> v_exp_array;
+    std::unordered_map<std::string, uint32_t*> internal_signals = {
+        {"imem_addr", &if_intf.imem_addr_word_aligned}, 
+        {"inst_id", &id_intf.inst_id},
+        {"alu_out", &ex_intf.alu_out}
+    };
+
 public:
+    void update_vectors();
 
 private:
     intf_cfg intf_cfg;
@@ -35,6 +48,8 @@ public:
     core() = delete;
     //core(seq_queue *q, uint32_t *imem_ptr, uint32_t *dmem_ptr);
     core(seq_queue *q, core_intf_t *core_intf);
+    ~core();
+
     void reset(bool rst_in);
     
     void update_system();

@@ -14,11 +14,12 @@ class imm_gen
 {
 private:
     id_intf_t *id_intf;
+    ex_intf_t *ex_intf;
 
 public:
     void update();
     imm_gen() = delete;
-    imm_gen(id_intf_t *id_intf);
+    imm_gen(id_intf_t *id_intf, ex_intf_t *ex_intf);
 };
 
 class branch_compare
@@ -82,10 +83,6 @@ public:
     load_shift_mask() = delete;
     load_shift_mask(mem_intf_t *mem_intf);
 };
-
-#if RISCV_ISA_REGR
-extern uint32_t global_tohost;
-#endif
 
 class csr_file
 {

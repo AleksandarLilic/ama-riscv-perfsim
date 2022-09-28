@@ -18,6 +18,7 @@ typedef struct core_intf_t
 typedef struct if_intf_t
 {
     uint32_t imem_addr = NOT_RESET & (0x0FFF);
+    uint32_t imem_addr_word_aligned = NOT_RESET & (0x0FFF);
     uint32_t pc_prepared = NOT_RESET & (0x0FFF);
     uint32_t pc_sel_if;
     uint32_t pc_we_if;
@@ -133,9 +134,9 @@ typedef struct ex_intf_t
     uint32_t bc_a_eq_b;
     uint32_t bc_a_lt_b;
     
-    uint32_t alu_in_a;
-    uint32_t alu_in_b;
-    uint32_t alu_out;
+    uint32_t alu_in_a = NOT_RESET;
+    uint32_t alu_in_b = NOT_RESET;
+    uint32_t alu_out = NOT_RESET;
     uint32_t store_offset;
     uint32_t dmem_addr = NOT_RESET & (0x0FFF);
     uint32_t dmem_din = NOT_RESET;
@@ -155,6 +156,8 @@ typedef struct mem_intf_t
     uint32_t rs2_addr_mem;
     uint32_t rd_addr_mem;
     uint32_t rd_we_mem;
+
+    uint32_t alu_in_a_mem = NOT_RESET;
 
     uint32_t csr_we_mem;
     uint32_t csr_ui_mem;

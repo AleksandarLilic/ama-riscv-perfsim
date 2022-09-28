@@ -353,20 +353,20 @@ void decoder::system(id_intf_t *id_intf)
 
     id_intf->dec_pc_sel_if = uint32_t(pc_sel_t::inc4);
     id_intf->dec_pc_we_if = 1;
-    id_intf->dec_ig_sel_id = uint32_t(imm_gen_t::disabled);
+    // id_intf->dec_ig_sel_id = uint32_t(imm_gen_t::disabled); // keep last one
 
     id_intf->dec_csr_en_id = rf_read_en;
     id_intf->dec_csr_we_id = 1;
     id_intf->dec_csr_ui_id = ui;
 
-    id_intf->dec_bc_uns_id = 0;
+    //id_intf->dec_bc_uns_id = 0;
 
     id_intf->dec_alu_a_sel_id = uint32_t(alu_op_a_sel_t::rs1);
-    id_intf->dec_alu_b_sel_id = uint32_t(alu_op_b_sel_t::rs2);
-    id_intf->dec_alu_op_sel_id = uint32_t(alu_op_t::op_add);
+    //id_intf->dec_alu_b_sel_id = uint32_t(alu_op_b_sel_t::rs2);
+    //id_intf->dec_alu_op_sel_id = uint32_t(alu_op_t::op_add);
 
     id_intf->dec_dmem_en_id = 0;
-    id_intf->dec_load_sm_en_id = 0;
+    //id_intf->dec_load_sm_en_id = 0;
 
     id_intf->dec_wb_sel_id = uint32_t(wb_sel_t::csr);
     id_intf->dec_rd_we_id = rf_read_en;
